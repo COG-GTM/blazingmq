@@ -73,7 +73,7 @@ apt-get install -qy --no-install-recommends \
     bison \
     libfl-dev \
     pkg-config \
-    python3.12-venv \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Install prerequisites for LLVM: latest cmake version, Ubuntu apt repository contains stale version
