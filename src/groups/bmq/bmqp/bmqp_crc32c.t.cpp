@@ -126,8 +126,11 @@ static int populateBufferLengthsSorted(bsl::vector<int>* bufferLengths)
 /// Populate the specified `bufferLengths` with various lengths in
 /// increasing sorted order. Apply these arguments to Google Benchmark
 /// internals Note that upper bound is 64 Ki
-static void populateBufferLengthsSorted_GoogleBenchmark_Small(
-    benchmark::internal::Benchmark* b)
+///
+/// `benchmark::Benchmark` is the public name of the benchmark descriptor;
+/// the `internal::` spelling is deprecated in google-benchmark >= 1.9.
+static void
+populateBufferLengthsSorted_GoogleBenchmark_Small(benchmark::Benchmark* b)
 {
     std::vector<long int> buffLens;
     buffLens.push_back(11);
@@ -157,8 +160,10 @@ static void populateBufferLengthsSorted_GoogleBenchmark_Small(
 /// Populate the specified `bufferLengths` with various lengths in
 /// increasing soorted order. Apply these arguments to Google Benchmark
 /// internals Note that upper bound is 64Mi
-static void populateBufferLengthsSorted_GoogleBenchmark_Large(
-    benchmark::internal::Benchmark* b)
+///
+/// Takes the public `benchmark::Benchmark` type (see above).
+static void
+populateBufferLengthsSorted_GoogleBenchmark_Large(benchmark::Benchmark* b)
 {
     std::vector<long int> buffLens;
     buffLens.push_back(11);
