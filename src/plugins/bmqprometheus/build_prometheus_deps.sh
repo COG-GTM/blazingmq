@@ -42,7 +42,8 @@ build_curl() {
         --disable-ipv6 --disable-sspi --disable-crypto-auth \
         --disable-ntlm-wb --disable-tls-srp --with-pic --without-nghttp2\
         --without-libidn2 --without-libssh2 --without-brotli \
-        --without-ssl --without-zlib --prefix=/opt/bb --libdir=/opt/bb/lib64
+        --without-ssl --without-zlib --without-libpsl \
+        --prefix=/opt/bb --libdir=/opt/bb/lib64
     make curl_LDFLAGS=-all-static
     make curl_LDFLAGS=-all-static install
     popd
