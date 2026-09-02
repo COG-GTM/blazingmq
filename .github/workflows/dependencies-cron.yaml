@@ -10,10 +10,10 @@ permissions:
   contents: read
 
 jobs:
-  build_dependencies_cpp03:
+  build_dependencies_cpp20:
     uses: ./.github/workflows/dependencies.yaml
     with:
-      cxx_standard: cpp03
+      cxx_standard: cpp20
 
   build_dependencies_cpp23:
     uses: ./.github/workflows/dependencies.yaml

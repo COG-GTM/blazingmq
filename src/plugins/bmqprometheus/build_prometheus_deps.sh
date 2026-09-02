@@ -22,12 +22,12 @@ set -euxo pipefail
 fetch_deps() {
     mkdir -p srcs
 
-    # Fetch curl with stable tag 8.4.0 to build static lib
-    curl -SL "https://github.com/curl/curl/releases/download/curl-8_4_0/curl-8.4.0.tar.gz" | tar -xzC srcs/
-    mv "srcs/curl-8.4.0" "srcs/curl"
+    # Fetch curl with stable tag 8.19.0 to build static lib
+    curl -SL "https://github.com/curl/curl/releases/download/curl-8_19_0/curl-8.19.0.tar.gz" | tar -xzC srcs/
+    mv "srcs/curl-8.19.0" "srcs/curl"
 
     # Clone prometheus-cpp repo because it has git submodules
-    git clone https://github.com/jupp0r/prometheus-cpp.git srcs/prometheus-cpp
+    git clone --depth 1 --branch v1.3.0 https://github.com/jupp0r/prometheus-cpp.git srcs/prometheus-cpp
 }
 
 build_curl() {
@@ -42,7 +42,8 @@ build_curl() {
         --disable-ipv6 --disable-sspi --disable-crypto-auth \
         --disable-ntlm-wb --disable-tls-srp --with-pic --without-nghttp2\
         --without-libidn2 --without-libssh2 --without-brotli \
-        --without-ssl --without-zlib --prefix=/opt/bb --libdir=/opt/bb/lib64
+        --without-ssl --without-zlib --without-libpsl \
+        --prefix=/opt/bb --libdir=/opt/bb/lib64
     make curl_LDFLAGS=-all-static
     make curl_LDFLAGS=-all-static install
     popd

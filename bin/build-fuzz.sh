@@ -58,7 +58,7 @@ fi
 PATH="${DIR_THIRDPARTY}/bde-tools/bin:$PATH"
 if [ ! -e "${DIR_BUILD}/bde/.complete" ]; then
     pushd "${DIR_THIRDPARTY}/bde" || exit
-    eval "$(bbs_build_env -p clang -u dbg_64_safe_cpp17 -b "${DIR_BUILD}/bde" -i "${DIR_INSTALL}")"
+    eval "$(bbs_build_env -p clang -u dbg_64_safe_cpp20 -b "${DIR_BUILD}/bde" -i "${DIR_INSTALL}")"
     bbs_build configure --prefix="${DIR_INSTALL}" \
         --toolchain "${TOOLCHAIN_PATH}"
     bbs_build build --prefix="${DIR_INSTALL}"
@@ -78,7 +78,7 @@ if [ ! -e "${DIR_BUILD}/ntf/.complete" ]; then
         --with-zlib \
         --without-zstd \
         --without-lz4 \
-        --ufid "dbg_64_safe_cpp17" \
+        --ufid "dbg_64_safe_cpp20" \
         --toolchain "${TOOLCHAIN_PATH}"
     make -j 16
     make install

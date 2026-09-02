@@ -25,11 +25,11 @@ jobs:
     with:
       cxx_standard: cpp23
 
-  get_dependencies_cpp03:
-    name: "Dependencies [C++03]"
+  get_dependencies_cpp20:
+    name: "Dependencies [C++20]"
     uses: ./.github/workflows/dependencies.yaml
     with:
-      cxx_standard: cpp03
+      cxx_standard: cpp20
 
   build_ubuntu:
     name: "Build [ubuntu]"
@@ -42,16 +42,16 @@ jobs:
       run_unit_tests: false
       cxx_standard: cpp23
 
-  build_ubuntu_cpp03:
-    name: "Build [ubuntu, C++03]"
-    needs: get_dependencies_cpp03
+  build_ubuntu_cpp20:
+    name: "Build [ubuntu, C++20]"
+    needs: get_dependencies_cpp20
     uses: ./.github/workflows/build-ubuntu.yaml
     with:
       ref: ${{ github.sha }}
       target: "bmqbrkr bmqtool bmq.t mqb.t"
       save_build_as_artifacts: false
       run_unit_tests: false
-      cxx_standard: cpp03
+      cxx_standard: cpp20
 
   unit_tests_cxx:
     name: "UT [c++]"

@@ -31,7 +31,7 @@ on:
         type: string
         default: "build-ubuntu"
       cxx_standard:
-        description: "What C++ Standard to build with.  [cpp03, cpp11, cpp14, cpp17, cpp20, cpp23]"
+        description: "What C++ Standard to build with.  [cpp20, cpp23]"
         required: true
         type: string
     outputs:

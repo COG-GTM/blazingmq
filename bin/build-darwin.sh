@@ -132,7 +132,7 @@ if [ ! -e "${DIR_BUILD}/bde/.complete" ]; then
         # shellcheck disable=SC2030
         export CXXFLAGS="-w -fsized-deallocation" CFLAGS="-w"
         cd "${DIR_THIRDPARTY}/bde"
-        eval "$(bbs_build_env -p clang -u opt_64_cpp17 -b "${DIR_BUILD}/bde" -i "${DIR_INSTALL}")"
+        eval "$(bbs_build_env -p clang -u opt_64_cpp20 -b "${DIR_BUILD}/bde" -i "${DIR_INSTALL}")"
         bbs_build configure --prefix="${DIR_INSTALL}"
         bbs_build build --prefix="${DIR_INSTALL}"
         bbs_build install --install_dir="/" --prefix="${DIR_INSTALL}"
@@ -158,7 +158,7 @@ if [ ! -e "${DIR_BUILD}/ntf/.complete" ]; then
             --with-zlib \
             --without-zstd \
             --without-lz4 \
-            --ufid opt_64_cpp17
+            --ufid opt_64_cpp20
         make -j 16
         make install
     )

@@ -19,7 +19,10 @@
 #
 # Options:
 #   --only-download           Only download dependencies (skip build and install)
-#   --cxx-standard=VERSION    C++ version to use (cpp03, cpp23, etc.). Default: cpp23
+#   --cxx-standard=VERSION    C++ version to use (cpp20 or cpp23). Default: cpp23
+#
+# C++20 is the minimum supported standard: all dependencies are built with the
+# same standard as BlazingMQ itself so that BDE/NTF ABI stays consistent.
 
 set -euxo pipefail
 
@@ -52,14 +55,14 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-# Validate CXX_STANDARD
+# Validate CXX_STANDARD (C++20 is the floor)
 case $CXX_STANDARD in
-cpp03 | cpp11 | cpp14 | cpp17 | cpp20 | cpp23)
+cpp20 | cpp23)
     # Valid C++ standard version
     ;;
 *)
     echo "Error: Invalid C++ standard version '$CXX_STANDARD'"
-    echo "Supported standard versions: cpp03, cpp11, cpp14, cpp17, cpp20, cpp23"
+    echo "Supported standard versions: cpp20, cpp23"
     exit 1
     ;;
 esac
@@ -79,7 +82,7 @@ fetch_git() {
 
 fetch_deps() {
     fetch_git bloomberg ntf-core 2.6.12
-    fetch_git google googletest v1.8.x
+    fetch_git google googletest v1.18.0
     fetch_git bloomberg bde-tools 4.39.0.0
     fetch_git bloomberg bde 4.39.0.0
 }
@@ -99,13 +102,6 @@ build_bde() {
 }
 
 build_ntf() {
-    local standard="$CXX_STANDARD"
-    if [[ "$CXX_STANDARD" == "cpp03" ]]; then
-        # NTF doesn't correctly translate cpp03 to 98 in its toolchain, so we have to
-        # pass it cpp98 explicitly.
-        standard="cpp98"
-    fi
-
     pushd srcs/ntf-core
     ./configure \
         --keep \
@@ -116,28 +112,16 @@ build_ntf() {
         --with-zlib \
         --without-zstd \
         --without-lz4 \
-        --ufid "opt_64_$standard"
+        --ufid "opt_64_$CXX_STANDARD"
     make -j8
     make install
     popd
 }
 
 build_google_test() {
-    local cmake_cxx_standard
-    case $CXX_STANDARD in
-    cpp03)
-        cmake_cxx_standard="98"
-        ;;
-    cpp11 | cpp14 | cpp17 | cpp20 | cpp23)
-        # Valid C++ standard version
-        cmake_cxx_standard="${CXX_STANDARD//cpp/}"
-        ;;
-    *)
-        echo "Error: Invalid C++ standard version '$CXX_STANDARD'"
-        echo "Supported standard versions: cpp03, cpp11, cpp14, cpp17, cpp20, cpp23"
-        exit 1
-        ;;
-    esac
+    # Translate the UFID-style standard (e.g. "cpp20") to the numeric value
+    # expected by CMAKE_CXX_STANDARD (e.g. "20").
+    local cmake_cxx_standard="${CXX_STANDARD//cpp/}"
 
     pushd srcs/googletest
     cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
