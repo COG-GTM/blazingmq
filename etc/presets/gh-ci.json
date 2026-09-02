@@ -23,18 +23,18 @@
             "binaryDir": "cmake.bld",
             "cacheVariables": {
                 "DBDE_BUILD_TARGET_64": "1",
-                "DBDE_BUILD_TARGET_CPP17": "1",
+                "DBDE_BUILD_TARGET_CPP20": "1",
                 "DBDE_BUILD_TARGET_SAFE": "1",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "1",
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_INSTALL_LIBDIR": "lib64",
-                "CMAKE_CXX_STANDARD": "17",
+                "CMAKE_CXX_STANDARD": "20",
                 "INSTALL_TARGETS": "fuzztests"
             }
         },
         {
-            "name": "gh-build-ubuntu-latest-cpp03",
-            "description": "GitHub Actions CI: Build on ubuntu-latest, C++03",
+            "name": "gh-build-ubuntu-latest-cpp20",
+            "description": "GitHub Actions CI: Build on ubuntu-latest, C++20",
             "inherits": "gh-base",
             "toolchainFile":
                 "$env{GITHUB_WORKSPACE}/deps/srcs/bde-tools/BdeBuildSystem/toolchains/linux/gcc-default.cmake",
@@ -43,7 +43,7 @@
                     "/usr/lib/x86_64-linux-gnu/pkgconfig:/opt/bb/lib64/pkgconfig"
             },
             "cacheVariables": {
-                "BDE_BUILD_TARGET_CPP03": "ON",
+                "BDE_BUILD_TARGET_CPP20": "ON",
                 "CMAKE_INSTALL_LIBDIR": "lib64"
             }
         },
@@ -82,9 +82,9 @@
     ],
     "buildPresets": [
         {
-            "name": "gh-build-ubuntu-latest-cpp03",
-            "description": "GitHub Actions CI: Build on ubuntu-latest, C++03",
-            "configurePreset": "gh-build-ubuntu-latest-cpp03",
+            "name": "gh-build-ubuntu-latest-cpp20",
+            "description": "GitHub Actions CI: Build on ubuntu-latest, C++20",
+            "configurePreset": "gh-build-ubuntu-latest-cpp20",
             "jobs": 8,
             "targets": [
                 "bmqbrkr",
@@ -148,10 +148,10 @@
     ],
     "testPresets": [
         {
-            "name": "gh-build-ubuntu-latest-cpp03",
+            "name": "gh-build-ubuntu-latest-cpp20",
             "description":
-                "GitHub Actions CI: Unit tests on ubuntu-latest, C++03",
-            "configurePreset": "gh-build-ubuntu-latest-cpp03",
+                "GitHub Actions CI: Unit tests on ubuntu-latest, C++20",
+            "configurePreset": "gh-build-ubuntu-latest-cpp20",
             "filter": {
                 "include": {
                     "label": "^unit$"

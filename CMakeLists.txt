@@ -31,6 +31,16 @@ add_custom_target(all.t ALL)
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
+# C++20 is the minimum supported standard.  Presets select 20 or 23 explicitly;
+# a bare configure (no preset) defaults to the floor.
+if( NOT DEFINED CMAKE_CXX_STANDARD )
+  set( CMAKE_CXX_STANDARD 20 )
+elseif( CMAKE_CXX_STANDARD LESS 20 )
+  message( FATAL_ERROR
+           "BlazingMQ requires C++20 or later (CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD})" )
+endif()
+set( CMAKE_CXX_STANDARD_REQUIRED ON )
+
 # Define CXXFlags/LDFlags per build mode, that are OS/compiler specific
 if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?Clang" )
   # Enable as much Clang compiler warnings as we can
@@ -49,22 +59,18 @@ if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?Clang" )
                                         # anonymous namespaces
   )
 
-
-
-  if( DEFINED CMAKE_CXX_STANDARD AND CMAKE_CXX_STANDARD GREATER_EQUAL 17 )
-    # The below warnings are disabled, but should be revisited and properly
-    # addressed
-    add_compile_options(
-            "-Wno-atomic-implicit-seq-cst"
-            "-Wno-c++98-compat-pedantic"
-            "-Wno-deprecated"
-            "-Wno-disabled-macro-expansion"
-            "-Wno-extra-semi-stmt"
-            "-Wno-zero-as-null-pointer-constant"
-            # to compile hello_world: uncomment or add 'override' specifier (C++11)
-            # "-Wno-suggest-override"
+  # The below warnings are disabled, but should be revisited and properly
+  # addressed
+  add_compile_options(
+          "-Wno-atomic-implicit-seq-cst"
+          "-Wno-c++98-compat-pedantic"
+          "-Wno-deprecated"
+          "-Wno-disabled-macro-expansion"
+          "-Wno-extra-semi-stmt"
+          "-Wno-zero-as-null-pointer-constant"
+          # to compile hello_world: uncomment or add 'override' specifier (C++11)
+          # "-Wno-suggest-override"
   )
-  endif()
 endif()
 
 if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )

@@ -87,6 +87,11 @@ BlazingMQ and see them in action.
 respectively, on Ubuntu 22.04.2 LTS and Darwin 22.6.0. They can serve as a basis
 to build BlazingMQ on other systems.  
   
+BlazingMQ requires a C++20-capable toolchain (GCC 11+, Clang 14+, or Apple
+Clang 15+).  C++20 is the minimum supported standard; the default presets build
+with C++23.  All dependencies (BDE, NTF, GoogleTest, ...) must be built with the
+same standard as BlazingMQ, e.g. `docker/build_deps.sh --cxx-standard=cpp20`.
+  
 To build BlazingMQ with plugins, pass '--plugins' argument with desired plugin names to the build script, e.g.
 ```bash
 bin/build-ubuntu.sh --plugins plugin-1-name,plugin-2-name

@@ -157,15 +157,15 @@ curl -SL "https://github.com/llvm/llvm-project/archive/refs/tags/${LLVM_TAG}.tar
 mv "${DIR_SRCS_EXT}/llvm-project-${LLVM_TAG}" "${DIR_SRCS_EXT}/llvm-project"
 
 # Download google-benchmark sources
-GOOGLE_BENCHMARK_TAG="v1.9.1"
+GOOGLE_BENCHMARK_TAG="v1.9.5"
 checkoutGitRepo "$(github_url google/benchmark)" "${GOOGLE_BENCHMARK_TAG}" "google-benchmark"
 
 # Download googletest sources
-GOOGLETEST_TAG="v1.15.2"
+GOOGLETEST_TAG="v1.18.0"
 checkoutGitRepo "$(github_url google/googletest)" "${GOOGLETEST_TAG}" "googletest"
 
 # Download zlib
-ZLIB_TAG="v1.3.1"
+ZLIB_TAG="v1.3.2"
 checkoutGitRepo "$(github_url madler/zlib)" "${ZLIB_TAG}" "zlib"
 
 # Download bde-tools, bde and ntf-core sources
@@ -193,7 +193,7 @@ if [ "${FUZZER}" == "off" ]; then
             -DCMAKE_BUILD_TYPE="Debug" \
             -DCMAKE_C_COMPILER="clang" \
             -DCMAKE_CXX_COMPILER="clang++" \
-            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_CXX_STANDARD=20 \
             -DCMAKE_C_FLAGS="-Wno-reserved-macro-identifier" \
             -DCMAKE_CXX_FLAGS="-Wno-reserved-macro-identifier" \
             -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
@@ -229,7 +229,7 @@ export PATH
 
 # Build BDE + NTF
 pushd "${DIR_SRCS_EXT}/bde"
-eval "$(bbs_build_env  -p clang -u dbg_64_safe_cpp17 -b "${DIR_BUILD_EXT}/bde")"
+eval "$(bbs_build_env  -p clang -u dbg_64_safe_cpp20 -b "${DIR_BUILD_EXT}/bde")"
 bbs_build configure --toolchain "${TOOLCHAIN_PATH}"
 bbs_build build -j"${PARALLELISM}"
 bbs_build --install=/opt/bb --prefix=/ install
@@ -254,7 +254,7 @@ sed -i 's/fcoroutines-ts/fcoroutines/g' 'repository.cmake'
             --without-zstd \
             --without-lz4 \
             --without-openssl \
-            --ufid 'dbg_64_safe_cpp17' \
+            --ufid 'dbg_64_safe_cpp20' \
             --toolchain "${TOOLCHAIN_PATH}"
 make -j"${PARALLELISM}"
 make install
