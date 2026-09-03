@@ -80,9 +80,7 @@ def test_compression_restart(
     assert msgs[0].payload[:32] == payload[:32]
 
 
-def test_compression_mixed_algorithms(
-    cluster: Cluster, domain_urls: tc.DomainUrls
-):
+def test_compression_mixed_algorithms(cluster: Cluster, domain_urls: tc.DomainUrls):
     # Create two producers that use different compression formats.
     uri_priority = domain_urls.uri_priority
     proxies = cluster.proxy_cycle()
