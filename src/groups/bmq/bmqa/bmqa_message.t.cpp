@@ -432,7 +432,7 @@ static void test4_subscriptionHandle()
     BMQTST_ASSERT_EQ(static_cast<unsigned int>(payload.length()),
                      bsl::strlen(buffer));
 
-    PV("PUSH MESSAGE - SUBSCRIPTION")
+    PV("PUSH MESSAGE - SUBSCRIPTION");
     {
         const bmqt::SubscriptionHandle sHandle(cId);
         const unsigned int             sId = sHandle.id();
@@ -496,7 +496,7 @@ static void test4_subscriptionHandle()
                          sHandle.correlationId());
     }
 
-    PV("PUSH MESSAGE - NO SUBSCRIPTION")
+    PV("PUSH MESSAGE - NO SUBSCRIPTION");
     {
         // Empty correlation Id
         const bmqt::CorrelationId emptyCorrelationId;
@@ -547,7 +547,7 @@ static void test4_subscriptionHandle()
         BMQTST_ASSERT_EQ(actualHandle.correlationId(), emptyCorrelationId);
     }
 
-    PV("PUT MESSAGE - FAIL")
+    PV("PUT MESSAGE - FAIL");
     {
         bmqa::Event event;
 
@@ -596,7 +596,7 @@ static void test4_subscriptionHandle()
         BMQTST_ASSERT_OPT_FAIL(message.subscriptionHandle());
     }
 
-    PV("ACK MESSAGE - FAIL")
+    PV("ACK MESSAGE - FAIL");
     {
         bmqa::Event event;
 
@@ -640,7 +640,7 @@ static void test4_subscriptionHandle()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
     switch (_testCase) {
     case 0:
     case 1: test1_messageOnStackIsInvalid(); break;

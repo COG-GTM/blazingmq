@@ -509,7 +509,7 @@ VirtualStorageCatalog::purgeImpl(VirtualStorage*     vs,
                     << d_storage_p->queueKey()
                     << "', with invalid context (refCount is already "
                        "zero)."
-                    << BMQTSK_ALARMLOG_END;
+                    << BMQTSK_ALARMLOG_END
             }
             ++itData;
         }

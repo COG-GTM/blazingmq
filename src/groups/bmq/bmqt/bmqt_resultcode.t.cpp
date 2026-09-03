@@ -413,7 +413,7 @@ static void invalidValueFromAsciiHelper()
 {
     typename RESULT_TYPE::Enum obj;
     bool                       res;
-    PVV("Invalid enum value for fromAscii method")
+    PVV("Invalid enum value for fromAscii method");
     res = RESULT_TYPE::fromAscii(&obj, "IMPOSSIBLE_RETURN_CODE");
     BMQTST_ASSERT_EQ(res, false);
 }
@@ -435,7 +435,7 @@ static void test5_invalidValueFromAscii()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

@@ -109,7 +109,7 @@ void defaultFailureCallback(const bslstl::StringRef& description,
                             const bslstl::StringRef& file,
                             int                      line)
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
     BALL_LOG_ERROR_BLOCK
     {
         BALL_LOG_OUTPUT_STREAM << "[ Description: '" << description << "'";
@@ -1076,7 +1076,7 @@ int MockSession::start(const bsls::TimeInterval& timeout)
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_START, { return 0; });
+    BMQA_CHECK_CALL(e_START, { return 0; })
     BMQA_CHECK_ARG(e_START, "timeout", call.d_timeout, timeout, call);
 
     d_eventsAndJobs.insert(d_eventsAndJobs.end(),
@@ -1572,7 +1572,7 @@ int MockSession::startAsync(const bsls::TimeInterval& timeout)
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_START_ASYNC, { return 0; });
+    BMQA_CHECK_CALL(e_START_ASYNC, { return 0; })
     BMQA_CHECK_ARG(e_START, "timeout", call.d_timeout, timeout, call);
 
     d_eventsAndJobs.insert(d_eventsAndJobs.end(),
@@ -1588,7 +1588,7 @@ void MockSession::stop()
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_STOP, {});
+    BMQA_CHECK_CALL(e_STOP, {})
 
     d_eventsAndJobs.insert(d_eventsAndJobs.end(),
                            call.d_emittedEvents.begin(),
@@ -1610,7 +1610,7 @@ void MockSession::stopAsync()
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_STOP_ASYNC, {});
+    BMQA_CHECK_CALL(e_STOP_ASYNC, {})
 
     d_eventsAndJobs.insert(d_eventsAndJobs.end(),
                            call.d_emittedEvents.begin(),
@@ -1632,7 +1632,7 @@ void MockSession::finalizeStop()
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_FINALIZE_STOP, {});
+    BMQA_CHECK_CALL(e_FINALIZE_STOP, {})
 
     d_eventsAndJobs.insert(d_eventsAndJobs.end(),
                            call.d_emittedEvents.begin(),
@@ -1738,7 +1738,7 @@ int MockSession::openQueue(QueueId*                  queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_OPEN_QUEUE, { return 0; });
+    BMQA_CHECK_CALL(e_OPEN_QUEUE, { return 0; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_OPEN_QUEUE, "uri", call.d_uri, uri, call);
@@ -1776,7 +1776,7 @@ OpenQueueStatus MockSession::openQueueSync(QueueId*                  queueId,
         return OpenQueueStatus(bmqa::QueueId(),
                                bmqt::OpenQueueResult::e_INVALID_ARGUMENT,
                                "Call to 'openQueueSync' was not expected.");
-    });
+    })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_OPEN_QUEUE_SYNC, "uri", call.d_uri, uri, call);
@@ -1821,7 +1821,7 @@ int MockSession::openQueueAsync(QueueId*                  queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_OPEN_QUEUE_ASYNC, { return 0; });
+    BMQA_CHECK_CALL(e_OPEN_QUEUE_ASYNC, { return 0; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_OPEN_QUEUE_ASYNC, "uri", call.d_uri, uri, call);
@@ -1858,7 +1858,7 @@ void MockSession::openQueueAsync(
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_OPEN_QUEUE_ASYNC_CALLBACK, { return; });
+    BMQA_CHECK_CALL(e_OPEN_QUEUE_ASYNC_CALLBACK, { return; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_OPEN_QUEUE_ASYNC_CALLBACK, "uri", uri, call.d_uri, call);
@@ -1903,7 +1903,7 @@ int MockSession::configureQueue(BSLA_MAYBE_UNUSED QueueId* queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE, { return 0; });
+    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE, { return 0; })
 
     BMQA_CHECK_ARG(e_CONFIGURE_QUEUE,
                    "options",
@@ -1940,7 +1940,7 @@ MockSession::configureQueueSync(BSLA_MAYBE_UNUSED QueueId* queueId,
             bmqa::QueueId(),
             bmqt::ConfigureQueueResult::e_INVALID_ARGUMENT,
             "Call to 'configureQueueSync' was not expected");
-    });
+    })
 
     BMQA_CHECK_ARG(e_CONFIGURE_QUEUE_SYNC,
                    "options",
@@ -1978,7 +1978,7 @@ int MockSession::configureQueueAsync(BSLA_MAYBE_UNUSED QueueId* queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE_ASYNC, { return 0; });
+    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE_ASYNC, { return 0; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CONFIGURE_QUEUE_ASYNC,
@@ -2013,7 +2013,7 @@ void MockSession::configureQueueAsync(
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE_ASYNC_CALLBACK, { return; });
+    BMQA_CHECK_CALL(e_CONFIGURE_QUEUE_ASYNC_CALLBACK, { return; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CONFIGURE_QUEUE_ASYNC_CALLBACK,
@@ -2042,7 +2042,7 @@ int MockSession::closeQueue(QueueId*                  queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CLOSE_QUEUE, { return 0; });
+    BMQA_CHECK_CALL(e_CLOSE_QUEUE, { return 0; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CLOSE_QUEUE, "timeout", call.d_timeout, timeout, call);
@@ -2076,7 +2076,7 @@ CloseQueueStatus MockSession::closeQueueSync(QueueId*                  queueId,
         return CloseQueueStatus(bmqa::QueueId(),
                                 bmqt::CloseQueueResult::e_INVALID_ARGUMENT,
                                 "Call to 'closeQueueSync' was not expected.");
-    });
+    })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CLOSE_QUEUE_SYNC,
@@ -2118,7 +2118,7 @@ int MockSession::closeQueueAsync(QueueId*                  queueId,
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CLOSE_QUEUE_ASYNC, { return 0; });
+    BMQA_CHECK_CALL(e_CLOSE_QUEUE_ASYNC, { return 0; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CLOSE_QUEUE_ASYNC,
@@ -2153,7 +2153,7 @@ void MockSession::closeQueueAsync(
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CLOSE_QUEUE_ASYNC_CALLBACK, { return; });
+    BMQA_CHECK_CALL(e_CLOSE_QUEUE_ASYNC_CALLBACK, { return; })
 
     // No need to check output parameter QueueId
     BMQA_CHECK_ARG(e_CLOSE_QUEUE_ASYNC_CALLBACK,
@@ -2174,7 +2174,7 @@ Event MockSession::nextEvent(const bsls::TimeInterval& timeout)
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
     // PRECONDITIONS
-    BMQA_CHECK_CALL(e_NEXT_EVENT, { return Event(); });
+    BMQA_CHECK_CALL(e_NEXT_EVENT, { return Event(); })
     BSLS_ASSERT_OPT(call.d_emittedEvents.empty() &&
                     "'nextEvent' cannot emit events");
 
@@ -2197,7 +2197,7 @@ int MockSession::post(const MessageEvent& messageEvent)
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_POST, { return 0; });
+    BMQA_CHECK_CALL(e_POST, { return 0; })
 
     // TODO: Cannot validate messageEvent for now.
     BMQA_RETURN_ON_RC();
@@ -2220,7 +2220,7 @@ int MockSession::confirmMessage(const MessageConfirmationCookie& cookie)
 {
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIRM_MESSAGE, { return 0; });
+    BMQA_CHECK_CALL(e_CONFIRM_MESSAGE, { return 0; })
 
     BMQA_CHECK_ARG(e_CONFIRM_MESSAGE,
                    "cookie.queueId())",
@@ -2248,7 +2248,7 @@ int MockSession::confirmMessages(ConfirmEventBuilder* builder)
 
     bslmt::LockGuard<bslmt::Mutex> guard(&d_mutex);  // LOCKED
 
-    BMQA_CHECK_CALL(e_CONFIRM_MESSAGES, { return 0; });
+    BMQA_CHECK_CALL(e_CONFIRM_MESSAGES, { return 0; })
 
     // No need to compare pointer of confirmEventBuilder.
     BMQA_RETURN_ON_RC();

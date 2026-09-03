@@ -107,7 +107,7 @@ BasicAuthenticator::BasicAuthenticator(
         BMQTSK_ALARMLOG_ALARM("CREDENTIALS_MISSING")
             << "No credentials found in configuration. Please double check if "
                "this is intended."
-            << BMQTSK_ALARMLOG_END;
+            << BMQTSK_ALARMLOG_END
     }
     else {
         BALL_LOG_INFO << "Loaded " << d_credentials.size()

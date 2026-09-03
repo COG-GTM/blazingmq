@@ -413,7 +413,7 @@ static int initializeTask(bsl::ostream&             errorDescription,
     if (!pidFd) {
         BMQTSK_ALARMLOG_ALARM("STARTUP")
             << "Failed to create pid file [" << pidFile << "]."
-            << " This is not fatal." << BMQTSK_ALARMLOG_END;
+            << " This is not fatal." << BMQTSK_ALARMLOG_END
     }
     else {
         pidFd << bdls::ProcessUtil::getProcessId() << "\n";
@@ -537,7 +537,7 @@ static void updateHistFile(const TaskEnvironment* taskEnv)
     if (!output) {
         BMQTSK_ALARMLOG_ALARM("STARTUP")
             << "Failed to create vers file [" << histFile << "]. "
-            << "This is not fatal." << BMQTSK_ALARMLOG_END;
+            << "This is not fatal." << BMQTSK_ALARMLOG_END
     }
     else {
         for (bsl::list<bsl::string>::const_iterator it = entries.begin();
@@ -750,8 +750,7 @@ int main(int argc, const char* argv[])
     if (rc != 0) {
         BMQTSK_ALARMLOG_PANIC("STARTUP")
             << "(" << rc << "): " << errorDescription.str()
-            << BMQTSK_ALARMLOG_END;
-        shutdownApplication(&taskEnv);
+            << BMQTSK_ALARMLOG_END shutdownApplication(&taskEnv);
         shutdownTask(&taskEnv);
         return mqbu::ExitCode::e_RUN;  // RETURN
     }

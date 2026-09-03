@@ -186,7 +186,7 @@ QueueStatsDomain::findAppIdContext(const bsl::string& appId) const
                                               d_subContextsLookup.cend())) {
         BSLS_PERFORMANCEHINT_UNLIKELY_HINT;
 
-        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
         BALL_LOGTHROTTLE_WARN(k_MAX_INSTANT_MESSAGES, k_NS_PER_MESSAGE)
             << "[THROTTLED] No matching StatContext for domain: "
             << d_statContext_mp->name() << ", appId: " << appId;
@@ -549,7 +549,7 @@ void QueueStatsDomain::onEvent(EventType::Enum    type,
     default: {
         BSLS_ASSERT_SAFE(false && "Unknown event type");
     } break;
-    };
+    }
 }
 
 void QueueStatsDomain::updateDomainAppIds(
@@ -757,7 +757,7 @@ void QueueStatsClient::onEvent(EventType::Enum type, bsls::Types::Int64 value)
     default: {
         BSLS_ASSERT_SAFE(false && "Unknown event type");
     } break;
-    };
+    }
 }
 
 // ---------------------

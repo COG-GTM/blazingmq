@@ -211,7 +211,7 @@ bmqt::AckResult::Enum ProtocolUtil::ackResultFromCode(int value)
     default: {
         return bmqt::AckResult::e_UNKNOWN;  // RETURN
     }
-    };
+    }
 }
 
 bool ProtocolUtil::loadFieldValues(bsl::vector<bsl::string>* fieldValues,

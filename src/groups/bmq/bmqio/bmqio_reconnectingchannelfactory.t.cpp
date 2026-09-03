@@ -891,18 +891,20 @@ BMQTST_TEST(DefaultConnectIntervalFn)
     static const int k_ITERATIONS = 1000;
 
 #define FN_CHECK(EXPECTED_MIN, EXPECTED_MAX, INPUT, LAST_ATTEMPT_TIME)        \
-    for (int iter = 0; iter < k_ITERATIONS; ++iter) {                         \
-        bsls::TimeInterval input(INPUT);                                      \
-        ReconnectingChannelFactoryUtil::defaultConnectIntervalFn(             \
-            &input,                                                           \
-            options,                                                          \
-            bsls::TimeInterval(LAST_ATTEMPT_TIME),                            \
-            bsls::TimeInterval(k_RESET),                                      \
-            bsls::TimeInterval(k_MAX));                                       \
+    do {                                                                      \
+        for (int iter = 0; iter < k_ITERATIONS; ++iter) {                     \
+            bsls::TimeInterval input(INPUT);                                  \
+            ReconnectingChannelFactoryUtil::defaultConnectIntervalFn(         \
+                &input,                                                       \
+                options,                                                      \
+                bsls::TimeInterval(LAST_ATTEMPT_TIME),                        \
+                bsls::TimeInterval(k_RESET),                                  \
+                bsls::TimeInterval(k_MAX));                                   \
                                                                               \
-        BMQTST_ASSERT_GE(input, bsls::TimeInterval(EXPECTED_MIN));            \
-        BMQTST_ASSERT_LE(input, bsls::TimeInterval(EXPECTED_MAX));            \
-    }
+            BMQTST_ASSERT_GE(input, bsls::TimeInterval(EXPECTED_MIN));        \
+            BMQTST_ASSERT_LE(input, bsls::TimeInterval(EXPECTED_MAX));        \
+        }                                                                     \
+    } while (false)
 
     // Convenience
     static const bsls::Types::Int64 k_INTERVAL_LOW  = k_INTERVAL / 2;
@@ -943,7 +945,7 @@ BMQTST_TEST(DefaultConnectIntervalFn)
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     bmqtst::runTest(_testCase);
 

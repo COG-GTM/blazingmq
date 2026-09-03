@@ -102,11 +102,14 @@ bool ParametersVerbosity::fromAscii(ParametersVerbosity::Value* out,
                                     const bslstl::StringRef&    str)
 {
 #define CHECKVALUE(M)                                                         \
-    if (bdlb::String::areEqualCaseless(toAscii(ParametersVerbosity::e_##M),   \
-                                       str)) {                                \
-        *out = ParametersVerbosity::e_##M;                                    \
-        return true;                                                          \
-    }
+    do {                                                                      \
+        if (bdlb::String::areEqualCaseless(                                   \
+                toAscii(ParametersVerbosity::e_##M),                          \
+                str)) {                                                       \
+            *out = ParametersVerbosity::e_##M;                                \
+            return true;                                                      \
+        }                                                                     \
+    } while (false)
 
     CHECKVALUE(SILENT);
     CHECKVALUE(TRACE);
@@ -164,7 +167,7 @@ const char* ParametersMode::toAscii(ParametersMode::Value value)
         CASE(CLI)
         CASE(AUTO)
         CASE(STORAGE)
-        CASE(SYSCHK);
+        CASE(SYSCHK)
     default: return "(* UNKNOWN *)";
     }
 
@@ -175,11 +178,13 @@ bool ParametersMode::fromAscii(ParametersMode::Value*   out,
                                const bslstl::StringRef& str)
 {
 #define CHECKVALUE(M)                                                         \
-    if (bdlb::String::areEqualCaseless(toAscii(ParametersMode::e_##M),        \
-                                       str)) {                                \
-        *out = ParametersMode::e_##M;                                         \
-        return true;                                                          \
-    }
+    do {                                                                      \
+        if (bdlb::String::areEqualCaseless(toAscii(ParametersMode::e_##M),    \
+                                           str)) {                            \
+            *out = ParametersMode::e_##M;                                     \
+            return true;                                                      \
+        }                                                                     \
+    } while (false)
 
     CHECKVALUE(CLI);
     CHECKVALUE(AUTO);
@@ -243,11 +248,13 @@ bool ParametersLatency::fromAscii(ParametersLatency::Value* out,
                                   const bslstl::StringRef&  str)
 {
 #define CHECKVALUE(M)                                                         \
-    if (bdlb::String::areEqualCaseless(toAscii(ParametersLatency::e_##M),     \
-                                       str)) {                                \
-        *out = ParametersLatency::e_##M;                                      \
-        return true;                                                          \
-    }
+    do {                                                                      \
+        if (bdlb::String::areEqualCaseless(toAscii(ParametersLatency::e_##M), \
+                                           str)) {                            \
+            *out = ParametersLatency::e_##M;                                  \
+            return true;                                                      \
+        }                                                                     \
+    } while (false)
 
     CHECKVALUE(NONE);
     CHECKVALUE(HIRES);

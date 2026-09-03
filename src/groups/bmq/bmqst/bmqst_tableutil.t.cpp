@@ -224,7 +224,7 @@ int main(int argc, char* argv[])
             const TestData& data = DATA[dataIdx];
             const int       LINE = data.d_line;
 
-            P(LINE);
+            P(LINE)
 
             TestTableInfoProvider tip;
 
@@ -300,7 +300,7 @@ case 3: {
       const TestData& data = DATA[dataIdx];
       const int LINE = data.d_line;
 
-      P(LINE);
+      P(LINE)
 
       TestTableInfoProvider tip;
       tip.addHeaderLevel(bmqst::TestUtil::stringVector(data.d_header));
@@ -349,7 +349,7 @@ case 3: {
             const TestData& data = DATA[dataIdx];
             const int       LINE = data.d_line;
 
-            P(LINE);
+            P(LINE)
 
             TestTableInfoProvider tip;
 

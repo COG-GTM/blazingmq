@@ -744,17 +744,17 @@ static void test3_flattenWithMessageProperties()
     bmqp::MessagePropertiesInfo logic =
         bmqp::MessagePropertiesInfo::makeInvalidSchema();
     datum.d_properties = msgProperties.streamOut(&bufferFactory, logic);
-    P(datum.d_properties.length());
+    P(datum.d_properties.length())
 
     // Set and append the payload
     payloadLength = generateRandomInteger(1, 120);
     populateBlob(&datum.d_payload, &payloadLength, payloadLength);
-    P(datum.d_payload.length());
+    P(datum.d_payload.length())
 
     // Append properties and payload to application data
     bdlbb::BlobUtil::append(&appData, datum.d_properties);
     bdlbb::BlobUtil::append(&appData, datum.d_payload);
-    P(appData.length());
+    P(appData.length())
 
     // Populate subQueueInfos
     numSubQueueInfos = 2;
@@ -812,7 +812,7 @@ static void test3_flattenWithMessageProperties()
         bdlbb::Blob properties(&bufferFactory,
                                bmqtst::TestHelperUtil::allocator());
         rc = msgIterator.loadMessageProperties(&properties);
-        P(msgIterator.messagePropertiesSize());
+        P(msgIterator.messagePropertiesSize())
         BMQTST_ASSERT_EQ(rc, 0);
         BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(datum.d_properties,
                                                   properties),
@@ -822,7 +822,7 @@ static void test3_flattenWithMessageProperties()
         bdlbb::Blob payload(&bufferFactory,
                             bmqtst::TestHelperUtil::allocator());
         rc = msgIterator.loadMessagePayload(&payload);
-        P(msgIterator.messagePayloadSize());
+        P(msgIterator.messagePayloadSize())
         BMQTST_ASSERT_EQ(rc, 0);
         BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(datum.d_payload, payload),
                          0);
@@ -831,7 +831,7 @@ static void test3_flattenWithMessageProperties()
         bdlbb::Blob applicationData(&bufferFactory,
                                     bmqtst::TestHelperUtil::allocator());
         rc = msgIterator.loadApplicationData(&applicationData);
-        P(msgIterator.applicationDataSize());
+        P(msgIterator.applicationDataSize())
         BMQTST_ASSERT_EQ(rc, 0);
         BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(appData, applicationData),
                          0);
@@ -849,7 +849,7 @@ static void test3_flattenWithMessageProperties()
         rc = optionsView.loadSubQueueInfosOption(&subQueueInfos);
         BSLS_ASSERT_OPT(rc == 0);
         BSLS_ASSERT_OPT(subQueueInfos.size() == 1);
-        P(subQueueInfos[0].id());
+        P(subQueueInfos[0].id())
         BMQTST_ASSERT_EQ_D(i, datum.d_subQueueInfos[i], subQueueInfos[0]);
     }
 }
@@ -860,7 +860,7 @@ static void test3_flattenWithMessageProperties()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     unsigned int seed = bsl::time(0);
     bsl::srand(seed);

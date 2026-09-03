@@ -165,7 +165,7 @@ struct ExpectedState {
     }
 };
 
-#define ELECTOR_VALIDATE(A, B) A.validate(B, __LINE__);
+#define ELECTOR_VALIDATE(A, B) A.validate(B, __LINE__)
 
 }  // close unnamed namespace
 
@@ -2785,7 +2785,7 @@ static void test20()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     using namespace mqbnet;
 

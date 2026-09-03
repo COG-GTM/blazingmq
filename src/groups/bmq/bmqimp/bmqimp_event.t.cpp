@@ -440,7 +440,7 @@ static void test3_sessionEvent_setterGetterTest()
         bmqtst::TestHelperUtil::allocator());
     bmqimp::Event obj(&bufferFactory, bmqtst::TestHelperUtil::allocator());
 
-    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED)
+    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED);
     PV("Configure as SessionEvent");
 
     bmqt::SessionEventType::Enum sessionType =
@@ -501,7 +501,7 @@ static void test4_messageEvent_setterGetterTest()
     bmqt::MessageGUID guid;
     bmqimp::Event     obj(&bufferFactory, bmqtst::TestHelperUtil::allocator());
 
-    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED)
+    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED);
 
     guid.fromHex(k_HEX_REP);
     prepareBlobForMessageEvent(&eventHeader,
@@ -700,27 +700,27 @@ static void test5_configureAsMessageEventTest()
             bmqp::PutMessageIterator* iter = obj.putMessageIterator();
             iter->reset(&eventBlob, eventHeader, true);
             BMQTST_ASSERT_EQ(iter->isValid(), true);
-            BMQTST_ASSERT_EQ(1, iter->next())
+            BMQTST_ASSERT_EQ(1, iter->next());
             BMQTST_ASSERT_EQ(iter->header().optionsWords(), 0);
             BMQTST_ASSERT_EQ(iter->header().messageWords(),
                              k_PUT_HEADER_WORDS + k_APP_DATA_WORDS);
             BMQTST_ASSERT_EQ(iter->header().queueId(), k_QUEUE_ID);
             BMQTST_ASSERT_EQ(iter->header().messageGUID(), guid);
             BMQTST_ASSERT_EQ(iter->header().flags(), k_FLAGS);
-            BMQTST_ASSERT_EQ(0, iter->next())
+            BMQTST_ASSERT_EQ(0, iter->next());
         }
         else if (test.d_isPushEvent) {
             bmqp::PushMessageIterator* iter = obj.pushMessageIterator();
             iter->reset(&eventBlob, eventHeader, true);
             BMQTST_ASSERT_EQ(iter->isValid(), true);
-            BMQTST_ASSERT_EQ(1, iter->next())
+            BMQTST_ASSERT_EQ(1, iter->next());
             BMQTST_ASSERT_EQ(iter->header().optionsWords(), 0);
             BMQTST_ASSERT_EQ(iter->header().messageWords(),
                              k_PUSH_HEADER_WORDS + k_APP_DATA_WORDS);
             BMQTST_ASSERT_EQ(iter->header().queueId(), k_QUEUE_ID);
             BMQTST_ASSERT_EQ(iter->header().messageGUID(), guid);
             BMQTST_ASSERT_EQ(iter->header().flags(), k_FLAGS);
-            BMQTST_ASSERT_EQ(0, iter->next())
+            BMQTST_ASSERT_EQ(0, iter->next());
         }
         else if (test.d_isAckEvent) {
             bmqp::AckMessageIterator* iter = obj.ackMessageIterator();
@@ -732,7 +732,7 @@ static void test5_configureAsMessageEventTest()
             BMQTST_ASSERT_EQ(iter->message().queueId(), k_QUEUE_ID);
             BMQTST_ASSERT_EQ(iter->message().messageGUID(), guid);
             BMQTST_ASSERT_EQ(iter->message().status(), k_ACK_STATUS);
-            BMQTST_ASSERT_EQ(0, iter->next())
+            BMQTST_ASSERT_EQ(0, iter->next());
         }
     }
 }
@@ -1317,7 +1317,7 @@ static void test9_copyTest()
     guid.fromHex(k_HEX_REP);
 
     bmqimp::Event obj(&bufferFactory, bmqtst::TestHelperUtil::allocator());
-    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED)
+    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED);
 
     prepareBlobForMessageEvent(&eventHeader,
                                &eventBlob,
@@ -1407,7 +1407,7 @@ static void test10_assignmentTest()
     guid.fromHex(k_HEX_REP);
 
     bmqimp::Event obj(&bufferFactory, bmqtst::TestHelperUtil::allocator());
-    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED)
+    BMQTST_ASSERT_EQ(obj.type(), bmqimp::Event::EventType::e_UNINITIALIZED);
 
     prepareBlobForMessageEvent(&eventHeader,
                                &eventBlob,
@@ -1579,7 +1579,7 @@ static void test12_upgradeDowngradeMessageEvent()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

@@ -157,7 +157,7 @@ struct ThrottledActionParams {
 // use a void reset action.
 
 #define BMQU_THROTTLEDACTION_THROTTLE_INTERNAL(P, ACTION, RESET)              \
-    {                                                                         \
+    do {                                                                      \
         const bsls::Types::Int64 _now =                                       \
             BloombergLP::bsls::TimeUtil::getTimer();                          \
                                                                               \
@@ -182,7 +182,7 @@ struct ThrottledActionParams {
         else {                                                                \
             /* Action was skipped because of throttling */                    \
         }                                                                     \
-    }
+    } while (false)
 // Throttle the specified 'ACTION' using the specified parameters 'P' and
 // the specified reset action 'RESET'.
 

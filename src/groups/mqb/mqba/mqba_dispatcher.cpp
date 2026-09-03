@@ -386,10 +386,12 @@ void Dispatcher::stop()
     d_isStarted = false;
 
 #define STOP_AND_CLEAR(OBJ)                                                   \
-    if (OBJ) {                                                                \
-        OBJ->stop();                                                          \
-        OBJ.clear();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            OBJ->stop();                                                      \
+            OBJ.clear();                                                      \
+        }                                                                     \
+    } while (false)
 
     DispatcherContext* context = 0;
 

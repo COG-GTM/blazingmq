@@ -190,7 +190,7 @@ static void test4_usageExample()
 
     bmqtst::TestHelper::printTestName("USAGE EXAMPLE");
 
-    BALL_LOG_SET_CATEGORY("TEST");
+    BALL_LOG_SET_CATEGORY("TEST")
 
     bmqtst::ScopedLogObserver observer(ball::Severity::e_ERROR,
                                        bmqtst::TestHelperUtil::allocator());
@@ -210,7 +210,7 @@ static void test4_usageExample()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

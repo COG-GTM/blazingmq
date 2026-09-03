@@ -91,11 +91,11 @@ static void test1_breathingTest()
     obj1.reset();
 
     BMQTST_ASSERT_EQ(obj1.dataFile(), "");
-    BMQTST_ASSERT_EQ(obj1.dataFileSize(), 0u)
+    BMQTST_ASSERT_EQ(obj1.dataFileSize(), 0u);
     BMQTST_ASSERT_EQ(obj1.journalFile(), "");
-    BMQTST_ASSERT_EQ(obj1.journalFileSize(), 0u)
+    BMQTST_ASSERT_EQ(obj1.journalFileSize(), 0u);
     BMQTST_ASSERT_EQ(obj1.qlistFile(), "");
-    BMQTST_ASSERT_EQ(obj1.qlistFileSize(), 0u)
+    BMQTST_ASSERT_EQ(obj1.qlistFileSize(), 0u);
 
     BMQTST_ASSERT_EQ(obj2.dataFile(), k_DATA_FILE);
     BMQTST_ASSERT_EQ(obj2.dataFileSize(), k_DATA_FILE_SIZE);
@@ -142,7 +142,7 @@ static void test1_breathingTest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

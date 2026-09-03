@@ -84,7 +84,7 @@ const bsls::Types::Int64 k_NS_PER_MESSAGE =
 /// dispatcher thread queue has been drained.
 void queueHandleHolderDummy(const bsl::shared_ptr<mqbi::QueueHandle>& handle)
 {
-    BALL_LOG_SET_CATEGORY("MQBBLP.PRIORITYQUEUEENGINE");
+    BALL_LOG_SET_CATEGORY("MQBBLP.PRIORITYQUEUEENGINE")
     BALL_LOG_TRACE << "queueHandleHolderDummy of '" << handle->queue()->uri()
                    << "'";
 }
@@ -478,11 +478,12 @@ void QueueEngineUtil::logRejectMessage(
             << attemptedDeliveries
             << " times to consumer(s). BlazingMQ failed to load message "
             << "properties with internal error code " << rc
-            << "Dumping raw message." << BMQTSK_ALARMLOG_END;
-        rc = dumpMessageInTempfile(&filepath,
-                                   *appData,
-                                   0,
-                                   queueState->blobBufferFactory());
+            << "Dumping raw message."
+            << BMQTSK_ALARMLOG_END rc = dumpMessageInTempfile(
+            &filepath,
+            *appData,
+            0,
+            queueState->blobBufferFactory());
         // decoding failed
     }
     else {
@@ -500,8 +501,7 @@ void QueueEngineUtil::logRejectMessage(
             << "]. Message was transmitted a total of " << attemptedDeliveries
             << " times to consumer(s). Attempt to dump message in a file "
             << "failed because file could not be created."
-            << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     if (rc == -2) {
@@ -512,8 +512,7 @@ void QueueEngineUtil::logRejectMessage(
             << "]. Message was transmitted a total of " << attemptedDeliveries
             << " times to consumer(s). Attempt to dump message in a file "
             << "failed because file could not be opened."
-            << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     BMQTSK_ALARMLOG_ALARM("POISON_PILL")
@@ -523,7 +522,7 @@ void QueueEngineUtil::logRejectMessage(
         << "]. Message was transmitted a total of " << attemptedDeliveries
         << " times to consumer(s). Message was dumped in file at location ["
         << filepath << "] on this machine. Please copy file before it gets "
-        << "deleted." << BMQTSK_ALARMLOG_END;
+        << "deleted." << BMQTSK_ALARMLOG_END
 }
 
 // -------------------------------------------
@@ -1215,7 +1214,7 @@ QueueEngineUtil_AppState::processDeliveryList(bsls::TimeInterval*    delay,
             }
             list.next(&it);
         }
-    };
+    }
 
     if (numMessages) {
         BMQ_LOGTHROTTLE_INFO << "Queue '" << d_queue_p->description()

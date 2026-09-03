@@ -360,8 +360,7 @@ int Domain::configure(bsl::ostream&           errorDescription,
     {
         bmqu::MemOutStream err;
         if (normalizeConfig(&finalConfig, err, *this)) {
-            BMQTSK_ALARMLOG_ALARM("DOMAIN")
-                << err.str() << BMQTSK_ALARMLOG_END;
+            BMQTSK_ALARMLOG_ALARM("DOMAIN") << err.str() << BMQTSK_ALARMLOG_END
         }
     }
 

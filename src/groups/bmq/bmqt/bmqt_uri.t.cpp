@@ -124,7 +124,7 @@ static void test1_breathingTest()
         BMQTST_ASSERT_EQ(obj.canonical(), "bmq://my.domain/queue-foo-bar");
     }
 
-    PV("Test assignment operator")
+    PV("Test assignment operator");
     {
         const char k_URI[] = "bmq://my.domain.~tst/queue";
         bmqt::Uri  objCopy(bmqtst::TestHelperUtil::allocator());
@@ -151,7 +151,7 @@ static void test1_breathingTest()
         BMQTST_ASSERT_EQ(objCopy.canonical(), "bmq://my.domain.~tst/queue");
     }
 
-    PV("Testing comparison operators")
+    PV("Testing comparison operators");
     {
         const char k_URI[] = "bmq://my.domain/queue";
         bmqt::Uri  obj1(bmqtst::TestHelperUtil::allocator());
@@ -168,7 +168,7 @@ static void test1_breathingTest()
         BMQTST_ASSERT_EQ(obj3, obj2);
     }
 
-    PV("Testing valid URI parsing")
+    PV("Testing valid URI parsing");
     {
         {
             const char k_URI[] = "bmq://ts.trades.myapp/my.queue";
@@ -359,7 +359,7 @@ static void test2_URIBuilder()
         BMQTST_ASSERT_EQ(uri.isValid(), true);
     }
 
-    PV("domain/tier/qualifiedDomain correlation")
+    PV("domain/tier/qualifiedDomain correlation");
     {
         bmqt::Uri uri(bmqtst::TestHelperUtil::allocator());
         builder.reset();
@@ -744,7 +744,7 @@ static void testN1_benchmark(benchmark::State& state)
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

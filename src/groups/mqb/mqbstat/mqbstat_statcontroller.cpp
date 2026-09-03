@@ -840,8 +840,8 @@ int StatController::start(bsl::ostream& errorDescription)
     if (rc != 0) {
         BMQTSK_ALARMLOG_ALARM("#STATS")
             << "Failed to start SystemStatMonitor [rc: " << rc << ","
-            << " error: '" << errorStream.str() << "']" << BMQTSK_ALARMLOG_END;
-        rc = 0;
+            << " error: '" << errorStream.str() << "']"
+            << BMQTSK_ALARMLOG_END rc = 0;
         errorStream.reset();
     }
 
@@ -875,8 +875,7 @@ int StatController::start(bsl::ostream& errorDescription)
             if (!factory) {
                 BMQTSK_ALARMLOG_ALARM("#STATS")
                     << "Not a StatConsumerPluginFactory [" << (*factoryIt)
-                    << "]" << BMQTSK_ALARMLOG_END;
-                continue;  // CONTINUE
+                    << "]" << BMQTSK_ALARMLOG_END continue;  // CONTINUE
             }
 
             StatConsumerMp consumer = factory->create(ctxPtrMap,
@@ -888,8 +887,7 @@ int StatController::start(bsl::ostream& errorDescription)
                 BMQTSK_ALARMLOG_ALARM("#STATS")
                     << "Failed to start StatConsumer '" << consumer->name()
                     << "' [rc: " << status << ", error: '" << errorStream.str()
-                    << "']" << BMQTSK_ALARMLOG_END;
-                errorStream.reset();
+                    << "']" << BMQTSK_ALARMLOG_END errorStream.reset();
                 continue;  // CONTINUE
             }
 
@@ -981,14 +979,18 @@ int StatController::start(bsl::ostream& errorDescription)
 void StatController::stop()
 {
 #define STOP_OBJ(OBJ, NAME)                                                   \
-    if (OBJ) {                                                                \
-        OBJ->stop();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            OBJ->stop();                                                      \
+        }                                                                     \
+    } while (false)
 
 #define DESTROY_OBJ(OBJ, NAME)                                                \
-    if (OBJ) {                                                                \
-        OBJ.clear();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            OBJ.clear();                                                      \
+        }                                                                     \
+    } while (false)
 
     // Stop the scheduler and cancel all clocks first to prevent any additional
     // periodic functions being invoked

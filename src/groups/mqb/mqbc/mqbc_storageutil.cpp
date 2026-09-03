@@ -303,8 +303,7 @@ int StorageUtil::registerQueueDispatched(mqbs::FileStore*         fs,
             << fs->description()
             << ": failed to write QueueCreationRecord for queue ["
             << storage->queueUri() << "] queueKey [" << storage->queueKey()
-            << "], rc: " << rc << BMQTSK_ALARMLOG_END;
-        return rc;  // RETURN
+            << "], rc: " << rc << BMQTSK_ALARMLOG_END return rc;  // RETURN
     }
 
     storage->addQueueOpRecordHandle(handle);
@@ -405,8 +404,7 @@ int StorageUtil::updateQueuePrimaryRaw(mqbs::ReplicatedStorage* storage,
                 << fs->description()
                 << ": failed to write App QueueCreationRecord for queue ["
                 << storage->queueUri() << "] queueKey [" << storage->queueKey()
-                << "], rc: " << rc << BMQTSK_ALARMLOG_END;
-            return rc;  // RETURN
+                << "], rc: " << rc << BMQTSK_ALARMLOG_END return rc;  // RETURN
         }
 
         storage->addQueueOpRecordHandle(handle);
@@ -1010,8 +1008,7 @@ void StorageUtil::storageMonitorCb(
             << "storage files reside: [" << clusterFileStoreLocation
             << "]. This is not fatal but broker may not be able to handle "
             << "disk-space issues gracefully. Reason: " << errorDesc.str()
-            << ", rc: " << rc << "." << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << ", rc: " << rc << "." << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     if (static_cast<bsls::Types::Uint64>(availableSpace) <
@@ -1219,8 +1216,7 @@ bool StorageUtil::validateStorageEvent(
             << "event from node " << source->nodeDescription() << " for "
             << "Partition [" << partitionId << "] which has no primary as "
             << "perceived by this node. Ignoring entire storage event."
-            << BMQTSK_ALARMLOG_END;
-        return false;  // RETURN
+            << BMQTSK_ALARMLOG_END return false;  // RETURN
     }
 
     if (source != primary) {
@@ -1234,8 +1230,7 @@ bool StorageUtil::validateStorageEvent(
             << "Partition [" << partitionId << "] which has different "
             << "primary as perceived by this node: "
             << primary->nodeDescription() << " Ignoring entire "
-            << "storage event." << BMQTSK_ALARMLOG_END;
-        return false;  // RETURN
+            << "storage event." << BMQTSK_ALARMLOG_END return false;  // RETURN
     }
 
     // Ensure that primary is perceived as active.
@@ -1250,8 +1245,8 @@ bool StorageUtil::validateStorageEvent(
             << "] from: " << source->nodeDescription()
             << ", which is perceived as "
             << "non-active primary. Primary status: " << status
-            << ". Ignoring entire storage event." << BMQTSK_ALARMLOG_END;
-        return false;  // RETURN
+            << ". Ignoring entire storage event."
+            << BMQTSK_ALARMLOG_END return false;  // RETURN
     }
 
     return true;
@@ -1328,8 +1323,7 @@ bool StorageUtil::validatePartitionSyncEvent(
                 << source->nodeDescription()
                 << " with different partitionIds: " << partitionId << " vs "
                 << header.partitionId() << ". Ignoring this entire event."
-                << BMQTSK_ALARMLOG_END;
-            return false;  // RETURN
+                << BMQTSK_ALARMLOG_END return false;  // RETURN
         }
     }
 
@@ -1517,11 +1511,11 @@ void StorageUtil::onPartitionPrimarySync(
             << pinfo->primaryLeaseId()
             << " chosen while self node was undergoing partition-primary sync."
             << " This scenario is not handled currently."
-            << BMQTSK_ALARMLOG_END;
+            << BMQTSK_ALARMLOG_END
 
-        // No need to inform via 'partitionPrimaryStatusCb' though, since this
-        // node is now an old primary.
-        return;  // RETURN
+            // No need to inform via 'partitionPrimaryStatusCb' though, since
+            // this node is now an old primary.
+            return;  // RETURN
     }
 
     if (0 != status) {
@@ -1529,9 +1523,11 @@ void StorageUtil::onPartitionPrimarySync(
             << clusterData->identity().description() << " Partition ["
             << partitionId << "]: node failed to sync "
             << "after being chosen as primary, with status: " << status
-            << BMQTSK_ALARMLOG_END;
+            << BMQTSK_ALARMLOG_END
 
-        partitionPrimaryStatusCb(partitionId, status, pinfo->primaryLeaseId());
+                   partitionPrimaryStatusCb(partitionId,
+                                            status,
+                                            pinfo->primaryLeaseId());
         return;  // RETURN
 
         // TBD: the leader should have a timeout period for a node to declare
@@ -1617,8 +1613,8 @@ void StorageUtil::recoveredQueuesCb(
             BMQTSK_ALARMLOG_ALARM("RECOVERY")
                 << clusterDescription << ": Partition [" << partitionId
                 << "]: encountered invalid CanonicalQueueUri [" << uri << "]."
-                << BMQTSK_ALARMLOG_END;
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);
+                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                       mqbu::ExitCode::e_RECOVERY_FAILURE);
             // EXIT
         }
 
@@ -1643,9 +1639,8 @@ void StorageUtil::recoveredQueuesCb(
                         << "recovered queue [" << uri << "], " << "queueKey ["
                         << qit->first << "]. AppId [" << *(appIdsIrc.first)
                         << "]. AppKey [" << cit->first << "]."
-                        << BMQTSK_ALARMLOG_END;
-                    mqbu::ExitUtil::terminate(
-                        mqbu::ExitCode::e_RECOVERY_FAILURE);
+                        << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                               mqbu::ExitCode::e_RECOVERY_FAILURE);
                     // EXIT
                 }
             }
@@ -1772,8 +1767,9 @@ void StorageUtil::recoveredQueuesCb(
                 << "]: encountered queueKey [" << queueKey
                 << "] again, for uri [" << queueUri
                 << "]. Uri associated with original queueKey: " << "["
-                << rs->queueUri() << "]." << BMQTSK_ALARMLOG_END;
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);
+                << rs->queueUri() << "]."
+                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                       mqbu::ExitCode::e_RECOVERY_FAILURE);
             // EXIT
         }
 
@@ -1858,8 +1854,8 @@ void StorageUtil::recoveredQueuesCb(
                 << clusterDescription << ": Partition [" << partitionId
                 << "]: Domain for queue [" << queueUri << "], queueKey ["
                 << queueKey << "] has invalid queue mode. Aborting broker."
-                << BMQTSK_ALARMLOG_END;
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);
+                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                       mqbu::ExitCode::e_RECOVERY_FAILURE);
             // EXIT
         }
 
@@ -1868,8 +1864,8 @@ void StorageUtil::recoveredQueuesCb(
                 << clusterDescription << ": Partition [" << partitionId
                 << "]: Domain for queue [" << queueUri << "], queueKey ["
                 << queueKey << "] has invalid storage config. Aborting broker."
-                << BMQTSK_ALARMLOG_END;
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);
+                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                       mqbu::ExitCode::e_RECOVERY_FAILURE);
             // EXIT
         }
 
@@ -1889,8 +1885,8 @@ void StorageUtil::recoveredQueuesCb(
                 << storageDef.config().isInMemoryValue()
                 << ", broadcast mode: " << bsl::boolalpha
                 << domainCfg->mode().isBroadcastValue() << ". Aboring broker."
-                << BMQTSK_ALARMLOG_END;
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);
+                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
+                       mqbu::ExitCode::e_RECOVERY_FAILURE);
             // EXIT
         }
 
@@ -1938,8 +1934,8 @@ void StorageUtil::recoveredQueuesCb(
                         << appId << "], appKey [" << appKey
                         << "] for queueUri [" << queueUri << "], queueKey ["
                         << queueKey << "]. Reason: [" << errorDesc.str()
-                        << "], rc: " << rc << "." << BMQTSK_ALARMLOG_END;
-                    continue;  // CONTINUE
+                        << "], rc: " << rc << "."
+                        << BMQTSK_ALARMLOG_END continue;  // CONTINUE
                 }
 
                 BALL_LOG_INFO
@@ -2072,8 +2068,7 @@ void StorageUtil::recoveredQueuesCb(
                 << "], dropping record " << "because queue key '" << queueKey
                 << "' not found in the "
                 << "list of recovered queues, record: " << fsIt
-                << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         mqbs::ReplicatedStorage* rs = storageMapIt->second;
@@ -2093,8 +2088,8 @@ void StorageUtil::recoveredQueuesCb(
                     << "] which is configured with in-memory storage, "
                     << " encountered a record of incompatible type ["
                     << fsIt.type() << "] during recovery at startup. "
-                    << "Skipping this record." << BMQTSK_ALARMLOG_END;
-                continue;  // CONTINUE
+                    << "Skipping this record."
+                    << BMQTSK_ALARMLOG_END continue;  // CONTINUE
             }
         }
 
@@ -2180,8 +2175,8 @@ void StorageUtil::recoveredQueuesCb(
                     << "storages associated with file-backed "
                     << "storage for queue [" << rs->queueUri()
                     << "], queueKey [" << rs->queueKey()
-                    << "]. Dropping this record." << BMQTSK_ALARMLOG_END;
-                continue;  // CONTINUE
+                    << "]. Dropping this record."
+                    << BMQTSK_ALARMLOG_END continue;  // CONTINUE
             }
             rs->processConfirmRecord(guid, appKey, confirmReason, handle);
         }
@@ -2481,8 +2476,7 @@ void StorageUtil::registerQueueAsPrimary(const mqbi::Cluster*    cluster,
             << fs->description()
             << ": invalid queue-mode in the domain configuration while "
             << "attempting to register queue '" << uri << "', queueKey '"
-            << queueKey << "'." << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << queueKey << "'." << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     if (!cluster->isLocal()) {
@@ -2497,8 +2491,8 @@ void StorageUtil::registerQueueAsPrimary(const mqbi::Cluster*    cluster,
                 << queueMode.selectionName() << ") and storage type ("
                 << storageDef.config().selectionName()
                 << ") while attempting to register clustered queue '" << uri
-                << "', queueKey '" << queueKey << "'." << BMQTSK_ALARMLOG_END;
-            return;  // RETURN
+                << "', queueKey '" << queueKey << "'."
+                << BMQTSK_ALARMLOG_END return;  // RETURN
         }
     }
 
@@ -2666,8 +2660,7 @@ void StorageUtil::unregisterQueueDispatched(mqbs::FileStore*     fs,
                                 : "** none **")
             << ", current leaseId: " << pinfo.primaryLeaseId()
             << ", primary status: " << pinfo.primaryStatus() << "."
-            << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     if (bmqp_ctrlmsg::PrimaryStatus::E_ACTIVE != pinfo.primaryStatus()) {
@@ -2677,8 +2670,7 @@ void StorageUtil::unregisterQueueDispatched(mqbs::FileStore*     fs,
             << "] unregistration requested but self is not ACTIVE primary."
             << ". Current leaseId: " << pinfo.primaryLeaseId()
             << ", primary status: " << pinfo.primaryStatus() << "."
-            << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     bslmt::LockGuard<bslmt::Mutex> guard(storagesLock);  // LOCK
@@ -2717,9 +2709,10 @@ void StorageUtil::unregisterQueueDispatched(mqbs::FileStore*     fs,
             << partitionId << "]: cannot unregister queue"
             << " because it has [" << numMsgs
             << "] outstanding messages. Queue [" << uri << "], queueKey ["
-            << storage->queueKey() << "]." << BMQTSK_ALARMLOG_END;
+            << storage->queueKey() << "]."
+            << BMQTSK_ALARMLOG_END
 
-        return;  // RETURN
+            return;  // RETURN
     }
 
     // Storage has no outstanding messages.
@@ -2745,8 +2738,7 @@ void StorageUtil::unregisterQueueDispatched(mqbs::FileStore*     fs,
             << partitionId
             << "] failed to write QueueDeletionRecord for queue [" << uri
             << "], queueKey [" << storage->queueKey() << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END;
-        return;  // RETURN
+            << BMQTSK_ALARMLOG_END return;  // RETURN
     }
 
     // Delete all QueueOp records associated with the queue.
@@ -3016,9 +3008,10 @@ void StorageUtil::removeQueueStorageDispatched(
         BMQTSK_ALARMLOG_ALARM("REPLICATION")
             << fs->description() << ": unaware of uri while deleting "
             << "storage for queue [ " << uri << "], queueKey [" << queueKey
-            << "]. Ignoring this event." << BMQTSK_ALARMLOG_END;
+            << "]. Ignoring this event."
+            << BMQTSK_ALARMLOG_END
 
-        return;  // RETURN
+            return;  // RETURN
     }
 
     mqbs::ReplicatedStorage* rs = it->second.get();
@@ -3032,9 +3025,9 @@ void StorageUtil::removeQueueStorageDispatched(
             << "storage for queue [ " << uri << "]. Specified queueKey ["
             << queueKey << "], queueKey associated with storage ["
             << rs->queueKey() << "]. Ignoring this event."
-            << BMQTSK_ALARMLOG_END;
+            << BMQTSK_ALARMLOG_END
 
-        return;  // RETURN
+            return;  // RETURN
     }
 
     if (appKey.isNull()) {
@@ -3058,9 +3051,10 @@ void StorageUtil::removeQueueStorageDispatched(
             << fs->description() << ": failed to remove virtual storage "
             << "for appKey [" << appKey << "] for queue [" << uri
             << "] and queueKey [" << queueKey << ", rc: " << rc
-            << ". Ignoring this event." << BMQTSK_ALARMLOG_END;
+            << ". Ignoring this event."
+            << BMQTSK_ALARMLOG_END
 
-        return;  // RETURN
+            return;  // RETURN
     }
 
     BALL_LOG_INFO << fs->description()
@@ -3102,9 +3096,10 @@ void StorageUtil::updateQueueStorageDispatched(
         BMQTSK_ALARMLOG_ALARM("REPLICATION")
             << description << ", failure while registering appIds [" << printer
             << "] for unknown queue [" << uri << "], queueKey [" << queueKey
-            << "]." << BMQTSK_ALARMLOG_END;
+            << "]."
+            << BMQTSK_ALARMLOG_END
 
-        return;  // RETURN
+            return;  // RETURN
     }
 
     mqbs::ReplicatedStorage* storage = it->second.get();

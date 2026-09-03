@@ -352,16 +352,13 @@ Test::haveUndeliveredCb(bsls::TimeInterval*       alarmTime_p,
     return oldestMsgIt;
 }
 
-void Test::loggingCb(
-    BSLA_MAYBE_UNUSED const bsl::string& id,
-    BSLA_MAYBE_UNUSED const bslma::ManagedPtr<mqbi::StorageIterator>&
-                            oldestMsgIt) const
-{
-    BALL_LOG_SET_CATEGORY("MQBBLP.QUEUECONSUMPTIONMONITORTEST");
+void Test::loggingCb(BSLA_MAYBE_UNUSED const bsl::string& id,
+                     BSLA_MAYBE_UNUSED const
+                         bslma::ManagedPtr<mqbi::StorageIterator>& oldestMsgIt)
+    const {BALL_LOG_SET_CATEGORY("MQBBLP.QUEUECONSUMPTIONMONITORTEST")
 
-    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK")
-        << "Test Alarm" << BMQTSK_ALARMLOG_END;
-}
+               BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK")
+           << "Test Alarm" << BMQTSK_ALARMLOG_END}
 
 // ============================================================================
 //                                    TESTS
@@ -587,7 +584,7 @@ BMQTST_TEST_F(Test, changeMaxIdleTime)
     d_monitor.alarmEventDispatched();
 
     BMQTST_ASSERT_EQ(d_monitor.state(d_id),
-                     QueueConsumptionMonitor::State::e_IDLE)
+                     QueueConsumptionMonitor::State::e_IDLE);
 
     BMQTST_ASSERT_EQ(logObserver.records().size(), 1u);
 }
@@ -783,9 +780,9 @@ BMQTST_TEST_F(Test, usage)
 
 int main(int argc, char* argv[])
 {
-    BALL_LOG_SET_CATEGORY("MAIN");
+    BALL_LOG_SET_CATEGORY("MAIN")
 
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     ball::LoggerManager::singleton().setDefaultThresholdLevels(
         ball::Severity::e_OFF,

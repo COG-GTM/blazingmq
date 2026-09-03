@@ -10,7 +10,7 @@
 
 	using namespace BloombergLP::bmqeval;
 
-	#define yyterminate() SimpleEvaluatorParser::make_END();
+	#define yyterminate() SimpleEvaluatorParser::make_END()
 %}
 
 %option nodefault

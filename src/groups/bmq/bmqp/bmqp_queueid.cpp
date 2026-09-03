@@ -90,7 +90,7 @@ bsl::ostream& operator<<(bsl::ostream&                    stream,
     default: {
         stream << rhs.d_value;
     }
-    };
+    }
 
     return stream;
 }
@@ -111,7 +111,7 @@ bsl::ostream& operator<<(bsl::ostream&                       stream,
     default: {
         stream << rhs.d_value;
     }
-    };
+    }
     return stream;
 }
 

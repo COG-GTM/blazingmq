@@ -279,7 +279,7 @@ bmqp_ctrlmsg::ClientIdentity* extractClientIdentity(
         BSLS_ASSERT_OPT(false && "Invalid negotiation message");
         return 0;  // RETURN
     }
-    };
+    }
 }
 
 bool isClientGeneratingGUIDs(
@@ -1924,7 +1924,7 @@ void ClientSession::onPushEvent(const mqbevt::PushEvent& event)
                 << ", compressionAlgorithmType: "
                 << event.compressionAlgorithmType()
                 << "] Message was dumped in file at location [" << filepath
-                << "] on this machine." << BMQTSK_ALARMLOG_END;
+                << "] on this machine." << BMQTSK_ALARMLOG_END
         }
         else {
             BMQTSK_ALARMLOG_ALARM("CLIENT_INVALID_PUSH")
@@ -1934,7 +1934,7 @@ void ClientSession::onPushEvent(const mqbevt::PushEvent& event)
                 << ", compressionAlgorithmType: "
                 << event.compressionAlgorithmType()
                 << "] Attempt to dump message in a file failed with error "
-                << dumpRc << BMQTSK_ALARMLOG_END;
+                << dumpRc << BMQTSK_ALARMLOG_END
         }
     }
 }
@@ -2924,7 +2924,7 @@ void ClientSession::onDispatcherEvent(const mqbi::DispatcherEvent& event)
             << ": Session received unexpected dispatcher event [type: "
             << event.type() << "]";
     }
-    };
+    }
 }
 
 void ClientSession::flush()

@@ -84,7 +84,7 @@ void MonitoredQueueUtil::stateLogCallback(const bsl::string& queueName,
                                           bsls::Types::Int64 queueSize,
                                           MonitoredQueueState::Enum state)
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     bmqu::MemOutStream buffer;
     buffer << queueName << " [Watermarks: low="

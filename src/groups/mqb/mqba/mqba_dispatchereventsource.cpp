@@ -66,7 +66,9 @@ DispatcherEventSource::~DispatcherEventSource()
 {
     // Make sure all the events have returned to the pool.
 #define MQBA_ASSERT_POOL_FREE(pool)                                           \
-    BSLS_ASSERT((pool).numObjects() == (pool).numAvailableObjects())
+    do {                                                                      \
+        BSLS_ASSERT((pool).numObjects() == (pool).numAvailableObjects());     \
+    } while (false)
 
     MQBA_ASSERT_POOL_FREE(d_ackEventPool);
     MQBA_ASSERT_POOL_FREE(d_callbackEventPool);

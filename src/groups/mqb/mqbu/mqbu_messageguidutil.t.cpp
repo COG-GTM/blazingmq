@@ -1218,7 +1218,7 @@ int main(int argc, char* argv[])
     // a BALL_LOG_INFO which allocates using the default allocator.
     bsls::TimeUtil::initialize();
 
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

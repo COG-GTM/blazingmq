@@ -82,7 +82,7 @@ static void test1_breathingTest()
     }
 
     {
-        PVV("GET ADDRESSES")
+        PVV("GET ADDRESSES");
 
         bsl::vector<ntsa::IpAddress> addresses(
             bmqtst::TestHelperUtil::allocator());
@@ -101,7 +101,7 @@ static void test1_breathingTest()
     }
 
     {
-        PVV("GET LOCAL ADDRESSES")
+        PVV("GET LOCAL ADDRESSES");
 
         bsl::vector<ntsa::IpAddress> addresses(
             bmqtst::TestHelperUtil::allocator());
@@ -133,7 +133,7 @@ static void test1_breathingTest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

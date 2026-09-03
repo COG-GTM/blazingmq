@@ -945,7 +945,7 @@ static void test5_calculateMd5Digest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     // One time app initialization.
     bsls::TimeUtil::initialize();

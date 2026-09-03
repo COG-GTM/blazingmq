@@ -656,7 +656,7 @@ void ClusterProxy::processEvent(const bmqp::Event&   event,
         BALL_LOG_ERROR << "#UNEXPECTED_EVENT " << description()
                        << "Received unknown event: " << event;
         return;  // RETURN
-    };
+    }
     }
 }
 
@@ -1355,7 +1355,7 @@ void ClusterProxy::onFailoverThreshold()
        << " pending reopen-queue requests.\n";
     // Log only a summary in the alarm
     printClusterStateSummary(os, 0, 4);
-    BMQTSK_ALARMLOG_PANIC("CLUSTERPROXY") << os.str() << BMQTSK_ALARMLOG_END;
+    BMQTSK_ALARMLOG_PANIC("CLUSTERPROXY") << os.str() << BMQTSK_ALARMLOG_END
 }
 
 // MANIPULATORS

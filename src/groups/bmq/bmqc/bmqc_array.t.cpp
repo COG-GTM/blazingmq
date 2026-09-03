@@ -909,7 +909,7 @@ static void VectorPushBack_GoogleBenchmark(benchmark::State& state)
         for (int i = 0; i < state.range(0); ++i) {
             vec.push_back(42);
         }
-    };
+    }
 }
 
 static void VectorAssign_GoogleBenchmark(benchmark::State& state)
@@ -933,7 +933,7 @@ static void VectorAssign_GoogleBenchmark(benchmark::State& state)
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
     switch (_testCase) {
     case 0:
     case 10: test10_pushBackSelfRef(); break;

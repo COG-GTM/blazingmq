@@ -290,7 +290,6 @@ static void test4_allocationLimit()
         bmqst::StatContext statContext(
             bmqst::StatContextConfiguration("myAllocatorStatContext"),
             bmqtst::TestHelperUtil::allocator());
-        ;
         bmqma::CountingAllocator obj("Test",
                                      &statContext,
                                      bmqtst::TestHelperUtil::allocator());
@@ -339,7 +338,7 @@ static void test4_allocationLimit()
             bmqst::StatContext statContext(
                 bmqst::StatContextConfiguration("myAllocatorStatContext"),
                 bmqtst::TestHelperUtil::allocator());
-            ;
+
             bmqma::CountingAllocator obj("Test",
                                          &statContext,
                                          bmqtst::TestHelperUtil::allocator());
@@ -369,7 +368,7 @@ static void test4_allocationLimit()
             bmqst::StatContext statContext(
                 bmqst::StatContextConfiguration("myAllocatorStatContext"),
                 bmqtst::TestHelperUtil::allocator());
-            ;
+
             bmqma::CountingAllocator obj("Test",
                                          &statContext,
                                          bmqtst::TestHelperUtil::allocator());
@@ -416,7 +415,7 @@ static void test5_allocationLimitHierarchical()
     bmqst::StatContext statContext(
         bmqst::StatContextConfiguration("myAllocatorStatContext"),
         bmqtst::TestHelperUtil::allocator());
-    ;
+
     bmqma::CountingAllocator topAlloc("Top",
                                       &statContext,
                                       bmqtst::TestHelperUtil::allocator());
@@ -784,7 +783,7 @@ testN1_defaultperformance_allocation_GoogleBenchmark(benchmark::State& state)
 
 int main(int argc, char** argv)
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

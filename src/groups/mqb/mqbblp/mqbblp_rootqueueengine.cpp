@@ -716,13 +716,15 @@ mqbi::QueueHandle* RootQueueEngine::getHandle(
     BSLS_ASSERT_SAFE(d_queueState_p->queue()->inDispatcherThread());
 
 #define CALLBACK(CAT, RC, MSG, HAN)                                           \
-    if (callback) {                                                           \
-        bmqp_ctrlmsg::Status status(d_allocator_p);                           \
-        status.category() = CAT;                                              \
-        status.code()     = RC;                                               \
-        status.message()  = MSG;                                              \
-        callback(status, HAN);                                                \
-    }
+    do {                                                                      \
+        if (callback) {                                                       \
+            bmqp_ctrlmsg::Status status(d_allocator_p);                       \
+            status.category() = CAT;                                          \
+            status.code()     = RC;                                           \
+            status.message()  = MSG;                                          \
+            callback(status, HAN);                                            \
+        }                                                                     \
+    } while (false)
 
     bool handleCreated = false;
 
@@ -896,11 +898,12 @@ mqbi::QueueHandle* RootQueueEngine::getHandle(
                 << d_queueState_p->uri()
                 << "' - please update the domain configuration to include "
                    "the appId to enable consumption."
-                << BMQTSK_ALARMLOG_END;
+                << BMQTSK_ALARMLOG_END
 
-            iter = makeSubStream(appId,
-                                 mqbu::StorageKey::k_NULL_KEY,
-                                 bmqp::QueueId::k_UNASSIGNED_SUBQUEUE_ID);
+                       iter = makeSubStream(
+                appId,
+                mqbu::StorageKey::k_NULL_KEY,
+                bmqp::QueueId::k_UNASSIGNED_SUBQUEUE_ID);
         }
         BSLS_ASSERT_SAFE(iter != d_apps.end());
         BSLS_ASSERT_SAFE(iter->first == subStreamInfo.appId());
@@ -961,13 +964,15 @@ void RootQueueEngine::configureHandle(
     BSLS_ASSERT_SAFE(handle);
 
 #define CONFIGURE_CB(CAT, RC, MSG, SPARAMS)                                   \
-    if (configuredCb) {                                                       \
-        bmqp_ctrlmsg::Status status;                                          \
-        status.category() = CAT;                                              \
-        status.code()     = RC;                                               \
-        status.message()  = MSG;                                              \
-        configuredCb(status, SPARAMS);                                        \
-    }
+    do {                                                                      \
+        if (configuredCb) {                                                   \
+            bmqp_ctrlmsg::Status status;                                      \
+            status.category() = CAT;                                          \
+            status.code()     = RC;                                           \
+            status.message()  = MSG;                                          \
+            configuredCb(status, SPARAMS);                                    \
+        }                                                                     \
+    } while (false)
 
     // Verify handle exists
     if (!d_queueState_p->handleCatalog().hasHandle(handle)) {
@@ -1518,7 +1523,7 @@ void RootQueueEngine::afterNewMessage()
                 << "Local queue: " << d_queueState_p->uri() << " dropping "
                 << numMessages
                 << " bcast messages because of subscription overhead."
-                << BMQTSK_ALARMLOG_END;
+                << BMQTSK_ALARMLOG_END
         }
 
         // Clear storage status
@@ -2067,7 +2072,7 @@ void RootQueueEngine::logAlarmCb(
     mqbcmd::HumanPrinter::print(out, result);
     out << "\n";
 
-    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK") << out.str() << BMQTSK_ALARMLOG_END;
+    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK") << out.str() << BMQTSK_ALARMLOG_END
 }
 
 void RootQueueEngine::updateFlowControl(bsls::Types::Int64 nowMs)

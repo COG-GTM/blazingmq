@@ -530,12 +530,14 @@ int UriParser::parse(Uri*                     result,
     BSLS_ASSERT_SAFE(result);
 
 #define BMQT_RETURN_ON_BAD_RC(RC, RES)                                        \
-    if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(                                \
-            UriParser::UriParseResult::e_SUCCESS != (RC))) {                  \
-        BSLS_PERFORMANCEHINT_UNLIKELY_HINT;                                   \
-        (RES)->reset();                                                       \
-        return (RC);                                                          \
-    }
+    do {                                                                      \
+        if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(                            \
+                UriParser::UriParseResult::e_SUCCESS != (RC))) {              \
+            BSLS_PERFORMANCEHINT_UNLIKELY_HINT;                               \
+            (RES)->reset();                                                   \
+            return (RC);                                                      \
+        }                                                                     \
+    } while (false)
 
     UriParsingContext ctx(uriString);
 

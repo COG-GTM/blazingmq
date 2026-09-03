@@ -93,7 +93,7 @@ static void test1_breathingTest()
                      static_cast<unsigned int>(k_INVALID_QUEUE_ID));
 
     BMQTST_ASSERT_EQ(obj.hasMultipleSubStreams(), false);
-    BMQTST_ASSERT_EQ(obj.handleParameters().uri(), "")
+    BMQTST_ASSERT_EQ(obj.handleParameters().uri(), "");
     BMQTST_ASSERT_EQ(obj.handleParameters().writeCount(), 0);
     BMQTST_ASSERT_EQ(obj.handleParameters().readCount(), 0);
     BMQTST_ASSERT_EQ(obj.handleParameters().adminCount(), 0);
@@ -163,7 +163,7 @@ static void test2_settersTest()
     BMQTST_ASSERT_EQ(obj.hasMultipleSubStreams(), true);
     BMQTST_ASSERT_EQ(obj.pendingConfigureId(), k_PENDING_ID);
     BMQTST_ASSERT_EQ(obj.handleParameters().qId(), k_ID);
-    BMQTST_ASSERT_EQ(obj.handleParameters().uri(), uri.asString())
+    BMQTST_ASSERT_EQ(obj.handleParameters().uri(), uri.asString());
     BMQTST_ASSERT_EQ(obj.handleParameters().writeCount(), 1);
     BMQTST_ASSERT_EQ(obj.handleParameters().readCount(), 1);
     BMQTST_ASSERT_EQ(obj.handleParameters().adminCount(), 1);
@@ -518,7 +518,7 @@ static void test6_statTest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

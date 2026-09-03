@@ -97,8 +97,10 @@ static void aSsErT(int c, const char* s, int i)
 // that expressions containing output stream operations can be supported.
 
 #define PV(X)                                                                 \
-    if (verbose)                                                              \
-        cout << endl << X << endl;
+    do {                                                                      \
+        if (verbose)                                                          \
+            cout << endl << X << endl;                                        \
+    } while (false)
 
 //=============================================================================
 //               GLOBAL HELPER CLASSES AND FUNCTIONS FOR TESTING
@@ -1103,7 +1105,7 @@ int main(int argc, char** argv)
     veryVeryVeryVerbose = argc > 5;
 
     // Initialize BALL
-    INIT_BALL_LOGGING_VERBOSITY(verbose, veryVerbose);
+    INIT_BALL_LOGGING_VERBOSITY(verbose, veryVerbose)
 
     // Initialize default and global memory allocators
     bslma::TestAllocator ga("global", veryVeryVeryVerbose);

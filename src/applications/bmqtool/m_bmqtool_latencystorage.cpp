@@ -163,8 +163,10 @@ int LatencyStorage::save(const bsl::string& filename) const
 void LatencyStorage::printSummary(bsl::ostream& stream) const
 {
 #define BMQTOOL_LSTAT(DESC, TIMESTAMP)                                        \
-    stream << "    " << (DESC) << ": "                                        \
-           << bmqu::PrintUtil::prettyTimeInterval(TIMESTAMP) << "\n";
+    do {                                                                      \
+        stream << "    " << (DESC) << ": "                                    \
+               << bmqu::PrintUtil::prettyTimeInterval(TIMESTAMP) << "\n";     \
+    } while (false)
 
     stream << "    totalCount......: " << d_totalCount << "\n";
     BMQTOOL_LSTAT("min.............", minLatency());

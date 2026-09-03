@@ -81,11 +81,13 @@ void onAllocationLimit(bsls::Types::Uint64 limit)
     os << "\nThe broker will now gracefully shutdown!";
 
     // Log a PANIC alarm
-    BALL_LOG_SET_CATEGORY("BMQBRKR.TASK");
-    BMQTSK_ALARMLOG_PANIC("MEMORY_LIMIT") << os.str() << BMQTSK_ALARMLOG_END;
+    BALL_LOG_SET_CATEGORY("BMQBRKR.TASK")
+    BMQTSK_ALARMLOG_PANIC("MEMORY_LIMIT")
+        << os.str()
+        << BMQTSK_ALARMLOG_END
 
-    // Initiate a graceful shutdown of the broker
-    mqbu::ExitUtil::shutdown(mqbu::ExitCode::e_MEMORY_LIMIT);
+               // Initiate a graceful shutdown of the broker
+               mqbu::ExitUtil::shutdown(mqbu::ExitCode::e_MEMORY_LIMIT);
 }
 
 }  // close unnamed namespace

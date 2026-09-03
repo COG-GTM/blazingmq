@@ -2596,7 +2596,7 @@ static void testN3_guidCollisionConfiguration()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     {
         bmqu::Time::initialize(bmqtst::TestHelperUtil::allocator());

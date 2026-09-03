@@ -314,12 +314,13 @@ void ClusterStateManager::onLeaderSyncStateQueryResponse(
             << ": failed to send leader sync data query request to follower "
             << "node " << maxSeqNode->nodeDescription() << ", rc: " << status
             << ". Attempting to send leader sync state "
-            << "query to AVAILABLE followers again." << BMQTSK_ALARMLOG_END;
+            << "query to AVAILABLE followers again."
+            << BMQTSK_ALARMLOG_END
 
-        // Attempt to send leader sync state query to AVAILABLE followers
-        // again (with wait=true flag).
+        // Attempt to send leader sync state query to AVAILABLE
+        // followers again (with wait=true flag).
 
-        initiateLeaderSync(true);
+            initiateLeaderSync(true);
     }
 }
 
@@ -422,9 +423,10 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
             << mqbc::printLSN(
                    d_clusterData_p->electorInfo().leaderMessageSequence())
             << ". Attempting to send leader-sync state query to AVAILABLE "
-            << "followers again." << BMQTSK_ALARMLOG_END;
+            << "followers again."
+            << BMQTSK_ALARMLOG_END
 
-        initiateLeaderSync(true);
+                   initiateLeaderSync(true);
         return;  // RETURN
     }
 
@@ -456,8 +458,8 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << " received from follower node "
                 << responder->nodeDescription()
                 << " in leader-sync data query response. "
-                << "Skipping this partition info." << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << "Skipping this partition info."
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         mqbnet::ClusterNode* proposedPrimaryNode =
@@ -470,8 +472,8 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << " received from follower node "
                 << responder->nodeDescription()
                 << " in leader-sync data query response. "
-                << "Skipping this partition info." << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << "Skipping this partition info."
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         if (0 == peerPinfo.primaryLeaseId()) {
@@ -481,8 +483,8 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << " received from follower node "
                 << responder->nodeDescription()
                 << " in leader-sync data query response. "
-                << "Skipping this partition info." << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << "Skipping this partition info."
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         const mqbc::ClusterStatePartitionInfo& selfPinfo =
@@ -499,8 +501,7 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << responder->nodeDescription()
                 << " in leader-sync data query response. Primary leaseId as "
                 << "perceived by self: " << selfPinfo.primaryLeaseId()
-                << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         unsigned int         effectiveLeaseId     = peerPinfo.primaryLeaseId();
@@ -557,9 +558,10 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << "step: " << peerPinfo
                 << ". This downgrade from primary to replica is currently not "
                 << "supported, and self node will exit."
-                << BMQTSK_ALARMLOG_END;
+                << BMQTSK_ALARMLOG_END
 
-            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);
+                       mqbu::ExitUtil::terminate(
+                           mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);
             // EXIT
         }
 
@@ -598,8 +600,7 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << queueInfo.uri() << "]: " << queueInfo.partitionId()
                 << " by follower node " << responder->nodeDescription()
                 << " in leader-sync data query response."
-                << BMQTSK_ALARMLOG_END;
-            continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
         }
 
         if (queueInfo.key().size() != static_cast<unsigned int>(k_KEY_LEN)) {
@@ -609,9 +610,9 @@ void ClusterStateManager::onLeaderSyncDataQueryResponse(
                 << queueInfo.uri() << "]: " << queueInfo.key().size()
                 << " by follower node " << responder->nodeDescription()
                 << " in leader-sync data query response."
-                << BMQTSK_ALARMLOG_END;
+                << BMQTSK_ALARMLOG_END
 
-            continue;  // CONTINUE
+                continue;  // CONTINUE
         }
 
         // This node may or may not be aware of the queue.  There are 3

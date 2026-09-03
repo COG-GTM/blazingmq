@@ -51,7 +51,7 @@ bsl::ostream& JsonPrinter::print(bsl::ostream& os,
 
     const int rc = encoder.encode(os, result, options);
     if (0 != rc) {
-        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
         BALL_LOG_ERROR << "failed to encode Result [" << result.selectionName()
                        << "], rc = " << rc;
     }
@@ -86,7 +86,7 @@ JsonPrinter::printResponses(bsl::ostream&            os,
                                       &result.result(),
                                       decoderOptions);
         if (0 != rc) {
-            BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+            BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
             BALL_LOG_ERROR << "failed to decode result [" << rit->response()
                            << "] , rc = " << rc;
             return os;  // RETURN
@@ -105,7 +105,7 @@ JsonPrinter::printResponses(bsl::ostream&            os,
 
     const int rc = encoder.encode(os, responseResultList, options);
     if (0 != rc) {
-        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
         BALL_LOG_ERROR << "failed to encode response list, rc = " << rc;
     }
     return os;  // RETURN

@@ -79,7 +79,7 @@ struct FileLastModificationTimeLess {
 bool FileLastModificationTimeLess::operator()(const bsl::string& lhs,
                                               const bsl::string& rhs) const
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     bdlt::Datetime lhsTime, rhsTime;
 
@@ -263,9 +263,9 @@ int Ledger::rollOverImpl(const mqbu::StorageKey& oldLogId)
             << "Rollover callback from log '" << oldLogId << "' to log '"
             << newLogId << "' failed, rc: " << rc
             << ". Aborting rollover and reverting back to old log."
-            << BMQTSK_ALARMLOG_END;
+            << BMQTSK_ALARMLOG_END
 
-        closeAndCleanup(currentLog(), d_logs.size() - 1);
+                   closeAndCleanup(currentLog(), d_logs.size() - 1);
 
         return rc * 100 + LedgerOpResult::e_LOG_ROLLOVER_CB_FAILURE;  // RETURN
     }

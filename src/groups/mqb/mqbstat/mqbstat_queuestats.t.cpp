@@ -96,24 +96,28 @@ static void test1_breathingTest()
     BMQTST_ASSERT_EQ(domain->numSubcontexts(), 1);
 
 #define BMQTST_ASSERT_EQ_TO_0_CLIENTSTAT(PARAM)                               \
-    BMQTST_ASSERT_EQ(                                                         \
-        0,                                                                    \
-        QueueStatsClient::getValue(*client, 1, ClientStat::PARAM));           \
-    BMQTST_ASSERT_EQ(                                                         \
-        0,                                                                    \
-        QueueStatsClient::getValue(*queueStatsClient.statContext(),           \
-                                   1,                                         \
-                                   ClientStat::PARAM));
+    do {                                                                      \
+        BMQTST_ASSERT_EQ(                                                     \
+            0,                                                                \
+            QueueStatsClient::getValue(*client, 1, ClientStat::PARAM));       \
+        BMQTST_ASSERT_EQ(                                                     \
+            0,                                                                \
+            QueueStatsClient::getValue(*queueStatsClient.statContext(),       \
+                                       1,                                     \
+                                       ClientStat::PARAM));                   \
+    } while (false)
 
 #define BMQTST_ASSERT_EQ_TO_0_DOMAINSTAT(PARAM)                               \
-    BMQTST_ASSERT_EQ(                                                         \
-        0,                                                                    \
-        QueueStatsDomain::getValue(*domain, 1, DomainStat::PARAM));           \
-    BMQTST_ASSERT_EQ(                                                         \
-        0,                                                                    \
-        QueueStatsDomain::getValue(*queueStatsDomain.statContext(),           \
-                                   1,                                         \
-                                   DomainStat::PARAM));
+    do {                                                                      \
+        BMQTST_ASSERT_EQ(                                                     \
+            0,                                                                \
+            QueueStatsDomain::getValue(*domain, 1, DomainStat::PARAM));       \
+        BMQTST_ASSERT_EQ(                                                     \
+            0,                                                                \
+            QueueStatsDomain::getValue(*queueStatsDomain.statContext(),       \
+                                       1,                                     \
+                                       DomainStat::PARAM));                   \
+    } while (false)
 
     BMQTST_ASSERT_EQ_TO_0_CLIENTSTAT(e_PUSH_MESSAGES_DELTA);
     BMQTST_ASSERT_EQ_TO_0_CLIENTSTAT(e_PUT_MESSAGES_DELTA);
@@ -230,11 +234,13 @@ static void test2_queueStatsClient()
     client->snapshot();
 
 #define BMQTST_ASSERT_EQ_CLIENTSTAT(PARAM, SNAPSHOT, VALUE)                   \
-    BMQTST_ASSERT_EQ(                                                         \
-        VALUE,                                                                \
-        QueueStatsClient::getValue(*queueStatsClient.statContext(),           \
-                                   SNAPSHOT,                                  \
-                                   ClientStat::PARAM));
+    do {                                                                      \
+        BMQTST_ASSERT_EQ(                                                     \
+            VALUE,                                                            \
+            QueueStatsClient::getValue(*queueStatsClient.statContext(),       \
+                                       SNAPSHOT,                              \
+                                       ClientStat::PARAM));                   \
+    } while (false)
 
     BMQTST_ASSERT_EQ_CLIENTSTAT(e_PUSH_MESSAGES_DELTA, 1, 2);
     BMQTST_ASSERT_EQ_CLIENTSTAT(e_PUT_MESSAGES_DELTA, 1, 5);
@@ -290,11 +296,13 @@ static void test3_queueStatsDomain()
     const int k_DUMMY = 0;
 
 #define BMQTST_ASSERT_EQ_DOMAINSTAT(PARAM, SNAPSHOT, VALUE)                   \
-    BMQTST_ASSERT_EQ(                                                         \
-        VALUE,                                                                \
-        QueueStatsDomain::getValue(*queueStatsDomain.statContext(),           \
-                                   SNAPSHOT,                                  \
-                                   DomainStat::PARAM));
+    do {                                                                      \
+        BMQTST_ASSERT_EQ(                                                     \
+            VALUE,                                                            \
+            QueueStatsDomain::getValue(*queueStatsDomain.statContext(),       \
+                                       SNAPSHOT,                              \
+                                       DomainStat::PARAM));                   \
+    } while (false)
 
     // Create two snapshot values
 
@@ -433,11 +441,13 @@ static void test4_queueStatsDomainContent()
     bmqtst::TestHelper::printTestName("QueueStatsDomainContent");
 
 #define BMQTST_ASSERT_EQ_DOMAINSTAT(PARAM, SNAPSHOT, VALUE)                   \
-    BMQTST_ASSERT_EQ(VALUE,                                                   \
-                     mqbstat::QueueStatsDomain::getValue(                     \
-                         *obj.statContext(),                                  \
-                         SNAPSHOT,                                            \
-                         mqbstat::QueueStatsDomain::Stat::PARAM));
+    do {                                                                      \
+        BMQTST_ASSERT_EQ(VALUE,                                               \
+                         mqbstat::QueueStatsDomain::getValue(                 \
+                             *obj.statContext(),                              \
+                             SNAPSHOT,                                        \
+                             mqbstat::QueueStatsDomain::Stat::PARAM));        \
+    } while (false)
 
     // Create the necessary objects to test
     mqbmock::Cluster    mockCluster(bmqtst::TestHelperUtil::allocator());
@@ -688,7 +698,7 @@ static void test5_appIdMetrics()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     {
         mqbcfg::AppConfig brokerConfig(bmqtst::TestHelperUtil::allocator());

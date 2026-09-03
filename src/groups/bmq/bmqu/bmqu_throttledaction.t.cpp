@@ -84,7 +84,7 @@ static void test1_breathingTest()
 {
     bmqtst::TestHelper::printTestName("BREATHING TEST");
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     // CONSTANTS
     const int k_INTERVAL_MS            = 2000;
@@ -265,7 +265,7 @@ static void test3_throttleWithDefaultReset()
 
     bmqtst::TestHelper::printTestName("THROTTLE WITH DEFAULT RESET");
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     // CONSTANTS
     const int k_INTERVAL_MS            = 2000;
@@ -505,7 +505,7 @@ static void test4_throttleWithCustomReset()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     bsls::TimeUtil::initialize();
 

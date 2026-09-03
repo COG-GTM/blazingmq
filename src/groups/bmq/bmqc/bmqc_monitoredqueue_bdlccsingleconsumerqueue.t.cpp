@@ -329,7 +329,7 @@ static void test1_MonitoredSingleConsumerQueue_breathingTest()
             0,
             5 * bdlt::TimeUnitRatio::k_NANOSECONDS_PER_MILLISECOND);
         BMQTST_ASSERT_EQ(queue.timedPopFront(&item, timeout), 0);
-        BMQTST_ASSERT_EQ(item, 1)
+        BMQTST_ASSERT_EQ(item, 1);
         BMQTST_ASSERT_EQ(queue.numElements(), 1);
         BMQTST_ASSERT_EQ(queue.isEmpty(), false);
 
@@ -469,7 +469,7 @@ static void testN1_performance()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

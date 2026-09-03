@@ -367,7 +367,7 @@ static void test1_breathingTest()
     }
 
     {
-        PV("SPLIT BUFFER WITH PREVIOUS CRC")
+        PV("SPLIT BUFFER WITH PREVIOUS CRC");
         // Prefix of a buffer, then the rest using the previous crc as the
         // starting point
         const char*        buffer        = "12345678";
@@ -1955,7 +1955,7 @@ int main(int argc, char* argv[])
     // case where the associated logging infrastructure triggers a default
     // allocation violation for no apparent reason.
 
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     size_t seed = bsl::time(0);
     PV("Seed: " << seed);

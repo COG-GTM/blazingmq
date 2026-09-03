@@ -217,7 +217,7 @@ static void test4_empty()
     bsls::Types::Uint64 flags = 0;
 
     // EMPTY
-    PV("Testing empty state getters")
+    PV("Testing empty state getters");
     flags = bmqt::QueueFlagsUtil::empty();
     BMQTST_ASSERT_EQ(flags, 0UL);
     BMQTST_ASSERT_EQ(bmqt::QueueFlagsUtil::isEmpty(flags), true);
@@ -231,35 +231,35 @@ static void test5_setFlag()
 {
     bmqtst::TestHelper::printTestName("SET FLAG");
 
-    PV("Test flag setter")
+    PV("Test flag setter");
     for (bsls::Types::Uint64 flags = 0; flags <= k_ALL_FLAGS_SETTED; flags++) {
         // ACK flag
         bsls::Types::Uint64 flags0 = flags;
         bmqt::QueueFlagsUtil::setAck(&flags0);
         BMQTST_ASSERT_EQ_D("Test set ACK",
                            flags | bmqt::QueueFlags::e_ACK,
-                           flags0)
+                           flags0);
 
         // READ flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::setReader(&flags0);
         BMQTST_ASSERT_EQ_D("Test set READ",
                            flags | bmqt::QueueFlags::e_READ,
-                           flags0)
+                           flags0);
 
         // WRITE flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::setWriter(&flags0);
         BMQTST_ASSERT_EQ_D("Test set WRITE",
                            flags | bmqt::QueueFlags::e_WRITE,
-                           flags0)
+                           flags0);
 
         // ADMIN flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::setAdmin(&flags0);
         BMQTST_ASSERT_EQ_D("Test set ADMIN",
                            flags | bmqt::QueueFlags::e_ADMIN,
-                           flags0)
+                           flags0);
     }
 }
 
@@ -267,35 +267,35 @@ static void test6_unsetFlag()
 {
     bmqtst::TestHelper::printTestName("UNSET FLAG");
 
-    PV("Test flag unsetter")
+    PV("Test flag unsetter");
     for (bsls::Types::Uint64 flags = 0; flags <= k_ALL_FLAGS_SETTED; flags++) {
         // ACK flag
         bsls::Types::Uint64 flags0 = flags;
         bmqt::QueueFlagsUtil::unsetAck(&flags0);
         BMQTST_ASSERT_EQ_D("Test unset ACK",
                            flags & ~bmqt::QueueFlags::e_ACK,
-                           flags0)
+                           flags0);
 
         // READ flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::unsetReader(&flags0);
         BMQTST_ASSERT_EQ_D("Test unset READ",
                            flags & ~bmqt::QueueFlags::e_READ,
-                           flags0)
+                           flags0);
 
         // WRITE flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::unsetWriter(&flags0);
         BMQTST_ASSERT_EQ_D("Test unset WRITE",
                            flags & ~bmqt::QueueFlags::e_WRITE,
-                           flags0)
+                           flags0);
 
         // ADMIN flag
         flags0 = flags;
         bmqt::QueueFlagsUtil::unsetAdmin(&flags0);
         BMQTST_ASSERT_EQ_D("Test unset ADMIN",
                            flags & ~bmqt::QueueFlags::e_ADMIN,
-                           flags0)
+                           flags0);
     }
 }
 
@@ -303,33 +303,34 @@ static void test7_getFlag()
 {
     bmqtst::TestHelper::printTestName("GET FLAG");
 
-    PV("Test flag getter")
+    PV("Test flag getter");
     for (bsls::Types::Uint64 flags = 0; flags <= k_ALL_FLAGS_SETTED; flags++) {
         // ACK flag
         bsls::Types::Uint64 flags0 = flags;
         BMQTST_ASSERT_EQ_D("Test ACK flag check",
                            bmqt::QueueFlagsUtil::isAck(flags0),
-                           static_cast<bool>(flags & bmqt::QueueFlags::e_ACK))
+                           static_cast<bool>(flags & bmqt::QueueFlags::e_ACK));
 
         // READ flag
         flags0 = flags;
-        BMQTST_ASSERT_EQ_D("Test READ flag check",
-                           bmqt::QueueFlagsUtil::isReader(flags0),
-                           static_cast<bool>(flags & bmqt::QueueFlags::e_READ))
+        BMQTST_ASSERT_EQ_D(
+            "Test READ flag check",
+            bmqt::QueueFlagsUtil::isReader(flags0),
+            static_cast<bool>(flags & bmqt::QueueFlags::e_READ));
 
         // WRITE flag
         flags0 = flags;
         BMQTST_ASSERT_EQ_D(
             "Test WRITE flag check",
             bmqt::QueueFlagsUtil::isWriter(flags0),
-            static_cast<bool>(flags & bmqt::QueueFlags::e_WRITE))
+            static_cast<bool>(flags & bmqt::QueueFlags::e_WRITE));
 
         // ADMIN flag
         flags0 = flags;
         BMQTST_ASSERT_EQ_D(
             "Test ADMIN flag check",
             bmqt::QueueFlagsUtil::isAdmin(flags0),
-            static_cast<bool>(flags & bmqt::QueueFlags::e_ADMIN))
+            static_cast<bool>(flags & bmqt::QueueFlags::e_ADMIN));
     }
 }
 
@@ -339,7 +340,7 @@ static void test7_getFlag()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

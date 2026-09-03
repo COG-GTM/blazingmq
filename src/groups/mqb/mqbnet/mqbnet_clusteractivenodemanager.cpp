@@ -217,7 +217,7 @@ void ClusterActiveNodeManager::onNewActiveNode(ClusterNode* node)
         if (d_nodes.size() > 1 && !d_isStopping) {
             BMQTSK_ALARMLOG_PANIC("CLUSTER_ACTIVE_NODE")
                 << d_description << ": no node available !!!"
-                << BMQTSK_ALARMLOG_END;
+                << BMQTSK_ALARMLOG_END
         }
         else {
             BALL_LOG_INFO << "No node available for '" << d_description << "'";

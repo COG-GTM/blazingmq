@@ -234,8 +234,7 @@ int StorageUtil::loadRecordHeaderAndPos(
             << ", for type: " << header.messageType()
             << ", with journal offset (in words): "
             << header.journalOffsetWords() << ". Ignoring entire event."
-            << BMQTSK_ALARMLOG_END;
-        return rc_PROTO_VER_MISMATCH;  // RETURN
+            << BMQTSK_ALARMLOG_END return rc_PROTO_VER_MISMATCH;  // RETURN
     }
 
     if (BSLS_PERFORMANCEHINT_PREDICT_UNLIKELY(
@@ -246,8 +245,7 @@ int StorageUtil::loadRecordHeaderAndPos(
             << partitionDesc << "Received an unexpected storage message type: "
             << header.messageType() << " with journal offset (in words): "
             << header.journalOffsetWords() << ". Ignoring entire event."
-            << BMQTSK_ALARMLOG_END;
-        return rc_INVALID_MSG_TYPE;  // RETURN
+            << BMQTSK_ALARMLOG_END return rc_INVALID_MSG_TYPE;  // RETURN
     }
 
     const int rc = storageIter.loadDataPosition(recordPosition);
@@ -259,8 +257,8 @@ int StorageUtil::loadRecordHeaderAndPos(
             << "Failed to load record position for storage msg "
             << header.messageType() << ", with journal offset (in words): "
             << header.journalOffsetWords() << ", rc: " << rc
-            << ". Ignoring entire event." << BMQTSK_ALARMLOG_END;
-        return rc_INVALID_RECORD_POS;  // RETURN
+            << ". Ignoring entire event."
+            << BMQTSK_ALARMLOG_END return rc_INVALID_RECORD_POS;  // RETURN
     }
 
     recordHeader->reset(stroageEvent.get(),
@@ -274,8 +272,7 @@ int StorageUtil::loadRecordHeaderAndPos(
             << partitionDesc << "Failed to read RecordHeader for storage msg "
             << header.messageType() << ", with journal offset (in words): "
             << header.journalOffsetWords() << ". Ignoring entire event."
-            << BMQTSK_ALARMLOG_END;
-        return rc_INVALID_RECORD_HDR;  // RETURN
+            << BMQTSK_ALARMLOG_END return rc_INVALID_RECORD_HDR;  // RETURN
     }
 
     return rc_SUCCESS;
