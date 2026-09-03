@@ -28,7 +28,7 @@
 # 3) Download external dependencies required for instrumentation.
 # 4) Build libc++ with the instrumentation specified by <LLVM Sanitizer Name>.
 # 5) Build sanitizer-instrumented dependencies including BDE, NTF, GoogleTest,
-#    Google Benchmark and zlib.
+#    Google Benchmark, zlib and zstd.
 # 6) Build sanitizer-instrumented BlazingMQ unit tests.
 # 7) Generate scripts to run unit tests:
 #      ./cmake.bld/Linux/run-unittests.sh
@@ -167,6 +167,10 @@ checkoutGitRepo "$(github_url google/googletest)" "${GOOGLETEST_TAG}" "googletes
 # Download zlib
 ZLIB_TAG="v1.3.1"
 checkoutGitRepo "$(github_url madler/zlib)" "${ZLIB_TAG}" "zlib"
+
+# Download zstd
+ZSTD_TAG="v1.5.7"
+checkoutGitRepo "$(github_url facebook/zstd)" "${ZSTD_TAG}" "zstd"
 
 # Download bde-tools, bde and ntf-core sources
 cd "${DIR_EXTERNAL}"
@@ -320,6 +324,23 @@ cmake --install "${DIR_SRCS_EXT}/zlib/cmake.bld"
 # Cleanup zlib source and build artifacts
 rm -rf "${DIR_SRCS_EXT}/zlib"
 print_disk_usage "zlib"
+
+# Build zstd.
+# CMAKE_OPTIONS sets CMAKE_INSTALL_LIBDIR=lib64, so zstd installs
+# /opt/bb/lib64/pkgconfig/libzstd.pc for pkg-config discovery.
+cmake -B "${DIR_SRCS_EXT}/zstd/cmake.bld" \
+        -S "${DIR_SRCS_EXT}/zstd/build/cmake" \
+        -D CMAKE_INSTALL_PREFIX="/opt/bb" \
+        "${CMAKE_OPTIONS[@]}" \
+        -DZSTD_BUILD_PROGRAMS=OFF \
+        -DZSTD_BUILD_SHARED=OFF \
+        -DZSTD_BUILD_STATIC=ON \
+        -DZSTD_BUILD_TESTS=OFF \
+        -DZSTD_BUILD_CONTRIB=OFF
+cmake --build "${DIR_SRCS_EXT}/zstd/cmake.bld" -j"${PARALLELISM}"
+cmake --install "${DIR_SRCS_EXT}/zstd/cmake.bld"
+rm -rf "${DIR_SRCS_EXT}/zstd"
+print_disk_usage "zstd"
 
 # Remove any remaining un-needed folders (safety net)
 rm -rf "${DIR_BUILD_EXT}"

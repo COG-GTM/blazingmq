@@ -44,9 +44,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     static const bmqt::CompressionAlgorithmType::Enum k_CATS[] = {
         bmqt::CompressionAlgorithmType::e_UNKNOWN,
         bmqt::CompressionAlgorithmType::e_NONE,
-        bmqt::CompressionAlgorithmType::e_ZLIB};
+        bmqt::CompressionAlgorithmType::e_ZLIB,
+        bmqt::CompressionAlgorithmType::e_ZSTD};
     const bmqt::CompressionAlgorithmType::Enum cat =
-        k_CATS[provider.ConsumeIntegralInRange<size_t>(0, 2)];
+        k_CATS[provider.ConsumeIntegralInRange<size_t>(0, 3)];
 
     const unsigned int offsetSeed = provider.ConsumeIntegral<unsigned int>();
     const unsigned int lengthSeed = provider.ConsumeIntegral<unsigned int>();

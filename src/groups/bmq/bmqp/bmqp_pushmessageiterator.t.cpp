@@ -934,6 +934,13 @@ static void test1_breathingTest()
     }
 
     {
+        PV("CREATE VALID ITER DECOMPRESSFLAG FALSE, E_ZSTD COMPRESSION");
+        breathingTestHelper(false,  // decompress flag
+                            bmqt::CompressionAlgorithmType::e_ZSTD,
+                            &bufferFactory);
+    }
+
+    {
         PV("CREATE VALID ITER DECOMPRESSFLAG TRUE, E_NONE COMPRESSION");
         breathingTestHelper(true,  // decompress flag
                             bmqt::CompressionAlgorithmType::e_NONE,
@@ -944,6 +951,13 @@ static void test1_breathingTest()
         PV("CREATE VALID ITER DECOMPRESSFLAG TRUE, E_ZLIB COMPRESSION");
         breathingTestHelper(true,  // decompress flag
                             bmqt::CompressionAlgorithmType::e_ZLIB,
+                            &bufferFactory);
+    }
+
+    {
+        PV("CREATE VALID ITER DECOMPRESSFLAG TRUE, E_ZSTD COMPRESSION");
+        breathingTestHelper(true,  // decompress flag
+                            bmqt::CompressionAlgorithmType::e_ZSTD,
                             &bufferFactory);
     }
 }

@@ -16,9 +16,18 @@ macro(setup_package_provider)
         # pkg-config style names BdeBuildSystem is trying to use.
         find_package(benchmark CONFIG REQUIRED)
         find_package(ZLIB REQUIRED)
+        find_package(zstd CONFIG REQUIRED)
 
         add_library(benchmark ALIAS benchmark::benchmark)
         add_library(zlib ALIAS ZLIB::ZLIB)
+        # Expose the vcpkg zstd target under the pkg-config-compatible name.
+        if(TARGET zstd::libzstd)
+            add_library(libzstd ALIAS zstd::libzstd)
+        elseif(TARGET zstd::libzstd_static)
+            add_library(libzstd ALIAS zstd::libzstd_static)
+        elseif(TARGET zstd::libzstd_shared)
+            add_library(libzstd ALIAS zstd::libzstd_shared)
+        endif()
 
         find_package(GTest CONFIG REQUIRED)
         add_library(gmock ALIAS GTest::gmock)

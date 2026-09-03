@@ -44,7 +44,7 @@ Options:
 
 What it does:
   • Optionally installs prerequisites using Homebrew:
-      brew install cmake flex bison google-benchmark googletest ninja pkg-config zlib
+      brew install cmake flex bison google-benchmark googletest ninja pkg-config zlib zstd
   • Clones third-party deps (bde-tools, bde, ntf-core)
   • Builds and installs BDE and NTF
   • Configures and builds BlazingMQ
@@ -83,7 +83,7 @@ fi
 
 # :: Optionally install prerequisites :::::::::::::::::::::::::::::::::::::::::
 
-REQ_PKGS=(cmake flex bison google-benchmark googletest ninja pkg-config zlib)
+REQ_PKGS=(cmake flex bison google-benchmark googletest ninja pkg-config zlib zstd)
 
 if $INSTALL_DEPS; then
     if ! command -v brew >/dev/null 2>&1; then

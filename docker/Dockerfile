@@ -18,6 +18,7 @@ RUN apt-get update && \
     libfl-dev \
     libbenchmark-dev \
     libz-dev \
+    libzstd-dev \
     libssl-dev \
     sudo \
     && apt clean \

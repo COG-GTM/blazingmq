@@ -314,6 +314,12 @@ static void test1_breathingTest()
         BMQTST_ASSERT_EQ(fh2.crc32c(), 987654321U);
         BMQTST_ASSERT_EQ(fh2.compressionAlgorithmType(),
                          bmqt::CompressionAlgorithmType::e_ZLIB);
+        fh2.setCompressionAlgorithmType(
+            bmqt::CompressionAlgorithmType::e_ZSTD);
+        BMQTST_ASSERT_EQ(fh2.compressionAlgorithmType(),
+                         bmqt::CompressionAlgorithmType::e_ZSTD);
+        BMQTST_ASSERT_EQ(fh2.refCount(), refCount);
+        BMQTST_ASSERT_EQ(fh2.messageOffsetDwords(), 1000000U);
         BMQTST_ASSERT_EQ(fh2.magic(), 0xdeadbeef);
     }
 
@@ -628,6 +634,19 @@ static void test3_printTest()
         bmqu::MemOutStream stream(bmqtst::TestHelperUtil::allocator());
         stream << msgRec;
         BMQTST_ASSERT_EQ(stream.str(), k_EXPECTED_OUTPUT);
+        stream.reset();
+
+        // Verify MessageRecord print output for Zstandard.
+        msgRec.setCompressionAlgorithmType(
+            bmqt::CompressionAlgorithmType::e_ZSTD);
+        const char* const k_EXPECTED_ZSTD_OUTPUT =
+            "[ header = [ type = MESSAGE flags = 2 primaryLeaseId = 8 "
+            "sequenceNumber = 33 timestamp = 123456 ] refCount = 2 queueKey = "
+            "DEADFACE13 fileKey = DEADBEEF01 messageOffsetDwords = 123 "
+            "messageGUID = ** UNSET ** crc32c = 2333 compressionAlgorithmType "
+            "= ZSTD ]";
+        stream << msgRec;
+        BMQTST_ASSERT_EQ(stream.str(), k_EXPECTED_ZSTD_OUTPUT);
         stream.reset();
 
         PV("Bad stream test");

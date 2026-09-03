@@ -650,6 +650,226 @@ static void test1_breathingTest()
         BMQTST_ASSERT_EQ(0, putIter.next());  // we added only 1 msg
         BMQTST_ASSERT_EQ(false, putIter.isValid());
     }
+
+    {
+        PVV("USE ZSTD COMPRESSION FOR MESSAGE PROPERTIES AND PAYLOAD");
+        bmqp::MessageProperties msgProps(bmqtst::TestHelperUtil::allocator());
+
+        BSLS_ASSERT_OPT(
+            0 ==
+            msgProps.setPropertyAsInt32("encoding", k_PROPERTY_VAL_ENCODING));
+        BSLS_ASSERT_OPT(0 ==
+                        msgProps.setPropertyAsString("id", k_PROPERTY_VAL_ID));
+        BSLS_ASSERT_OPT(
+            0 == msgProps.setPropertyAsInt64("timestamp", k_TIME_STAMP));
+
+        BSLS_ASSERT_OPT(k_NUM_PROPERTIES == msgProps.numProperties());
+
+        // Create PutEventBuilder
+        bmqp::PutEventBuilder obj(blobSpPool.get(),
+                                  bmqtst::TestHelperUtil::allocator());
+
+        BMQTST_ASSERT_EQ(obj.crc32c(), 0U);
+
+        obj.startMessage();
+        obj.setMessagePayload(k_PAYLOAD_BIGGER, k_PAYLOAD_BIGGER_LEN);
+        obj.setMessageProperties(&msgProps);
+
+        struct Test {
+            int                d_line;
+            int                d_queueId;
+            const char*        d_guidHex;
+            bsls::Types::Int64 d_timeStamp;
+            bool               d_hasProperties;
+            bool               d_hasNewTimeStamp;
+        } k_DATA[] = {{L_, 9876, k_HEX_GUIDS[0], k_TIME_STAMP, true, false},
+                      {L_, 5432, k_HEX_GUIDS[1], 9876543210LL, true, true},
+                      {L_, 3333, k_HEX_GUIDS[2], 0LL, false, false}};
+
+        // Pack messages
+        const size_t k_NUM_DATA = sizeof(k_DATA) / sizeof(*k_DATA);
+        unsigned int expectedCrc32[k_NUM_DATA];
+
+        for (size_t idx = 0; idx < k_NUM_DATA; ++idx) {
+            const Test&       test   = k_DATA[idx];
+            const int         msgNum = idx + 1;
+            bmqt::MessageGUID guid;
+            guid.fromHex(test.d_guidHex);
+
+            obj.setMessageGUID(guid);
+            obj.setCrc32c(k_CRC32);
+            obj.setCompressionAlgorithmType(
+                bmqt::CompressionAlgorithmType::e_ZSTD);
+            BMQTST_ASSERT_EQ(obj.crc32c(), k_CRC32);
+
+            if (test.d_hasNewTimeStamp) {
+                BSLS_ASSERT_OPT(0 ==
+                                msgProps.setPropertyAsInt64("timestamp",
+                                                            test.d_timeStamp));
+            }
+
+            if (!test.d_hasProperties) {
+                obj.clearMessageProperties();
+            }
+
+            expectedCrc32[idx] = findExpectedCrc32(
+                k_PAYLOAD_BIGGER,
+                k_PAYLOAD_BIGGER_LEN,
+                &msgProps,
+                test.d_hasProperties,
+                &bufferFactory,
+                bmqtst::TestHelperUtil::allocator(),
+                obj.compressionAlgorithmType());
+
+            BMQTST_ASSERT_EQ(obj.unpackedMessageSize(), k_PAYLOAD_BIGGER_LEN);
+
+            bmqt::EventBuilderResult::Enum rc = obj.packMessage(
+                test.d_queueId);
+
+            BMQTST_ASSERT_EQ(bmqt::EventBuilderResult::e_SUCCESS, rc);
+            BMQTST_ASSERT_EQ(obj.messageCount(), msgNum);
+            BMQTST_ASSERT_EQ(obj.unpackedMessageSize(), k_PAYLOAD_BIGGER_LEN);
+            BMQTST_ASSERT_EQ(obj.messageGUID(), bmqt::MessageGUID());
+            BMQTST_ASSERT_EQ(obj.crc32c(), 0U);
+
+            // since we compress a large size message; expect event to be small
+            BMQTST_ASSERT_LT(obj.eventSize(),
+                             k_PAYLOAD_BIGGER_LEN * msgNum +
+                                 msgProps.totalSize());
+        }
+
+        // Get blob and use bmqp iterator to test.  Note that bmqp event and
+        // bmqp iterators are lower than bmqp builders, and thus, can be used
+        // to test them.
+        bmqp::Event rawEvent(obj.blob().get(),
+                             bmqtst::TestHelperUtil::allocator());
+
+        BSLS_ASSERT_OPT(rawEvent.isValid());
+        BSLS_ASSERT_OPT(rawEvent.isPutEvent());
+
+        bmqp::PutMessageIterator putIter(&bufferFactory,
+                                         bmqtst::TestHelperUtil::allocator());
+        rawEvent.loadPutMessageIterator(&putIter, true);
+
+        BSLS_ASSERT_OPT(putIter.isValid());
+        bdlbb::Blob payloadBlob(bmqtst::TestHelperUtil::allocator());
+
+        for (size_t idx = 0; idx < k_NUM_DATA; ++idx) {
+            const Test&       test = k_DATA[idx];
+            bmqt::MessageGUID guid;
+            guid.fromHex(test.d_guidHex);
+
+            BMQTST_ASSERT_EQ(1, putIter.next());
+            BMQTST_ASSERT_EQ(test.d_queueId, putIter.header().queueId());
+            BMQTST_ASSERT_EQ(guid, putIter.header().messageGUID());
+            BMQTST_ASSERT_EQ(expectedCrc32[idx], putIter.header().crc32c());
+            BMQTST_ASSERT_EQ(bmqt::CompressionAlgorithmType::e_ZSTD,
+                             putIter.header().compressionAlgorithmType());
+
+            payloadBlob.removeAll();
+
+            BSLS_ASSERT_OPT(putIter.loadMessagePayload(&payloadBlob) == 0);
+            BSLS_ASSERT_OPT(putIter.messagePayloadSize() ==
+                            k_PAYLOAD_BIGGER_LEN);
+
+            int res, compareResult;
+            res = bmqu::BlobUtil::compareSection(&compareResult,
+                                                 payloadBlob,
+                                                 bmqu::BlobPosition(),
+                                                 k_PAYLOAD_BIGGER,
+                                                 k_PAYLOAD_BIGGER_LEN);
+
+            BSLS_ASSERT_OPT(res == 0);
+            BSLS_ASSERT_OPT(compareResult == 0);
+
+            bmqt::PropertyType::Enum ptype;
+            bmqp::MessageProperties  prop(bmqtst::TestHelperUtil::allocator());
+
+            if (!test.d_hasProperties) {
+                BMQTST_ASSERT_EQ(false, putIter.hasMessageProperties());
+                BMQTST_ASSERT_EQ(0, putIter.loadMessageProperties(&prop));
+                BMQTST_ASSERT_EQ(0, prop.numProperties());
+            }
+            else {
+                BMQTST_ASSERT_EQ(putIter.hasMessageProperties(), true);
+                BMQTST_ASSERT_EQ(putIter.loadMessageProperties(&prop), 0);
+                BMQTST_ASSERT_EQ(prop.numProperties(), k_NUM_PROPERTIES);
+                BMQTST_ASSERT_EQ(prop.hasProperty("encoding", &ptype), true);
+                BMQTST_ASSERT_EQ(bmqt::PropertyType::e_INT32, ptype);
+
+                BMQTST_ASSERT_EQ(prop.getPropertyAsInt32("encoding"),
+                                 k_PROPERTY_VAL_ENCODING);
+
+                BMQTST_ASSERT_EQ(prop.hasProperty("id", &ptype), true);
+                BMQTST_ASSERT_EQ(bmqt::PropertyType::e_STRING, ptype);
+                BMQTST_ASSERT_EQ(prop.getPropertyAsString("id"),
+                                 k_PROPERTY_VAL_ID);
+                BMQTST_ASSERT_EQ(prop.hasProperty("timestamp", &ptype), true);
+                BMQTST_ASSERT_EQ(bmqt::PropertyType::e_INT64, ptype);
+                BMQTST_ASSERT_EQ(prop.getPropertyAsInt64("timestamp"),
+                                 test.d_timeStamp);
+            }
+
+            BMQTST_ASSERT_EQ(putIter.isValid(), true);
+        }
+
+        BMQTST_ASSERT_EQ(true, putIter.isValid());
+        BMQTST_ASSERT_EQ(0, putIter.next());  // we added only 3 msgs
+        BMQTST_ASSERT_EQ(false, putIter.isValid());
+
+        // Reset the builder, pack 1 msg. Test.
+        obj.reset();
+        BMQTST_ASSERT_EQ(0, obj.messageCount());
+        BMQTST_ASSERT_EQ(0U, obj.crc32c());
+
+        obj.startMessage();
+
+        // Pack one msg
+        const int         k_QID = 9876;
+        bmqt::MessageGUID guid;
+        guid.fromHex(k_HEX_GUIDS[3]);
+
+        obj.setMessageGUID(guid);
+        obj.setMessagePayload(k_PAYLOAD_BIGGER, k_PAYLOAD_BIGGER_LEN);
+        obj.setCompressionAlgorithmType(
+            bmqt::CompressionAlgorithmType::e_ZSTD);
+        bmqt::EventBuilderResult::Enum rc = obj.packMessage(k_QID);
+
+        BMQTST_ASSERT_EQ(bmqt::EventBuilderResult::e_SUCCESS, rc);
+
+        // Compression using ZSTD should reduce a large message size
+        // significantly
+        BMQTST_ASSERT_LT(obj.eventSize(), k_PAYLOAD_BIGGER_LEN);
+        BMQTST_ASSERT_EQ(obj.messageCount(), 1);
+
+        rawEvent.reset(obj.blob().get());
+        rawEvent.loadPutMessageIterator(&putIter, true);
+
+        BMQTST_ASSERT_EQ(1, putIter.next());
+        BMQTST_ASSERT_EQ(k_QID, putIter.header().queueId());
+        BMQTST_ASSERT_EQ(guid, putIter.header().messageGUID());
+
+        payloadBlob.removeAll();
+
+        BMQTST_ASSERT_EQ(putIter.loadMessagePayload(&payloadBlob), 0);
+        BMQTST_ASSERT_EQ(putIter.messagePayloadSize(), k_PAYLOAD_BIGGER_LEN);
+
+        bmqp::MessageProperties prop(bmqtst::TestHelperUtil::allocator());
+        int                     res, compareResult;
+        res = bmqu::BlobUtil::compareSection(&compareResult,
+                                             payloadBlob,
+                                             bmqu::BlobPosition(),
+                                             k_PAYLOAD_BIGGER,
+                                             k_PAYLOAD_BIGGER_LEN);
+        BMQTST_ASSERT_EQ(0, res);
+        BMQTST_ASSERT_EQ(0, compareResult);
+        BMQTST_ASSERT_EQ(false, putIter.hasMessageProperties());
+        BMQTST_ASSERT_EQ(0, putIter.loadMessageProperties(&prop));
+        BMQTST_ASSERT_EQ(0, prop.numProperties());
+        BMQTST_ASSERT_EQ(true, putIter.isValid());
+        BMQTST_ASSERT_EQ(0, putIter.next());  // we added only 1 msg
+        BMQTST_ASSERT_EQ(false, putIter.isValid());
+    }
     {
         PVV("USE MIX OF ZLIB COMPRESSION AND NO COMPRESSION FOR MESSAGES");
         bmqp::MessageProperties msgProps(bmqtst::TestHelperUtil::allocator());

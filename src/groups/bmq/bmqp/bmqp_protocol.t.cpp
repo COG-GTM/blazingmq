@@ -441,6 +441,16 @@ static void test1_breathingTest()
                              bmqp::PutHeaderFlags::e_ACK_REQUESTED),
                          true);
 
+        // Verify the second supported compression algorithm preserves fields.
+        ph.setCompressionAlgorithmType(bmqt::CompressionAlgorithmType::e_ZSTD);
+        BMQTST_ASSERT_EQ(bmqt::CompressionAlgorithmType::e_ZSTD,
+                         ph.compressionAlgorithmType());
+        BMQTST_ASSERT_EQ(msgNumWords, ph.messageWords());
+        BMQTST_ASSERT_EQ(optionsNumWords, ph.optionsWords());
+        BMQTST_ASSERT_EQ(queueId, ph.queueId());
+        BMQTST_ASSERT_EQ(guid, ph.messageGUID());
+        BMQTST_ASSERT_EQ(crc32c, ph.crc32c());
+
         // Set empty GUID
         bmqt::MessageGUID emptyGUID;
         ph.setMessageGUID(emptyGUID);
@@ -503,6 +513,15 @@ static void test1_breathingTest()
                              ph.flags(),
                              bmqp::PushHeaderFlags::e_IMPLICIT_PAYLOAD),
                          true);
+
+        // Verify the second supported compression algorithm preserves fields.
+        ph.setCompressionAlgorithmType(bmqt::CompressionAlgorithmType::e_ZSTD);
+        BMQTST_ASSERT_EQ(bmqt::CompressionAlgorithmType::e_ZSTD,
+                         ph.compressionAlgorithmType());
+        BMQTST_ASSERT_EQ(msgNumWords, ph.messageWords());
+        BMQTST_ASSERT_EQ(optionsNumWords, ph.optionsWords());
+        BMQTST_ASSERT_EQ(queueId, ph.queueId());
+        BMQTST_ASSERT_EQ(expectedGUID, ph.messageGUID());
     }
 
     {

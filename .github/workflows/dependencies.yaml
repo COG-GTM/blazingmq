@@ -57,7 +57,8 @@ jobs:
             bison \
             libfl-dev \
             libbenchmark-dev \
-            libz-dev
+            libz-dev \
+            libzstd-dev
 
       - name: Fetch & build non packaged dependencies
         if: steps.cache-lookup.outputs.cache-hit != 'true'
