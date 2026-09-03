@@ -63,12 +63,14 @@ bool CompressionAlgorithmType::fromAscii(CompressionAlgorithmType::Enum* out,
                                          const bsl::string&              str)
 {
 #define BMQT_CHECKVALUE(M)                                                    \
-    if (bdlb::String::areEqualCaseless(                                       \
-            toAscii(CompressionAlgorithmType::e_##M),                         \
-            str)) {                                                           \
-        *out = CompressionAlgorithmType::e_##M;                               \
-        return true;                                                          \
-    }
+    do {                                                                      \
+        if (bdlb::String::areEqualCaseless(                                   \
+                toAscii(CompressionAlgorithmType::e_##M),                     \
+                str)) {                                                       \
+            *out = CompressionAlgorithmType::e_##M;                           \
+            return true;                                                      \
+        }                                                                     \
+    } while (false)
 
     BMQT_CHECKVALUE(NONE);
     BMQT_CHECKVALUE(ZLIB);

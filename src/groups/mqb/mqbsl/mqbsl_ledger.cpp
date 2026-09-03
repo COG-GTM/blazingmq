@@ -79,7 +79,7 @@ struct FileLastModificationTimeLess {
 bool FileLastModificationTimeLess::operator()(const bsl::string& lhs,
                                               const bsl::string& rhs) const
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     bdlt::Datetime lhsTime, rhsTime;
 

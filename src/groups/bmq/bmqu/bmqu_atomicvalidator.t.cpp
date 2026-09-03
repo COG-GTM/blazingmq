@@ -122,7 +122,7 @@ static void test1_breathingTest()
         // Reset -> can acquire again
         BMQTST_ASSERT_PASS(obj.reset());
         BMQTST_ASSERT(obj.acquire());
-        BMQTST_ASSERT_PASS(obj.release())
+        BMQTST_ASSERT_PASS(obj.release());
     }
 
     {
@@ -257,7 +257,7 @@ static void test2_atomicValidatorMultiThreaded()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

@@ -105,7 +105,7 @@ TEST(AuthorizationController, configuredWithUnknownNameFails)
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     // 'DefaultAuthorizerPluginFactory::create()' looks up its settings from
     // the broker's global authorization configuration, so it must be set

@@ -1114,13 +1114,15 @@ mqbi::QueueHandle* RelayQueueEngine::getHandle(
     BSLS_ASSERT_SAFE(d_queueState_p->queue()->inDispatcherThread());
 
 #define CALLBACK(CAT, RC, MSG, HAN)                                           \
-    if (callback) {                                                           \
-        bmqp_ctrlmsg::Status status(d_allocator_p);                           \
-        status.category() = CAT;                                              \
-        status.code()     = RC;                                               \
-        status.message()  = MSG;                                              \
-        callback(status, HAN);                                                \
-    }
+    do {                                                                      \
+        if (callback) {                                                       \
+            bmqp_ctrlmsg::Status status(d_allocator_p);                       \
+            status.category() = CAT;                                          \
+            status.code()     = RC;                                           \
+            status.message()  = MSG;                                          \
+            callback(status, HAN);                                            \
+        }                                                                     \
+    } while (false)
 
     bool handleCreated = false;
 

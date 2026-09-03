@@ -2361,7 +2361,7 @@ static void test8_zeroWatermarksUpdate()
 
     // 3. Decrease messages to 0 and verify that the state is FULL
     BMQTST_ASSERT_EQ(monitor.update(0, -1),
-                     mqbu::ResourceUsageMonitorStateTransition::e_NO_CHANGE)
+                     mqbu::ResourceUsageMonitorStateTransition::e_NO_CHANGE);
     BMQTST_ASSERT_EQ(monitor.messageState(),
                      mqbu::ResourceUsageMonitorState::e_STATE_FULL);
     BMQTST_ASSERT_EQ(monitor.state(),
@@ -2856,7 +2856,7 @@ static void test10_usageExample()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

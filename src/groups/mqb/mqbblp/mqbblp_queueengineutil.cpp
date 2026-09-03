@@ -84,7 +84,7 @@ const bsls::Types::Int64 k_NS_PER_MESSAGE =
 /// dispatcher thread queue has been drained.
 void queueHandleHolderDummy(const bsl::shared_ptr<mqbi::QueueHandle>& handle)
 {
-    BALL_LOG_SET_CATEGORY("MQBBLP.PRIORITYQUEUEENGINE");
+    BALL_LOG_SET_CATEGORY("MQBBLP.PRIORITYQUEUEENGINE")
     BALL_LOG_TRACE << "queueHandleHolderDummy of '" << handle->queue()->uri()
                    << "'";
 }
@@ -1215,7 +1215,7 @@ QueueEngineUtil_AppState::processDeliveryList(bsls::TimeInterval*    delay,
             }
             list.next(&it);
         }
-    };
+    }
 
     if (numMessages) {
         BMQ_LOGTHROTTLE_INFO << "Queue '" << d_queue_p->description()

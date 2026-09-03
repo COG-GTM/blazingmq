@@ -222,7 +222,7 @@ void loadNameFromFsType(bsl::string* buffer, long ftype)
         buffer->assign(os.str());
         return;  // RETURN
     }
-    };
+    }
 }
 
 #endif

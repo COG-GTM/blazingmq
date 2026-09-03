@@ -60,7 +60,7 @@
 
 // Asserts that X == Y
 #define ASSERT_EQUALS_SKIP(X, Y, SKIP)                                        \
-    {                                                                         \
+    do {                                                                      \
         if (!((X) == (Y))) {                                                  \
             bsl::cout << "Error " << __FILE__ << "(" << __LINE__              \
                       << "): " << #X << " (" << bmqu::PrintUtil::printer(X)   \
@@ -71,7 +71,7 @@
             else if (testStatus >= 0 && testStatus <= 100)                    \
                 ++testStatus;                                                 \
         }                                                                     \
-    }
+    } while (false)
 #define ASSERT_EQUALS(X, Y) ASSERT_EQUALS_SKIP(X, Y, false)
 
 // Asserts that X != Y
@@ -92,7 +92,7 @@
 
 // Loop version of ASSERT_EQUALS
 #define LOOP_ASSERT_EQUALS_SKIP(I, X, Y, SKIP)                                \
-    {                                                                         \
+    do {                                                                      \
         if (!((X) == (Y))) {                                                  \
             cout << #I << ": " << bmqu::PrintUtil::printer(I) << "\n"         \
                  << "Error " << __FILE__ << "(" << __LINE__ << "): " << #X    \
@@ -104,7 +104,7 @@
             else if (testStatus >= 0 && testStatus <= 100)                    \
                 ++testStatus;                                                 \
         }                                                                     \
-    }
+    } while (false)
 #define LOOP_ASSERT_EQUALS(I, X, Y) LOOP_ASSERT_EQUALS_SKIP(I, X, Y, false)
 
 // Loop version of ASSERT_NOT_EQUALS

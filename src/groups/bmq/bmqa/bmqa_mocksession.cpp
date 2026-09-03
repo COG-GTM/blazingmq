@@ -109,7 +109,7 @@ void defaultFailureCallback(const bslstl::StringRef& description,
                             const bslstl::StringRef& file,
                             int                      line)
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
     BALL_LOG_ERROR_BLOCK
     {
         BALL_LOG_OUTPUT_STREAM << "[ Description: '" << description << "'";
@@ -286,7 +286,8 @@ Event createPushEventImpl(
     if (call.d_method != (METHOD)) {                                          \
         assertWrongCall((METHOD), call);                                      \
         RETURNBLOCK;                                                          \
-    }
+    }                                                                         \
+    static_cast<void>(call)
 
 #define BMQA_ASSERT_AND_POP_FRONT()                                           \
     do {                                                                      \

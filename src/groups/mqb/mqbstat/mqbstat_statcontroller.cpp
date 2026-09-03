@@ -981,14 +981,18 @@ int StatController::start(bsl::ostream& errorDescription)
 void StatController::stop()
 {
 #define STOP_OBJ(OBJ, NAME)                                                   \
-    if (OBJ) {                                                                \
-        OBJ->stop();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            OBJ->stop();                                                      \
+        }                                                                     \
+    } while (false)
 
 #define DESTROY_OBJ(OBJ, NAME)                                                \
-    if (OBJ) {                                                                \
-        OBJ.clear();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            OBJ.clear();                                                      \
+        }                                                                     \
+    } while (false)
 
     // Stop the scheduler and cancel all clocks first to prevent any additional
     // periodic functions being invoked

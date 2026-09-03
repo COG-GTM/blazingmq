@@ -2157,9 +2157,9 @@ BMQTST_TEST_F(Test, put_autoConfirmWriteMessageFailure)
 
 int main(int argc, char* argv[])
 {
-    BALL_LOG_SET_CATEGORY("MAIN");
+    BALL_LOG_SET_CATEGORY("MAIN")
 
-    TEST_PROLOG(bmqtst::TestHelper::e_CHECK_GBL_ALLOC);
+    TEST_PROLOG(bmqtst::TestHelper::e_CHECK_GBL_ALLOC)
 
     bmqu::Time::initialize(bmqtst::TestHelperUtil::allocator());
 

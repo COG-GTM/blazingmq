@@ -842,7 +842,7 @@ BMQTST_TEST(ChannelDownCancelsReauthentication)
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     bmqtst::runTest(_testCase);
 

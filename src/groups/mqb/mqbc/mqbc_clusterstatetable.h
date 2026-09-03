@@ -452,7 +452,7 @@ class ClusterStateTable
     Table::configure(State::e_##s,                                            \
                      Event::e_##e,                                            \
                      Transition(State::e_##n,                                 \
-                                &ClusterStateTableActions<ARGS>::do_##a));
+                                &ClusterStateTableActions<ARGS>::do_##a))
         //       state             event                   action next state
         CST_CFG(
             UNKNOWN,

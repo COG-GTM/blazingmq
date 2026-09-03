@@ -310,9 +310,9 @@
 //                       STANDARD BDE ASSERT TEST MACROS
 // ----------------------------------------------------------------------------
 #define ASSERT(X)                                                             \
-    {                                                                         \
+    do {                                                                      \
         ::_assert((X), #X, __FILE__, __LINE__);                               \
-    }
+    } while (false)
 
 // ============================================================================
 //                       STANDARD BDE TEST DRIVER MACROS
@@ -359,34 +359,34 @@
 #define BMQTST_ASSERT(X) ASSERT(X)
 
 #define BMQTST_ASSERT_EQ(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareEquals("", X, Y, #X, #Y, __FILE__, __LINE__);           \
-    }
+    } while (false)
 #define BMQTST_ASSERT_NE(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareNotEquals("", X, Y, #X, #Y, __FILE__, __LINE__);        \
-    }
+    } while (false)
 #define BMQTST_ASSERT_LT(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareLess("", X, Y, #X, #Y, __FILE__, __LINE__);             \
-    }
+    } while (false)
 #define BMQTST_ASSERT_LE(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareLessEquals("", X, Y, #X, #Y, __FILE__, __LINE__);       \
-    }
+    } while (false)
 #define BMQTST_ASSERT_GT(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareGreater("", X, Y, #X, #Y, __FILE__, __LINE__);          \
-    }
+    } while (false)
 #define BMQTST_ASSERT_GE(X, Y)                                                \
-    {                                                                         \
+    do {                                                                      \
         _assertCompareGreaterEquals("", X, Y, #X, #Y, __FILE__, __LINE__);    \
-    }
+    } while (false)
 
 // '_D' variants, allowing to specify a 'description' that will be printed in
 // case of failure.
 #define BMQTST_ASSERT_D(D, X)                                                 \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << '\0';                                                     \
@@ -394,49 +394,49 @@
         if (!(X)) {                                                           \
             BloombergLP::_assert(false, _osStr.data(), __FILE__, __LINE__);   \
         }                                                                     \
-    }
+    } while (false)
 #define BMQTST_ASSERT_EQ_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
         bsl::string_view _osStr(_buf.data(), _buf.length());                  \
         _assertCompareEquals(_osStr, X, Y, #X, #Y, __FILE__, __LINE__);       \
-    }
+    } while (false)
 #define BMQTST_ASSERT_NE_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
         bsl::string_view _osStr(_buf.data(), _buf.length());                  \
         _assertCompareNotEquals(_osStr, X, Y, #X, #Y, __FILE__, __LINE__);    \
-    }
+    } while (false)
 #define BMQTST_ASSERT_LT_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
         bsl::string_view _osStr(_buf.data(), _buf.length());                  \
         _assertCompareLess(_osStr, X, Y, #X, #Y, __FILE__, __LINE__);         \
-    }
+    } while (false)
 #define BMQTST_ASSERT_LE_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
         bsl::string_view _osStr(_buf.data(), _buf.length());                  \
         _assertCompareLessEquals(_osStr, X, Y, #X, #Y, __FILE__, __LINE__);   \
-    }
+    } while (false)
 #define BMQTST_ASSERT_GT_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
         bsl::string_view _osStr(_buf.data(), _buf.length());                  \
         _assertCompareGreater(_osStr, X, Y, #X, #Y, __FILE__, __LINE__);      \
-    }
+    } while (false)
 #define BMQTST_ASSERT_GE_D(D, X, Y)                                           \
-    {                                                                         \
+    do {                                                                      \
         bdlsb::MemOutStreamBuf _buf(bmqtst::TestHelperUtil::allocator());     \
         bsl::ostream           _os(&_buf);                                    \
         _os << D << ": ";                                                     \
@@ -448,11 +448,11 @@
                                     #Y,                                       \
                                     __FILE__,                                 \
                                     __LINE__);                                \
-    }
+    } while (false)
 
 // Assertions using fuzzy comparisons
 #define BMQTST_ASSERT_EQF(X, Y)                                               \
-    {                                                                         \
+    do {                                                                      \
         if (!(bmqtst::TestHelper::areFuzzyEqual((X), (Y)))) {                 \
             bsl::cout << "Error " << __FILE__ << "(" << __LINE__              \
                       << "): " << #X << " (" << bmqtst::printer(X)            \
@@ -462,10 +462,10 @@
                 bmqtst::TestHelperUtil::testStatus() <= 100)                  \
                 ++bmqtst::TestHelperUtil::testStatus();                       \
         }                                                                     \
-    }
+    } while (false)
 
 #define BMQTST_ASSERT_NEF(X, Y)                                               \
-    {                                                                         \
+    do {                                                                      \
         if (bmqtst::TestHelper::areFuzzyEqual((X), (Y))) {                    \
             bsl::cout << "Error " << __FILE__ << "(" << __LINE__              \
                       << "): " << #X << " (" << bmqtst::printer(X)            \
@@ -475,17 +475,35 @@
                 bmqtst::TestHelperUtil::testStatus() <= 100)                  \
                 ++bmqtst::TestHelperUtil::testStatus();                       \
         }                                                                     \
-    }
+    } while (false)
 
 // ============================================================================
 //                     NEGATIVE-TEST MACROS ABBREVIATIONS
 // ----------------------------------------------------------------------------
-#define BMQTST_ASSERT_SAFE_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_SAFE_PASS(EXPR)
-#define BMQTST_ASSERT_SAFE_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_SAFE_FAIL(EXPR)
-#define BMQTST_ASSERT_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_PASS(EXPR)
-#define BMQTST_ASSERT_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_FAIL(EXPR)
-#define BMQTST_ASSERT_OPT_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_OPT_PASS(EXPR)
-#define BMQTST_ASSERT_OPT_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_OPT_FAIL(EXPR)
+#define BMQTST_ASSERT_SAFE_PASS(EXPR)                                         \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_SAFE_PASS(EXPR)                                \
+    } while (false)
+#define BMQTST_ASSERT_SAFE_FAIL(EXPR)                                         \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_SAFE_FAIL(EXPR)                                \
+    } while (false)
+#define BMQTST_ASSERT_PASS(EXPR)                                              \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_PASS(EXPR)                                     \
+    } while (false)
+#define BMQTST_ASSERT_FAIL(EXPR)                                              \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_FAIL(EXPR)                                     \
+    } while (false)
+#define BMQTST_ASSERT_OPT_PASS(EXPR)                                          \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_OPT_PASS(EXPR)                                 \
+    } while (false)
+#define BMQTST_ASSERT_OPT_FAIL(EXPR)                                          \
+    do {                                                                      \
+        BSLS_ASSERTTEST_ASSERT_OPT_FAIL(EXPR)                                 \
+    } while (false)
 
 // ============================================================================
 //                                PRINT MACROS
@@ -496,51 +514,66 @@
 // '_SAFE' versions use a mutex to make sure concurrent output doesn't get
 // interleaved.
 #define PRINT(X)                                                              \
-    {                                                                         \
+    do {                                                                      \
         bsl::cout << X << bsl::endl;                                          \
-    }
+    } while (false)
 
 #define PRINT_(X)                                                             \
-    {                                                                         \
+    do {                                                                      \
         bsl::cout << X;                                                       \
-    }
+    } while (false)
 
 #define PRINT_SAFE(X)                                                         \
-    {                                                                         \
+    do {                                                                      \
         bslmt::QLockGuard qGuard(                                             \
             &bmqtst::TestHelperUtil::serializePrintLock());                   \
         PRINT(X);                                                             \
-    }
+    } while (false)
 
 #define PRINT_SAFE_(X)                                                        \
-    {                                                                         \
+    do {                                                                      \
         bslmt::QLockGuard qGuard(                                             \
             &bmqtst::TestHelperUtil::serializePrintLock());                   \
         PRINT_(X);                                                            \
-    }
+    } while (false)
 
 #define PV(X)                                                                 \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 1)                        \
-        PRINT(X);
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 1) {                  \
+            PRINT(X);                                                         \
+        }                                                                     \
+    } while (false)
 #define PVV(X)                                                                \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 2)                        \
-        PRINT(X);
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 2) {                  \
+            PRINT(X);                                                         \
+        }                                                                     \
+    } while (false)
 #define PVVV(X)                                                               \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 3)                        \
-        PRINT(X);
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 3) {                  \
+            PRINT(X);                                                         \
+        }                                                                     \
+    } while (false)
 
 #define PV_SAFE(X)                                                            \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 1) {                      \
-        PRINT_SAFE(X);                                                        \
-    };
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 1) {                  \
+            PRINT_SAFE(X);                                                    \
+        }                                                                     \
+    } while (false)
 #define PVV_SAFE(X)                                                           \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 2) {                      \
-        PRINT_SAFE(X);                                                        \
-    };
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 2) {                  \
+            PRINT_SAFE(X);                                                    \
+        }                                                                     \
+    } while (false)
 #define PVVV_SAFE(X)                                                          \
-    if (bmqtst::TestHelperUtil::verbosityLevel() >= 3) {                      \
-        PRINT_SAFE(X);                                                        \
-    };
+    do {                                                                      \
+        if (bmqtst::TestHelperUtil::verbosityLevel() >= 3) {                  \
+            PRINT_SAFE(X);                                                    \
+        }                                                                     \
+    } while (false)
 
 // ============================================================================
 //                                 TEST SHELL
@@ -676,7 +709,7 @@
                                                                               \
     bmqtst::TestHelperUtil::allocator() =                                     \
         0; /* clang-tidy warning silencing */                                 \
-    return bmqtst::TestHelperUtil::testStatus();
+    return bmqtst::TestHelperUtil::testStatus()
 
 #define BMQTST_TEST_F(FIXTURE, NAME)                                          \
     struct FIXTURE##NAME : FIXTURE {                                          \
@@ -727,11 +760,11 @@
 
 #ifdef BMQTST_BENCHMARK_ENABLED
 #define BMQTST_BENCHMARK_WITH_ARGS(BM_NAME, ARGS)                             \
-    BENCHMARK(BM_NAME##_GoogleBenchmark)->ARGS;
-#define BMQTST_BENCHMARK(BM_NAME) BENCHMARK(BM_NAME##_GoogleBenchmark);
+    BENCHMARK(BM_NAME##_GoogleBenchmark)->ARGS
+#define BMQTST_BENCHMARK(BM_NAME) BENCHMARK(BM_NAME##_GoogleBenchmark)
 #else  // !BMQTST_BENCHMARK_ENABLED
-#define BMQTST_BENCHMARK(BM_NAME) BM_NAME();
-#define BMQTST_BENCHMARK_WITH_ARGS(BM_NAME, ARGS) BM_NAME();
+#define BMQTST_BENCHMARK(BM_NAME) BM_NAME()
+#define BMQTST_BENCHMARK_WITH_ARGS(BM_NAME, ARGS) BM_NAME()
 
 #endif  // BMQTST_BENCHMARK_ENABLED
 

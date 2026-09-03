@@ -96,6 +96,7 @@
 // Terminal macro to close the alarm block opened by any of the above macros.
 #define BMQTSK_ALARMLOG_END                                                   \
     "";                                                                       \
-    }
+    }                                                                         \
+    static_cast<void>(0)
 
 #endif

@@ -279,7 +279,7 @@ bmqp_ctrlmsg::ClientIdentity* extractClientIdentity(
         BSLS_ASSERT_OPT(false && "Invalid negotiation message");
         return 0;  // RETURN
     }
-    };
+    }
 }
 
 bool isClientGeneratingGUIDs(
@@ -2924,7 +2924,7 @@ void ClientSession::onDispatcherEvent(const mqbi::DispatcherEvent& event)
             << ": Session received unexpected dispatcher event [type: "
             << event.type() << "]";
     }
-    };
+    }
 }
 
 void ClientSession::flush()

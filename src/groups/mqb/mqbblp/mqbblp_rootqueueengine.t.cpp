@@ -3149,7 +3149,7 @@ static void test31_afterNewMessageDeliverToAllActiveConsumers()
     BMQTST_ASSERT_EQ(tester.getHandle("C2@d readCount=1"), C2);
     BMQTST_ASSERT_EQ(tester.getHandle("C2   writeCount=1"), C2);
     BMQTST_ASSERT_NE(C2, k_nullMockHandle_p);
-    BMQTST_ASSERT_NE(C2, C1)
+    BMQTST_ASSERT_NE(C2, C1);
     BMQTST_ASSERT_EQ(C2->_appIds(), "-,c,d");
 
     BMQTST_ASSERT_EQ(tester.configureHandle(
@@ -5121,7 +5121,7 @@ static void test49_closeWithScheduledAlarm()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     bmqu::Time::initialize(bmqtst::TestHelperUtil::allocator());
 

@@ -374,7 +374,7 @@ static void test5_loadArrivalTimeDelta()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     bmqu::Time::initialize();
 

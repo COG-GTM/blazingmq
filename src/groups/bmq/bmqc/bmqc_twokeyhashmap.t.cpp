@@ -833,7 +833,7 @@ static void test4_erase()
 
         // find element with first key equal to 3
         Map::iterator erased = map.findByKey1(3);
-        BMQTST_ASSERT_EQ(erased == map.end(), false)
+        BMQTST_ASSERT_EQ(erased == map.end(), false);
         BMQTST_ASSERT_EQ(erased->key1(), 3);
         BMQTST_ASSERT_EQ(erased.keyIndex(), Map::e_FIRST_KEY);
 
@@ -924,7 +924,7 @@ static void test4_erase()
 
         // find element with second key equal to "third"
         Map::iterator erased = map.findByKey2("third");
-        BMQTST_ASSERT_EQ(erased == map.end(), false)
+        BMQTST_ASSERT_EQ(erased == map.end(), false);
         BMQTST_ASSERT_EQ(erased->key2(), "third");
         BMQTST_ASSERT_EQ(erased.keyIndex(), Map::e_SECOND_KEY);
 
@@ -1099,7 +1099,7 @@ static void test5_eraseByKey1()
 
         // find element with first key equal to 3
         Map::iterator erased = map.findByKey1(3);
-        BMQTST_ASSERT_EQ(erased == map.end(), false)
+        BMQTST_ASSERT_EQ(erased == map.end(), false);
         BMQTST_ASSERT_EQ(erased->key1(), 3);
 
         const Map::value_type* erased_p = &*erased;
@@ -1279,7 +1279,7 @@ static void test6_eraseByKey2()
 
         // find element with second key equal to "third"
         Map::iterator erased = map.findByKey2("third");
-        BMQTST_ASSERT_EQ(erased == map.end(), false)
+        BMQTST_ASSERT_EQ(erased == map.end(), false);
         BMQTST_ASSERT_EQ(erased->key2(), "third");
 
         const Map::value_type* erased_p = &*erased;
@@ -1948,7 +1948,7 @@ static void test13_equality()
 
 int main(int argc, char** argv)
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 13: test13_equality(); break;

@@ -291,7 +291,7 @@ static void test6_gateKeeper_threadSafety()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_CHECK_DEF_GBL_ALLOC);
+    TEST_PROLOG(bmqtst::TestHelper::e_CHECK_DEF_GBL_ALLOC)
 
     switch (_testCase) {
     case 0:

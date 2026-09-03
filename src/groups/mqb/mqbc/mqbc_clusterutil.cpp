@@ -154,7 +154,7 @@ void applyQueueUpdate(mqbc::ClusterState* clusterState,
                       const bsl::vector<bmqp_ctrlmsg::QueueInfoUpdate>& queues,
                       const mqbc::ClusterData& clusterData)
 {
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     for (bsl::vector<bmqp_ctrlmsg::QueueInfoUpdate>::const_iterator it =
              queues.begin();
@@ -265,7 +265,7 @@ void getNextPrimarys(NumNewPartitionsMap* numNewPartitions,
                      clusterData.electorInfo().electorState());
     BSLS_ASSERT_SAFE(numNewPartitions && numNewPartitions->empty());
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     switch (assignmentAlgo) {
     case mqbcfg::MasterAssignmentAlgorithm::E_LEADER_IS_MASTER_ALL: {

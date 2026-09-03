@@ -97,10 +97,10 @@ static void bslsLogHandler(bsls::LogSeverity::Enum severity,
     case bsls::LogSeverity::e_DEBUG: balSev = ball::Severity::e_DEBUG; break;
     case bsls::LogSeverity::e_TRACE: balSev = ball::Severity::e_TRACE; break;
     default: balSev = ball::Severity::e_INFO;
-    };
+    }
 
     ball::Log::logMessage(category, balSev, file, line, message);
-};
+}
 
 }  // close unnamed namespace
 
@@ -120,7 +120,7 @@ LogControllerConfig::balToBslsLogLevel(ball::Severity::Level level)
     case ball::Severity::e_TRACE: return bsls::LogSeverity::e_TRACE;
     case ball::Severity::e_OFF:
     default: return bsls::LogSeverity::e_ERROR;
-    };
+    }
 }
 
 LogControllerConfig::CategoryProperties::CategoryProperties(

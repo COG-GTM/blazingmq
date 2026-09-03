@@ -1394,7 +1394,7 @@ static void test16_link_swap()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     // utility mechanisms
     bdlmt::ThreadPool threadPool(bslmt::ThreadAttributes(),

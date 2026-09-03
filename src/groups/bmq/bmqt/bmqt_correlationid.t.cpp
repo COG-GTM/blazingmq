@@ -150,7 +150,7 @@ static void test2_copyAndAssign()
     bmqt::CorrelationId numericId(numeric);
     bmqt::CorrelationId ptrId(ptr);
 
-    PV("Test copy constructor")
+    PV("Test copy constructor");
     {
         bmqt::CorrelationId numericIdCopy(numericId);
         BMQTST_ASSERT_EQ(numericIdCopy.isPointer(), false);
@@ -447,7 +447,7 @@ static void test7_printTest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

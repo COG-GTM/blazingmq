@@ -123,6 +123,12 @@ FLEX_TARGET(SimpleEvaluatorScanner
             COMPILE_FLAGS --warn)
 ADD_FLEX_BISON_DEPENDENCY(SimpleEvaluatorScanner SimpleEvaluatorParser)
 
+# Flex output is third-party generated code.
+set_source_files_properties(
+    ${FLEX_SimpleEvaluatorScanner_OUTPUTS}
+    PROPERTIES COMPILE_OPTIONS
+               "$<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-extra-semi-stmt>")
+
 target_sources(bmqeval-iface
                PRIVATE
                ${BISON_SimpleEvaluatorParser_OUTPUTS}

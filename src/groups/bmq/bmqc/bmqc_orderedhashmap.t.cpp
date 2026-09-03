@@ -1168,7 +1168,7 @@ int main(int argc, char* argv[])
     // One time initialization
     bsls::TimeUtil::initialize();
 
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

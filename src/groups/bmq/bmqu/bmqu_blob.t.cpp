@@ -1438,7 +1438,7 @@ static void test17_getAlignedSection()
             test.d_copyFromBlob);
 
         if (test.d_res == Test::e_NULL) {
-            PVVV("null result")
+            PVVV("null result");
             BMQTST_ASSERT_D("line " << test.d_line, !resSafe);
             continue;
         }
@@ -1459,7 +1459,7 @@ static void test17_getAlignedSection()
         BMQTST_ASSERT_EQ_D("line " << test.d_line, rc, 0);
 
         if (test.d_res == Test::e_BUFFER) {
-            PVVV("pointer to blob buffer data")
+            PVVV("pointer to blob buffer data");
             BMQTST_ASSERT_EQ_D("line " << test.d_line,
                                resSafe,
                                blob.buffer(start.buffer()).data() +
@@ -1470,12 +1470,12 @@ static void test17_getAlignedSection()
             BMQTST_ASSERT_EQ_D("line " << test.d_line, resSafe, res);
         }
         else {
-            PVVV("pointer to storage")
+            PVVV("pointer to storage");
             BMQTST_ASSERT_EQ_D("line " << test.d_line, resSafe, storageSafe);
             BMQTST_ASSERT_EQ_D("line " << test.d_line, res, storage);
 
             if (test.d_copyFromBlob) {
-                PVVV("copy to storage")
+                PVVV("copy to storage");
                 BMQTST_ASSERT_EQ_D("line " << test.d_line,
                                    bsl::string(resSafe, test.d_length),
                                    bsl::string(expected, test.d_length));
@@ -1557,7 +1557,7 @@ static void test18_getAlignedObject()
             test.d_copyFromBlob);
 
         if (!test.d_resData) {
-            PVVV("null result")
+            PVVV("null result");
             BMQTST_ASSERT_D("line " << test.d_line, !resSafe);
             continue;
         }
@@ -1642,7 +1642,7 @@ static void test19_blobStartHexDumper()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

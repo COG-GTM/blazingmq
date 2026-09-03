@@ -629,7 +629,7 @@ class PartitionStateTable
     Table::configure(State::e_##s,                                            \
                      Event::e_##e,                                            \
                      Transition(State::e_##n,                                 \
-                                &PartitionStateTableActions::do_##a));
+                                &PartitionStateTableActions::do_##a))
         //       state                 event                         action
         //       next state
         PST_CFG(
@@ -738,7 +738,7 @@ class PartitionStateTable
         PST_CFG(PRIMARY_HEALING_STG2,
                 PRIMARY_STATE_RQST,
                 storeReplicaSeq_primaryStateResponse_sendDataToReplicas,
-                PRIMARY_HEALING_STG2)
+                PRIMARY_HEALING_STG2);
         PST_CFG(PRIMARY_HEALING_STG2,
                 RECOVERY_DATA,
                 updateStorage,

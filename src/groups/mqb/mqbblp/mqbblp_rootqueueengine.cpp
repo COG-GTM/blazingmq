@@ -716,13 +716,15 @@ mqbi::QueueHandle* RootQueueEngine::getHandle(
     BSLS_ASSERT_SAFE(d_queueState_p->queue()->inDispatcherThread());
 
 #define CALLBACK(CAT, RC, MSG, HAN)                                           \
-    if (callback) {                                                           \
-        bmqp_ctrlmsg::Status status(d_allocator_p);                           \
-        status.category() = CAT;                                              \
-        status.code()     = RC;                                               \
-        status.message()  = MSG;                                              \
-        callback(status, HAN);                                                \
-    }
+    do {                                                                      \
+        if (callback) {                                                       \
+            bmqp_ctrlmsg::Status status(d_allocator_p);                       \
+            status.category() = CAT;                                          \
+            status.code()     = RC;                                           \
+            status.message()  = MSG;                                          \
+            callback(status, HAN);                                            \
+        }                                                                     \
+    } while (false)
 
     bool handleCreated = false;
 
@@ -961,13 +963,15 @@ void RootQueueEngine::configureHandle(
     BSLS_ASSERT_SAFE(handle);
 
 #define CONFIGURE_CB(CAT, RC, MSG, SPARAMS)                                   \
-    if (configuredCb) {                                                       \
-        bmqp_ctrlmsg::Status status;                                          \
-        status.category() = CAT;                                              \
-        status.code()     = RC;                                               \
-        status.message()  = MSG;                                              \
-        configuredCb(status, SPARAMS);                                        \
-    }
+    do {                                                                      \
+        if (configuredCb) {                                                   \
+            bmqp_ctrlmsg::Status status;                                      \
+            status.category() = CAT;                                          \
+            status.code()     = RC;                                           \
+            status.message()  = MSG;                                          \
+            configuredCb(status, SPARAMS);                                    \
+        }                                                                     \
+    } while (false)
 
     // Verify handle exists
     if (!d_queueState_p->handleCatalog().hasHandle(handle)) {

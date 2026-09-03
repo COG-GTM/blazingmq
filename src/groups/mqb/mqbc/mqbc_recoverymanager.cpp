@@ -857,7 +857,7 @@ int RecoveryManager::processReceiveDataChunks(
                     return rc_INVALID_QUEUE_RECORD;  // RETURN
                 }
             }
-        };
+        }
 
         receiveDataCtx.d_currPSN = recordPSN;
         if (receiveDataCtx.d_currPSN == receiveDataCtx.d_endPSN) {

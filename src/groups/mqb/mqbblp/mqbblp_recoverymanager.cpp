@@ -105,7 +105,7 @@ void movePartitionFiles(int                      partitionId,
     BSLS_ASSERT_SAFE(bdls::FilesystemUtil::isDirectory(currentLocation));
     BSLS_ASSERT_SAFE(bdls::FilesystemUtil::isDirectory(archiveLocation));
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     BALL_LOG_INFO << "For Partition [" << partitionId
                   << "], will archive all files.";
@@ -237,7 +237,7 @@ void RecoveryManager_ChunkDeleter::operator()(
     BSLS_ASSERT_SAFE(d_requestContext_p || d_primarySyncContext_p);
     BSLS_ASSERT_SAFE(0 == d_requestContext_p || 0 == d_primarySyncContext_p);
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
 
     typedef RecoveryManager_FileTransferInfo FileTransferInfo;
 

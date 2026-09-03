@@ -542,16 +542,20 @@ void Application::stop()
     bsls::TimeInterval startTime = bdlt::CurrentTime::now();
 
 #define STOP_OBJ(OBJ, NAME)                                                   \
-    if (OBJ) {                                                                \
-        BALL_LOG_INFO << "Stopping " NAME "...";                              \
-        OBJ->stop();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            BALL_LOG_INFO << "Stopping " NAME "...";                          \
+            OBJ->stop();                                                      \
+        }                                                                     \
+    } while (false)
 
 #define DESTROY_OBJ(OBJ, NAME)                                                \
-    if (OBJ) {                                                                \
-        BALL_LOG_INFO << "Destroying " NAME "...";                            \
-        OBJ.reset();                                                          \
-    }
+    do {                                                                      \
+        if (OBJ) {                                                            \
+            BALL_LOG_INFO << "Destroying " NAME "...";                        \
+            OBJ.reset();                                                      \
+        }                                                                     \
+    } while (false)
 
     // Only if 'start()' got far enough to construct the transport manager.
     if (d_transportManager_mp) {

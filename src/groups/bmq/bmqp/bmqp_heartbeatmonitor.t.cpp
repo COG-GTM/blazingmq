@@ -49,7 +49,7 @@ static void test1_heartbeatBlobs()
 {
     bmqtst::TestHelper::printTestName("HEARTBEAT BLOBS");
 
-    PV("Verifying the HeartbeatReq blob")
+    PV("Verifying the HeartbeatReq blob");
     {
         bmqp::EventHeader expectedHeader(bmqp::EventType::e_HEARTBEAT_REQ);
 
@@ -64,7 +64,7 @@ static void test1_heartbeatBlobs()
                                 sizeof(bmqp::EventHeader)));
     }
 
-    PV("Verifying the HeartbeatRsp blob")
+    PV("Verifying the HeartbeatRsp blob");
     {
         bmqp::EventHeader expectedHeader(bmqp::EventType::e_HEARTBEAT_RSP);
 
@@ -86,7 +86,7 @@ static void test1_heartbeatBlobs()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

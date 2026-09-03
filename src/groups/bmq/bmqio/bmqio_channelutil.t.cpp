@@ -237,7 +237,7 @@ static void test2_handleRead_multiplePackets()
             &input);
         BMQTST_ASSERT_EQ(rc, 0);
         BMQTST_ASSERT_EQ(packets.size(), 1U);
-        BMQTST_ASSERT_EQ(packets[0].length(), totalLength)
+        BMQTST_ASSERT_EQ(packets[0].length(), totalLength);
         BMQTST_ASSERT_EQ(input.length(), 0);
         BMQTST_ASSERT_EQ(numNeeded, k_MINIMUM_PACKET_LENGTH);
     }
@@ -395,7 +395,7 @@ static void test3_isLocalHost()
         BMQTST_ASSERT(bmqio::ChannelUtil::isLocalHost("localhost"));
         BMQTST_ASSERT(bmqio::ChannelUtil::isLocalHost("LoCaLhOsT"));
 
-        PVV("'WWW.WIKIPEDIA.ORG' - FALSE")
+        PVV("'WWW.WIKIPEDIA.ORG' - FALSE");
         BMQTST_ASSERT(!bmqio::ChannelUtil::isLocalHost("www.wikipedia.org"));
     }
 
@@ -422,7 +422,7 @@ static void test3_isLocalHost()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

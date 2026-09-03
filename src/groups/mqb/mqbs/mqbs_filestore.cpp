@@ -7242,7 +7242,7 @@ void FileStore::onDispatcherEvent(const mqbi::DispatcherEvent& event)
         BALL_LOG_ERROR << "Received dispatcher event of unexpected type"
                        << event.type();
         break;  // BREAK
-    };
+    }
 }
 
 void FileStore::flush()

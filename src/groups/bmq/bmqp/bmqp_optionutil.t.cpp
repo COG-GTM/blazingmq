@@ -166,7 +166,7 @@ static void test1_basicOptionMetaProperties()
     const bmqp::OptionType::Enum type = bmqp::OptionType::e_SUB_QUEUE_IDS_OLD;
     const int                    headerSize = sizeof(bmqp::OptionHeader);
 
-    PV("A payload without padding")
+    PV("A payload without padding");
     {
         for (int size = 0; size < 10; ++size) {
             if (0 != size % bmqp::Protocol::k_WORD_SIZE) {
@@ -185,7 +185,7 @@ static void test1_basicOptionMetaProperties()
         }
     }
 
-    PV("A payload with zero with padding")
+    PV("A payload with zero with padding");
     {
         for (int size = 0; size < 10; ++size) {
             const OptionMeta meta = OptionMeta::forOptionWithPadding(type,
@@ -201,7 +201,7 @@ static void test1_basicOptionMetaProperties()
         }
     }
 
-    PV("A null option")
+    PV("A null option");
     {
         const OptionMeta meta = OptionMeta::forNullOption();
 
@@ -249,7 +249,7 @@ static void test2_basicOptionsBoxCanAdd()
     const int sizeStep16 = ((k_MAX_SIZE / 16) / k_WORD) * k_WORD;
 
     PV("Rule 1. Fail with e_OPTION_TOO_BIG"
-       "when payload + header > OptionHeader::k_MAX_SIZE")
+       "when payload + header > OptionHeader::k_MAX_SIZE");
     {
         const int contentSize = 4;
 
@@ -265,7 +265,7 @@ static void test2_basicOptionsBoxCanAdd()
     }
 
     PV("Rule 2. Fail with e_TOO_MANY_OPTIONS"
-       "when payload + header > OptionHeader::k_MAX_SIZE")
+       "when payload + header > OptionHeader::k_MAX_SIZE");
     {
         // Regardless of the content size, the problem is going to be that
         // we have too many small options in this case.
@@ -296,7 +296,7 @@ static void test2_basicOptionsBoxCanAdd()
     // "the same for all other options > OptionHeader::k_MAX_OPTIONS_SIZE")
 
     PV("Rule 4. Fail with e_OPTION_TOO_BIG when size excluding options + size"
-       "of all options > EventHeader::k_MAX_SIZE_SOFT")
+       "of all options > EventHeader::k_MAX_SIZE_SOFT");
     {
         const int testContentSizes[] = {4, 2 * k_MAX_SIZE};
         for (unsigned int i = 0;
@@ -395,7 +395,7 @@ static void test3_checkOptionsBlobSegment()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

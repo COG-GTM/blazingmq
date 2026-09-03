@@ -801,7 +801,8 @@ void Cluster::onPutEvent(const mqbevt::PutEvent& event)
                     putIt.header().queueId(),
                     "Node unavailable",
                     ns);
-        };
+        }
+
         return;  // RETURN
     }
 
@@ -2936,7 +2937,7 @@ void Cluster::onDispatcherEvent(const mqbi::DispatcherEvent& event)
     default:
         BALL_LOG_ERROR << "Received dispatcher event of unexpected type";
         break;  // BREAK
-    };
+    }
 }
 
 void Cluster::flush()

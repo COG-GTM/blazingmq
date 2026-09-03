@@ -418,28 +418,36 @@ static void test4_snapshot()
     // MACROS
 #define PVV_CPU_USER_N(ID) PVV("cpuUser(" << ID << "): " << obj.cpuUser(ID));
 #define PVV_CPU_USER(HEADER)                                                  \
-    PVV(HEADER);                                                              \
-    PVV_CPU_USER_N(0);                                                        \
-    BSLS_MACROREPEAT(3, PVV_CPU_USER_N);
+    do {                                                                      \
+        PVV(HEADER);                                                          \
+        PVV_CPU_USER_N(0);                                                    \
+        BSLS_MACROREPEAT(3, PVV_CPU_USER_N);                                  \
+    } while (false)
 #define PVV_CPU_SYSTEM_N(ID)                                                  \
     PVV("cpuSystem(" << ID << "): " << obj.cpuSystem(ID));
 #define PVV_CPU_SYSTEM(HEADER)                                                \
-    PVV(HEADER);                                                              \
-    PVV_CPU_SYSTEM_N(0);                                                      \
-    BSLS_MACROREPEAT(3, PVV_CPU_SYSTEM_N);
+    do {                                                                      \
+        PVV(HEADER);                                                          \
+        PVV_CPU_SYSTEM_N(0);                                                  \
+        BSLS_MACROREPEAT(3, PVV_CPU_SYSTEM_N);                                \
+    } while (false)
 #define PVV_MEM_VIRTUAL_N(ID)                                                 \
     PVV("memVirtual(" << ID << "): " << obj.memVirtual(ID));
 #define PVV_MEM_VIRTUAL(HEADER)                                               \
-    PVV(HEADER);                                                              \
-    PVV_MEM_VIRTUAL_N(0);                                                     \
-    BSLS_MACROREPEAT(3, PVV_MEM_VIRTUAL_N);
+    do {                                                                      \
+        PVV(HEADER);                                                          \
+        PVV_MEM_VIRTUAL_N(0);                                                 \
+        BSLS_MACROREPEAT(3, PVV_MEM_VIRTUAL_N);                               \
+    } while (false)
 #define PVV_INV_CONTEXT_SWITCHES_N(ID)                                        \
     PVV("involuntaryContextSwitches("                                         \
         << ID << "): " << obj.involuntaryContextSwitches(ID));
 #define PVV_INV_CONTEXT_SWITCHES(HEADER)                                      \
-    PVV(HEADER);                                                              \
-    PVV_INV_CONTEXT_SWITCHES_N(0);                                            \
-    BSLS_MACROREPEAT(3, PVV_INV_CONTEXT_SWITCHES_N);
+    do {                                                                      \
+        PVV(HEADER);                                                          \
+        PVV_INV_CONTEXT_SWITCHES_N(0);                                        \
+        BSLS_MACROREPEAT(3, PVV_INV_CONTEXT_SWITCHES_N);                      \
+    } while (false)
 
     bmqtst::TestHelperUtil::ignoreCheckDefAlloc() = true;
     // 'start' passes a string using default alloc
@@ -518,7 +526,7 @@ static void test4_snapshot()
                               &workDoneSemaphore),
         bmqtst::TestHelperUtil::allocator());
     workDoneSemaphore.wait();
-    BSLS_ASSERTTEST_ASSERT_OPT_PASS(obj.snapshot());
+    BSLS_ASSERTTEST_ASSERT_OPT_PASS(obj.snapshot())
 
     // Make sure the broker uptime is monotonically increasing
     bsls::Types::Int64 uptime2 = obj.uptime();
@@ -540,7 +548,7 @@ static void test4_snapshot()
                               &workDoneSemaphore),
         bmqtst::TestHelperUtil::allocator());
     workDoneSemaphore.wait();
-    BSLS_ASSERTTEST_ASSERT_OPT_PASS(obj.snapshot());
+    BSLS_ASSERTTEST_ASSERT_OPT_PASS(obj.snapshot())
 
     // Make sure the broker uptime is monotonically increasing
     bsls::Types::Int64 uptime3 = obj.uptime();
@@ -567,7 +575,7 @@ static void test4_snapshot()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

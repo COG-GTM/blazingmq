@@ -112,7 +112,7 @@ static void testN1_SimpleEvaluator_GoogleBenchmark(benchmark::State& state)
 static void testN1_SimpleEvaluator()
 {
     bmqtst::TestHelper::printTestName("GOOGLE BENCHMARK: SimpleEvaluator");
-    PV("GoogleBenchmark is not supported on this platform, skipping...")
+    PV("GoogleBenchmark is not supported on this platform, skipping...");
 }
 #endif
 
@@ -659,7 +659,7 @@ static void test4_evaluationErrors()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     switch (_testCase) {
     case 0:

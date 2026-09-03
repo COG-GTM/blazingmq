@@ -732,7 +732,7 @@ static void test3_alwaysInvalidStateTest()
 
 int main(int argc, char* argv[])
 {
-    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT);
+    TEST_PROLOG(bmqtst::TestHelper::e_DEFAULT)
 
     {
         mqbcfg::AppConfig brokerConfig(bmqtst::TestHelperUtil::allocator());

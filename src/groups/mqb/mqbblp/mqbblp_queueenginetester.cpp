@@ -106,7 +106,7 @@ static void dummyGetHandleCallback(
     // PRECONDITIONS
     BSLS_ASSERT_OPT(handleOut && "'handleOut' must not be null");
 
-    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
     BALL_LOG_TRACE << "'getHandle' callback invoked "
                    << "[requestedHandleParameters: "
                    << requestedHandleParameters << ", status: " << status
@@ -130,7 +130,7 @@ static void dummyHandleConfiguredCallback(
     BSLS_ASSERT_OPT(rc);
 
     if (handle) {
-        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY)
         BALL_LOG_TRACE << "handle with client " << handle->client()
                        << ": configured handle "
                        << "[ handle parameters: " << handle->handleParameters()
