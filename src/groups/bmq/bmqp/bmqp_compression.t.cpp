@@ -1327,6 +1327,103 @@ static void test8_algorithmMismatch()
     BMQTST_ASSERT_NE(rc, 0);
 }
 
+static void test9_zstdSmallOutputBuffers()
+// ------------------------------------------------------------------------
+// ZSTD SMALL OUTPUT BUFFERS
+//
+// Concerns:
+//   - Zstandard decompression must drain data buffered after all input bytes
+//     have been consumed.
+//   - Compression and decompression must work with very small blob buffers.
+//
+// Plan:
+//   - Compress a repeated payload with a 1024-byte output buffer.
+//   - Decompress it with 16-byte and 1-byte output buffers.
+//   - Compress with a 16-byte output buffer and decompress with a 1024-byte
+//     output buffer.
+//
+// Testing:
+//   Zstandard streaming with constrained output buffers
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ZSTD SMALL OUTPUT BUFFERS");
+    bmqu::MemOutStream             error(bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory inputFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory largeFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory sixteenByteFactory(
+        16,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory oneByteFactory(
+        1,
+        bmqtst::TestHelperUtil::allocator());
+    const bsl::string payload(5000, 'z', bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob input(&inputFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&input,
+                            payload.data(),
+                            static_cast<int>(payload.size()));
+
+    bdlbb::Blob compressedLarge(&largeFactory,
+                                bmqtst::TestHelperUtil::allocator());
+    int         rc = bmqp::Compression::compress(
+        &compressedLarge,
+        &largeFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        input,
+        &error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob decompressedSixteen(&sixteenByteFactory,
+                                    bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedSixteen,
+                                       &sixteenByteFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedLarge,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedSixteen, input), 0);
+
+    bdlbb::Blob decompressedOne(&oneByteFactory,
+                                bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedOne,
+                                       &oneByteFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedLarge,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedOne, input), 0);
+
+    bdlbb::Blob compressedSixteen(&sixteenByteFactory,
+                                  bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::compress(&compressedSixteen,
+                                     &sixteenByteFactory,
+                                     bmqt::CompressionAlgorithmType::e_ZSTD,
+                                     input,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob decompressedLarge(&largeFactory,
+                                  bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedLarge,
+                                       &largeFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedSixteen,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedLarge, input), 0);
+}
+
 // ============================================================================
 //                              PERFORMANCE TESTS
 // ----------------------------------------------------------------------------
@@ -1693,6 +1790,7 @@ int main(int argc, char* argv[])
     case 6: test6_zstdLargePayload(); break;
     case 7: test7_zstdCorruptInput(); break;
     case 8: test8_algorithmMismatch(); break;
+    case 9: test9_zstdSmallOutputBuffers(); break;
     case -1:
         BMQTST_BENCHMARK_WITH_ARGS(
             testN1_performanceCompressionDecompressionDefault,

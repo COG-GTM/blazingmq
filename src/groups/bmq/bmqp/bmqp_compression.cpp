@@ -770,6 +770,45 @@ int Compression_Impl::decompressZstd(bdlbb::Blob*              output,
         }
     }
 
+    // Drain decoded data buffered by Zstandard after all input bytes have
+    // been consumed, including when the final input call filled the output
+    // buffer before completing the frame.
+    if (inputBytes > 0) {
+        ZSTD_inBuffer emptyInput = {0, 0, 0};
+        while (lastResult != 0) {
+            Zstd::prepareOutput(output, factory, &outBuffer, &outSize);
+            const size_t   previousResult  = lastResult;
+            const size_t   previousOutSize = outSize;
+            ZSTD_outBuffer out             = {outBuffer.data(),
+                                              static_cast<size_t>(outBuffer.size()),
+                                              outSize};
+            lastResult = ZSTD_decompressStream(stream, &out, &emptyInput);
+            outSize    = out.pos;
+            if (ZSTD_isError(lastResult)) {
+                Zstd::setError(errorStream,
+                               "Error processing zstd decompression stream",
+                               rc_STREAM_PROCESS_FAILURE,
+                               ZSTD_getErrorName(lastResult));
+                ZSTD_freeDStream(stream);
+                return rc_STREAM_PROCESS_FAILURE;  // RETURN
+            }
+
+            if (maxOutputSize != 0 &&
+                static_cast<bsls::Types::Uint64>(output->length()) + outSize >
+                    maxOutputSize) {
+                Zstd::setError(errorStream,
+                               "Decompressed output exceeds maximum size",
+                               rc_MAX_SIZE_EXCEEDED);
+                ZSTD_freeDStream(stream);
+                return rc_MAX_SIZE_EXCEEDED;  // RETURN
+            }
+
+            if (outSize == previousOutSize && lastResult == previousResult) {
+                break;  // BREAK
+            }
+        }
+    }
+
     if (inputBytes == 0 || lastResult != 0) {
         Zstd::setError(errorStream,
                        "Error finishing zstd decompression stream",
