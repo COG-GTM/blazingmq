@@ -77,9 +77,24 @@ fetch_git() {
     git clone --depth 1 --branch "${ref}" "https://github.com/${org}/${repo}.git" "srcs/${repo}"
 }
 
+googletest_ref() {
+    # GoogleTest's supported language standard determines the compatible release.
+    case $CXX_STANDARD in
+    cpp03)
+        echo "v1.8.x"
+        ;;
+    cpp11 | cpp14)
+        echo "v1.12.1"
+        ;;
+    cpp17 | cpp20 | cpp23)
+        echo "v1.18.0"
+        ;;
+    esac
+}
+
 fetch_deps() {
     fetch_git bloomberg ntf-core 2.6.12
-    fetch_git google googletest v1.8.x
+    fetch_git google googletest "$(googletest_ref)"
     fetch_git bloomberg bde-tools 4.39.0.0
     fetch_git bloomberg bde 4.39.0.0
 }
