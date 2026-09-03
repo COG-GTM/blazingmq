@@ -57,7 +57,6 @@ if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?Clang" )
     add_compile_options(
             "-Wno-atomic-implicit-seq-cst"
             "-Wno-c++98-compat-pedantic"
-            "-Wno-deprecated"
             "-Wno-disabled-macro-expansion"
             "-Wno-extra-semi-stmt"
             "-Wno-zero-as-null-pointer-constant"
