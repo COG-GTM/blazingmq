@@ -219,7 +219,7 @@ void RecoveryManager::setExpectedDataChunkRange(
             << "; beginSeqNum = " << mqbs::printPSN(receiveDataCtx.d_beginPSN)
             << "; endSeqNum = " << mqbs::printPSN(receiveDataCtx.d_endPSN)
             << "; currSeqNum = " << mqbs::printPSN(receiveDataCtx.d_currPSN)
-            << ".  Please review Partition FSM logic." << BMQTSK_ALARMLOG_END
+            << ".  Please review Partition FSM logic." << BMQTSK_ALARMLOG_END;
     }
 
     receiveDataCtx.d_recoveryDataSource_p = source;
@@ -331,13 +331,11 @@ int RecoveryManager::processSendDataChunks(
             << partitionId << "]: "
             << "While sending data chunks, failed to load file descriptors, "
                "rc: "
-            << rc
-            << BMQTSK_ALARMLOG_END
+            << rc << BMQTSK_ALARMLOG_END;
 
-        // Failure to access our own storage files is non-transient,
-        // will terminate
-            mqbu::ExitUtil::terminate(
-                mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        // Failure to access our own storage files is non-transient, will
+        // terminate
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 
     bsl::shared_ptr<bsls::AtomicInt> journalChunkDeleterCounter =
@@ -372,13 +370,11 @@ int RecoveryManager::processSendDataChunks(
             << partitionId << "]: "
             << "While sending data chunks, failed to reset journal iterator, "
                "rc: "
-            << rc
-            << BMQTSK_ALARMLOG_END
+            << rc << BMQTSK_ALARMLOG_END;
 
-        // Failure to access our own storage files is non-transient,
-        // will terminate
-            mqbu::ExitUtil::terminate(
-                mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        // Failure to access our own storage files is non-transient, will
+        // terminate
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 
     // Make initial 'journalIt.nextRecord()' call
@@ -389,13 +385,11 @@ int RecoveryManager::processSendDataChunks(
             << partitionId << "]: "
             << "While sending data chunks, failed to advance journal "
                "iterator,  rc : "
-            << rc
-            << BMQTSK_ALARMLOG_END
+            << rc << BMQTSK_ALARMLOG_END;
 
-        // Failure to access our own storage files is non-transient,
-        // will terminate
-            mqbu::ExitUtil::terminate(
-                mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        // Failure to access our own storage files is non-transient, will
+        // terminate
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 
     bmqp_ctrlmsg::PartitionSequenceNumber currentSeqNum;
@@ -409,12 +403,9 @@ int RecoveryManager::processSendDataChunks(
             << "While sending data chunks, failed to bootstrap the first "
             << "PSN to send, rc : " << rc
             << ".  There is likely data gap between self and "
-            << destination->nodeDescription() << "."
-            << BMQTSK_ALARMLOG_END
+            << destination->nodeDescription() << "." << BMQTSK_ALARMLOG_END;
 
-                       return rc *
-                       10 +
-                   rc_INVALID_SEQUENCE_NUMBER;  // RETURN
+        return rc * 10 + rc_INVALID_SEQUENCE_NUMBER;  // RETURN
     }
 
     BALL_LOG_INFO << d_clusterData.identity().description() << " Partition ["
@@ -504,11 +495,10 @@ int RecoveryManager::processSendDataChunks(
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: "
                 << "While sending data chunks, failed to pack message, rc: "
-                << builderRc << "."
-                << BMQTSK_ALARMLOG_END
+                << builderRc << "." << BMQTSK_ALARMLOG_END;
 
-                       return rc_BUILDER_FAILURE +
-                       10 * static_cast<int>(builderRc);  // RETURN
+            return rc_BUILDER_FAILURE +
+                   10 * static_cast<int>(builderRc);  // RETURN
         }
 
         if (d_clusterConfig.partitionConfig()
@@ -545,15 +535,13 @@ int RecoveryManager::processSendDataChunks(
                     << partitionId << "]: "
                     << "While sending data chunks, failed to increment "
                        "PSN, rc: "
-                    << rc << "."
-                    << BMQTSK_ALARMLOG_END
+                    << rc << "." << BMQTSK_ALARMLOG_END;
 
-                // Failure to access our own storage files is
-                // non-transient, will terminate.  If we are able to
-                // find a valid PSN in our journal, we must be able
-                // to call increment.
-                    mqbu::ExitUtil::terminate(
-                        mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+                // Failure to access our own storage files is non-transient,
+                // will terminate.  If we are able to find a valid PSN
+                // in our journal, we must be able to call increment.
+                mqbu::ExitUtil::terminate(
+                    mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
             }
         }
     }
@@ -568,8 +556,8 @@ int RecoveryManager::processSendDataChunks(
             << "of last record sent: " << mqbs::printPSN(currentSeqNum)
             << ", was supposed to send up to: " << mqbs::printPSN(endSeqNum)
             << ". Peer: " << destination->nodeDescription()
-            << ".  Please review Partition FSM logic."
-            << BMQTSK_ALARMLOG_END return rc_INCOMPLETE_REPLAY;  // RETURN
+            << ".  Please review Partition FSM logic." << BMQTSK_ALARMLOG_END;
+        return rc_INCOMPLETE_REPLAY;  // RETURN
     }
 
     if (0 < builder.messageCount()) {
@@ -637,8 +625,8 @@ int RecoveryManager::processReceiveDataChunks(
             << "]: " << "Received partition-sync event from node "
             << source->nodeDescription()
             << ", but self is not expecting data chunks. "
-            << "Ignoring this event."
-            << BMQTSK_ALARMLOG_END return rc_UNEXPECTED_DATA;  // RETURN
+            << "Ignoring this event." << BMQTSK_ALARMLOG_END;
+        return rc_UNEXPECTED_DATA;  // RETURN
     }
 
     BSLS_ASSERT_SAFE(receiveDataCtx.d_recoveryDataSource_p);
@@ -650,8 +638,8 @@ int RecoveryManager::processReceiveDataChunks(
             << source->nodeDescription()
             << ", which is not identified as recovery peer node "
             << receiveDataCtx.d_recoveryDataSource_p->nodeDescription()
-            << ". Ignoring this event."
-            << BMQTSK_ALARMLOG_END return rc_INVALID_RECOVERY_PEER;  // RETURN
+            << ". Ignoring this event." << BMQTSK_ALARMLOG_END;
+        return rc_INVALID_RECOVERY_PEER;  // RETURN
     }
 
     if (fs->isOpen()) {
@@ -678,8 +666,8 @@ int RecoveryManager::processReceiveDataChunks(
                 << mqbs::printPSN(receiveDataCtx.d_currPSN)
                 << ", larger than self's expected ending PSN of "
                 << "data chunks: " << mqbs::printPSN(receiveDataCtx.d_endPSN)
-                << "."
-                << BMQTSK_ALARMLOG_END return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
+                << "." << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
         }
 
         return rc_SUCCESS;  // RETURN
@@ -725,7 +713,8 @@ int RecoveryManager::processReceiveDataChunks(
                 << mqbs::printPSN(receiveDataCtx.d_endPSN)
                 << ". Record's journal offset (in words): "
                 << header.journalOffsetWords() << ". Ignoring entire event."
-                << BMQTSK_ALARMLOG_END return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
         }
 
         if (recordPSN > receiveDataCtx.d_endPSN) {
@@ -739,7 +728,8 @@ int RecoveryManager::processReceiveDataChunks(
                 << "data chunks: " << mqbs::printPSN(receiveDataCtx.d_endPSN)
                 << ". Record's journal offset (in words): "
                 << header.journalOffsetWords() << ". Ignoring entire event."
-                << BMQTSK_ALARMLOG_END return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_RECORD_SEQ_NUM;  // RETURN
         }
 
         // Local refs for convenience.
@@ -767,8 +757,8 @@ int RecoveryManager::processReceiveDataChunks(
                 << ", self journal offset: " << journalPos << ", PSN: "
                 << mqbs::printPSN(recHeader->primaryLeaseId(),
                                   recHeader->sequenceNumber())
-                << ". Ignoring this message."
-                << BMQTSK_ALARMLOG_END return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
+                << ". Ignoring this message." << BMQTSK_ALARMLOG_END;
+            return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
         }
 
         if (bmqp::StorageMessageType::e_DATA == header.messageType()) {
@@ -1361,7 +1351,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << partitionId << "]: " << "Failed to truncate journal file ["
                 << recoveryCtx.d_recoveryFileSet.journalFile()
                 << "], rc: " << rc << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1382,7 +1373,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << partitionId << "]: " << "Failed to flush journal file ["
                 << recoveryCtx.d_recoveryFileSet.journalFile()
                 << "], rc: " << rc << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1399,9 +1391,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to close journal file ["
                 << recoveryCtx.d_recoveryFileSet.journalFile()
-                << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc * 10 +
-                       rc_JOURNAL_FD_CLOSE_FAILURE;  // RETURN
+                << "], rc: " << rc << BMQTSK_ALARMLOG_END;
+            return rc * 10 + rc_JOURNAL_FD_CLOSE_FAILURE;  // RETURN
         }
 
         BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1421,8 +1412,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to truncate data file ["
                 << recoveryCtx.d_recoveryFileSet.dataFile() << "], rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1441,8 +1432,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to flush data file ["
                 << recoveryCtx.d_recoveryFileSet.dataFile() << "], rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1459,8 +1450,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to close data file ["
                 << recoveryCtx.d_recoveryFileSet.dataFile() << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc * 10 +
-                       rc_DATA_FD_CLOSE_FAILURE;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc * 10 + rc_DATA_FD_CLOSE_FAILURE;  // RETURN
         }
 
         BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1480,8 +1471,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to truncate QList file ["
                 << recoveryCtx.d_recoveryFileSet.qlistFile() << "], rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1500,8 +1491,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to flush QList file ["
                 << recoveryCtx.d_recoveryFileSet.qlistFile() << "], rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
         else {
             BALL_LOG_INFO << d_clusterData.identity().description()
@@ -1518,8 +1509,8 @@ int RecoveryManager::closeRecoveryFileSet(int partitionId)
                 << d_clusterData.identity().description() << " Partition ["
                 << partitionId << "]: " << "Failed to close QList file ["
                 << recoveryCtx.d_recoveryFileSet.qlistFile() << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc * 10 +
-                       rc_QLIST_FD_CLOSE_FAILURE;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc * 10 + rc_QLIST_FD_CLOSE_FAILURE;  // RETURN
         }
 
         BALL_LOG_INFO << d_clusterData.identity().description()

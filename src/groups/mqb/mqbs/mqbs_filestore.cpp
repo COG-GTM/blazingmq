@@ -1354,7 +1354,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                     << "was seen earlier during first pass backward iteration."
                     << " Record offset: " << journalIt.recordOffset()
                     << ", record index: " << journalIt.recordIndex()
-                    << BMQTSK_ALARMLOG_END return rc_DUPLICATE_QUEUE_KEY;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return rc_DUPLICATE_QUEUE_KEY;  // RETURN
             }
 
             // AppKey specified in the QueueOp.ADDITION record is supposed to
@@ -1426,7 +1427,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << "reverse iteration. Record offset: "
                         << journalIt.recordOffset()
                         << ", record index: " << journalIt.recordIndex()
-                        << BMQTSK_ALARMLOG_END return rc_DUPLICATE_QUEUE_KEY;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return rc_DUPLICATE_QUEUE_KEY;  // RETURN
                 }
             }
 
@@ -1445,7 +1447,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                 << "] during first pass backward iteration. "
                 << "Record offset: " << journalIt.recordOffset()
                 << ", record index: " << journalIt.recordIndex()
-                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END;
+            continue;  // CONTINUE
         }
     }
 
@@ -1687,9 +1690,9 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                     << mqbs::printPSN(primaryLeaseId, sequenceNum)
                     << ". Record offset: " << jit->recordOffset()
                     << ", record index: " << jit->recordIndex()
-                    << BMQTSK_ALARMLOG_END
+                    << BMQTSK_ALARMLOG_END;
 
-                    return rc_INVALID_PRIMARY_LEASE_ID;  // RETURN
+                return rc_INVALID_PRIMARY_LEASE_ID;  // RETURN
             }
 
             if (rec.primaryLeaseId() == primaryLeaseId) {
@@ -1705,7 +1708,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << mqbs::printPSN(primaryLeaseId, sequenceNum)
                         << ". Record offset: " << jit->recordOffset()
                         << ", record index: " << jit->recordIndex()
-                        << BMQTSK_ALARMLOG_END return rc_INVALID_SEQ_NUMBER;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return rc_INVALID_SEQ_NUMBER;  // RETURN
                 }
             }
 
@@ -1806,8 +1810,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                             << "], offset: " << jit->recordOffset()
                             << ", index: " << jit->recordIndex()
                             << ", for which a QueueOp.CREATION record was not "
-                            << "seen in first pass."
-                            << BMQTSK_ALARMLOG_END continue;  // CONTINUE
+                            << "seen in first pass." << BMQTSK_ALARMLOG_END;
+                        continue;  // CONTINUE
                     }
                 }
 
@@ -2021,8 +2025,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << ", index: " << jit->recordIndex()
                         << ", for which a "
                         << "QueueOp.CREATION record was not seen in first "
-                        << "pass."
-                        << BMQTSK_ALARMLOG_END return rc_INVALID_QUEUE_KEY;  // RETURN
+                        << "pass." << BMQTSK_ALARMLOG_END;
+                    return rc_INVALID_QUEUE_KEY;  // RETURN
                 }
 
                 BSLS_ASSERT_SAFE(iter != queueKeyInfoMap->end());
@@ -2085,7 +2089,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                                 << ", with QueueUri mismatch. Expected URI ["
                                 << qinfo.canonicalQueueUri()
                                 << "], recovered URI [" << uri << "]."
-                                << BMQTSK_ALARMLOG_END return rc_QUEUE_URI_MISMATCH;  // RETURN
+                                << BMQTSK_ALARMLOG_END;
+                            return rc_QUEUE_URI_MISMATCH;  // RETURN
                         }
                     }
                     else {
@@ -2110,7 +2115,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                                 << ", with QueueUri mismatch. Expected URI ["
                                 << qinfo.canonicalQueueUri()
                                 << "], recovered URI [" << uri << "]."
-                                << BMQTSK_ALARMLOG_END return rc_QUEUE_URI_MISMATCH;  // RETURN
+                                << BMQTSK_ALARMLOG_END;
+                            return rc_QUEUE_URI_MISMATCH;  // RETURN
                         }
                     }
 
@@ -2159,8 +2165,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                                         << "Recovered appId/appKey ["
                                         << cit->first << ", " << cit->second
                                         << "] is not found in the cluster "
-                                        << "state."
-                                        << BMQTSK_ALARMLOG_END return rc_APP_ID_KEY_MISMATCH;  // RETURN
+                                        << "state." << BMQTSK_ALARMLOG_END;
+                                    return rc_APP_ID_KEY_MISMATCH;  // RETURN
                                 }
                                 else if (qinfoAppCit->second != cit->first) {
                                     BMQTSK_ALARMLOG_ALARM("RECOVERY")
@@ -2178,7 +2184,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                                         << "] in the cluster state, recovered "
                                         << "appId/appKey [" << cit->first
                                         << ", " << cit->second << "]."
-                                        << BMQTSK_ALARMLOG_END return rc_APP_ID_KEY_MISMATCH;  // RETURN
+                                        << BMQTSK_ALARMLOG_END;
+                                    return rc_APP_ID_KEY_MISMATCH;  // RETURN
                                 }
                             }
                             else {
@@ -2286,7 +2293,7 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << "], offset: " << jit->recordOffset()
                         << ", index: " << jit->recordIndex()
                         << ", for which a QueueOp.CREATION record was not "
-                        << "seen in first pass." << BMQTSK_ALARMLOG_END
+                        << "seen in first pass." << BMQTSK_ALARMLOG_END;
                 }
 
                 // Ignore the error and continue tracking the GUID as deleted.
@@ -2367,8 +2374,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << ", index: " << jit->recordIndex()
                         << ", for which a "
                         << "QueueOp.CREATION record was not seen in first "
-                        << "pass."
-                        << BMQTSK_ALARMLOG_END continue;  // CONTINUE
+                        << "pass." << BMQTSK_ALARMLOG_END;
+                    continue;  // CONTINUE
                 }
             }
 
@@ -2588,8 +2595,8 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                         << ", index: " << jit->recordIndex()
                         << ", for which a "
                         << "QueueOp.CREATION record was not seen in first "
-                        << "pass."
-                        << BMQTSK_ALARMLOG_END return rc_INVALID_QUEUE_KEY;  // RETURN
+                        << "pass." << BMQTSK_ALARMLOG_END;
+                    return rc_INVALID_QUEUE_KEY;  // RETURN
                 }
             }
 
@@ -2614,7 +2621,7 @@ int FileStore::recoverMessages(QueueKeyInfoMap*     queueKeyInfoMap,
                     << ". CRC32-C in JOURNAL record: " << rec.crc32c()
                     << ". CRC32-C of payload in DATA file: " << checksum
                     << ". Payload offset in DATA file: " << appDataOffset
-                    << BMQTSK_ALARMLOG_END
+                    << BMQTSK_ALARMLOG_END;
             }
 
             DataStoreRecordKey key(primaryLeaseId, sequenceNum);
@@ -3222,10 +3229,10 @@ int FileStore::rolloverIfNeeded(FileType::Enum           fileType,
 
         activeFileSet->d_fileSetRolloverPolicyAlarm = true;
 
-        BMQTSK_ALARMLOG_PANIC("PARTITION_READONLY") << out.str()
-                                                    << BMQTSK_ALARMLOG_END
+        BMQTSK_ALARMLOG_PANIC("PARTITION_READONLY")
+            << out.str() << BMQTSK_ALARMLOG_END;
 
-            return rc;  // RETURN
+        return rc;  // RETURN
     }
 
     BALL_LOG_INFO << partitionDesc() << "Rollover criteria met. Initiating "
@@ -3323,7 +3330,8 @@ void FileStore::truncate(FileSet* fileSet)
             << "[FILE_IO] " << partitionDesc()
             << "Failed to truncate data file [" << fileSet->d_data.d_fileName
             << "], rc: " << rc << ", error: " << errorDesc.str()
-            << BMQTSK_ALARMLOG_END errorDesc.reset();
+            << BMQTSK_ALARMLOG_END;
+        errorDesc.reset();
     }
 
     rc = FileSystemUtil::truncate(&fileSet->d_journal.d_file,
@@ -3333,8 +3341,8 @@ void FileStore::truncate(FileSet* fileSet)
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << partitionDesc() << "Failed to truncate journal ["
             << fileSet->d_journal.d_fileName << "], rc: " << rc
-            << ", error: " << errorDesc.str()
-            << BMQTSK_ALARMLOG_END errorDesc.reset();
+            << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+        errorDesc.reset();
     }
 
     if (d_qListAware) {
@@ -3345,8 +3353,8 @@ void FileStore::truncate(FileSet* fileSet)
             BMQTSK_ALARMLOG_ALARM("FILE_IO")
                 << partitionDesc() << "Failed to truncate qlist file ["
                 << fileSet->d_qlist.d_fileName << "], rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
     }
 }
@@ -3382,8 +3390,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
             BMQTSK_ALARMLOG_ALARM("FILE_IO")
                 << partitionDesc() << "Failed to flush data file ["
                 << fileSetRef.d_data.d_fileName
-                << "], error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << "], error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
 
         rc = FileSystemUtil::flush(fileSetRef.d_journal.d_file.mapping(),
@@ -3393,8 +3401,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
             BMQTSK_ALARMLOG_ALARM("FILE_IO")
                 << partitionDesc() << "Failed to sync journal file ["
                 << fileSetRef.d_journal.d_fileName
-                << "], error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END errorDesc.reset();
+                << "], error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+            errorDesc.reset();
         }
 
         if (d_qListAware) {
@@ -3405,8 +3413,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
                 BMQTSK_ALARMLOG_ALARM("FILE_IO")
                     << partitionDesc() << "Failed to sync qlist file ["
                     << fileSetRef.d_qlist.d_fileName
-                    << "], error: " << errorDesc.str()
-                    << BMQTSK_ALARMLOG_END errorDesc.reset();
+                    << "], error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+                errorDesc.reset();
             }
         }
 
@@ -3418,8 +3426,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << partitionDesc() << "Failed to close data file ["
             << fileSetRef.d_data.d_fileName << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc * 10 +
-                   rc_DATA_CLOSE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc * 10 + rc_DATA_CLOSE_FAILURE;  // RETURN
     }
 
     rc = FileSystemUtil::close(&fileSetRef.d_journal.d_file);
@@ -3427,8 +3435,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << partitionDesc() << "Failed to close journal file ["
             << fileSetRef.d_journal.d_fileName << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc * 10 +
-                   rc_JOURNAL_CLOSE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc * 10 + rc_JOURNAL_CLOSE_FAILURE;  // RETURN
     }
 
     if (d_qListAware) {
@@ -3437,8 +3445,8 @@ int FileStore::close(FileSet& fileSetRef, bool flush)
             BMQTSK_ALARMLOG_ALARM("FILE_IO")
                 << partitionDesc() << "Failed to close qlist file ["
                 << fileSetRef.d_qlist.d_fileName << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc * 10 +
-                       rc_QLIST_CLOSE_FAILURE;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc * 10 + rc_QLIST_CLOSE_FAILURE;  // RETURN
         }
     }
 
@@ -3458,7 +3466,8 @@ int FileStore::archive(FileSet* fileSet)
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << partitionDesc() << "Failed to archive file set to location ["
             << d_config.archiveLocation() << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc_FILE_MOVE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc_FILE_MOVE_FAILURE;  // RETURN
     }
 
     BALL_LOG_INFO << partitionDesc() << "Archived file set to location ["
@@ -3633,8 +3642,8 @@ int FileStore::writeQueueOpRecord(DataStoreRecordHandle*  handle,
         BMQTSK_ALARMLOG_ALARM("REPLICATION")
             << partitionDesc()
             << "Not the primary. Not writing & replicating queueOp record with"
-            << " queueKey [" << queueKey << "]"
-            << BMQTSK_ALARMLOG_END return rc_NOT_PRIMARY;  // RETURN
+            << " queueKey [" << queueKey << "]" << BMQTSK_ALARMLOG_END;
+        return rc_NOT_PRIMARY;  // RETURN
     }
 
     if (!activeFileSet->d_journalFileAvailable) {
@@ -4021,7 +4030,7 @@ void FileStore::alarmHighwatermarkIfNeededDispatched()
                                        d_storages);
 
             BMQTSK_ALARMLOG_ALARM("PARTITION_AVAILABLESPACE_SOFTLIMIT")
-                << out.str() << BMQTSK_ALARMLOG_END
+                << out.str() << BMQTSK_ALARMLOG_END;
         }
     }
 }
@@ -4112,14 +4121,10 @@ int FileStore::issueSyncPointInternal(SyncPointType::Enum            type,
     if (0 != rc) {
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << partitionDesc() << "Failed to write sync point: " << syncPoint
-            << ", rc: " << rc
-            << BMQTSK_ALARMLOG_END
+            << ", rc: " << rc << BMQTSK_ALARMLOG_END;
 
-                       // Don't broadcast sync point because we failed to apply
-                       // it to self
-                       return 10 *
-                       rc +
-                   rc_WRITE_FAILURE;  // RETURN
+        // Don't broadcast sync point because we failed to apply it to self
+        return 10 * rc + rc_WRITE_FAILURE;  // RETURN
     }
 
     BALL_LOG_INFO << partitionDesc() << "Issued a sync point: " << syncPoint;
@@ -4307,8 +4312,8 @@ int FileStore::writeMessageRecord(const bmqp::StorageHeader& header,
             << "Primary's journal offset: " << primaryJournalOffset
             << ", self journal offset: " << journalPos << ", PSN "
             << printPSN(recHeader.primaryLeaseId(), recHeader.sequenceNumber())
-            << "). Ignoring this message."
-            << BMQTSK_ALARMLOG_END return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
+            << "). Ignoring this message." << BMQTSK_ALARMLOG_END;
+        return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
     }
 
     int               headerSize  = 0;
@@ -4443,8 +4448,8 @@ int FileStore::writeQueueCreationRecord(
             << "Primary's journal offset: " << primaryJournalOffset
             << ", self journal offset: " << journalPos << ", PSN "
             << printPSN(recHeader.primaryLeaseId(), recHeader.sequenceNumber())
-            << "). Ignoring this message."
-            << BMQTSK_ALARMLOG_END return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
+            << "). Ignoring this message." << BMQTSK_ALARMLOG_END;
+        return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
     }
 
     bmqt::Uri         quri;
@@ -4580,10 +4585,9 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
             << ", PSN: "
             << printPSN(recHeader.primaryLeaseId(), recHeader.sequenceNumber())
             << ". Ignoring this message.\n"
-            << os.str()
-            << BMQTSK_ALARMLOG_END
+            << os.str() << BMQTSK_ALARMLOG_END;
 
-            return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
+        return rc_JOURNAL_OUT_OF_SYNC;  // RETURN
     }
 
     // Append record to journal.  Note that here, we only assert on journal
@@ -4734,8 +4738,8 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                 << journalOpType << ", PSN: "
                 << printPSN(recHeader.primaryLeaseId(),
                             recHeader.sequenceNumber())
-                << ". Ignoring this message."
-                << BMQTSK_ALARMLOG_END return rc_INVALID_CONTENT;  // RETURN
+                << ". Ignoring this message." << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_CONTENT;  // RETURN
         }
 
         if (JournalOpType::e_SYNCPOINT == journalOpType) {
@@ -4749,8 +4753,8 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                     << jOpRec->syncPointType() << ", PSN: "
                     << printPSN(recHeader.primaryLeaseId(),
                                 recHeader.sequenceNumber())
-                    << ". Ignoring this message."
-                    << BMQTSK_ALARMLOG_END return rc_INVALID_CONTENT;  // RETURN
+                    << ". Ignoring this message." << BMQTSK_ALARMLOG_END;
+                return rc_INVALID_CONTENT;  // RETURN
             }
 
             // Note that 'jOpRec->primaryLeaseId()' may be smaller than
@@ -4788,9 +4792,9 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                     << syncPoint << ", offset maintained by self (DWORDS): "
                     << (activeFileSet->d_data.d_filePosition /
                         bmqp::Protocol::k_DWORD_SIZE)
-                    << BMQTSK_ALARMLOG_END
+                    << BMQTSK_ALARMLOG_END;
 
-                    return rc_DATA_FILE_OUT_OF_SYNC;  // RETURN
+                return rc_DATA_FILE_OUT_OF_SYNC;  // RETURN
             }
 
             if (d_qListAware) {
@@ -4807,9 +4811,9 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                         << syncPoint << ", offset maintained by self (WORDS): "
                         << (activeFileSet->d_qlist.d_filePosition /
                             bmqp::Protocol::k_WORD_SIZE)
-                        << BMQTSK_ALARMLOG_END
+                        << BMQTSK_ALARMLOG_END;
 
-                        return rc_QLIST_FILE_OUT_OF_SYNC;  // RETURN
+                    return rc_QLIST_FILE_OUT_OF_SYNC;  // RETURN
                 }
             }
 
@@ -4831,8 +4835,8 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                         << "Failed to rollover partition as notified by the "
                         << "primary, rc: " << rc
                         << ", sync point: " << syncPoint
-                        << BMQTSK_ALARMLOG_END return 10 * rc +
-                               rc_ROLLOVER_FAILURE;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return 10 * rc + rc_ROLLOVER_FAILURE;  // RETURN
                 }
             }
             else {
@@ -4880,8 +4884,8 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                 << queueOpType << ", PSN: "
                 << printPSN(recHeader.primaryLeaseId(),
                             recHeader.sequenceNumber())
-                << ". Ignoring this message."
-                << BMQTSK_ALARMLOG_END return rc_INVALID_CONTENT;  // RETURN
+                << ". Ignoring this message." << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_CONTENT;  // RETURN
         }
 
         BALL_LOG_INFO << partitionDesc() << "Received QueueOpRecord of type ["
@@ -4924,8 +4928,8 @@ int FileStore::writeJournalRecord(const bmqp::StorageHeader& header,
                         << partitionDesc()
                         << "Received QueueOpRecord.DELETION for queue ["
                         << rstorage->queueUri() << "] which has [" << numMsgs
-                        << "] outstanding messages."
-                        << BMQTSK_ALARMLOG_END return rc_QUEUE_DELETION_ERROR;  // RETURN
+                        << "] outstanding messages." << BMQTSK_ALARMLOG_END;
+                    return rc_QUEUE_DELETION_ERROR;  // RETURN
                 }
 
                 const ReplicatedStorage::RecordHandles& recHandles =
@@ -5025,7 +5029,8 @@ void FileStore::replicateRecord(bmqp::StorageMessageType::Enum type,
             << ". Current storage "
             << "event builder size: " << d_storageEventBuilder.eventSize()
             << ", message count: " << d_storageEventBuilder.messageCount()
-            << "." << BMQTSK_ALARMLOG_END return;  // RETURN
+            << "." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Flush if the builder is 'full' or if immediate flush is requested.
@@ -5133,7 +5138,8 @@ void FileStore::replicateRecord(bmqp::StorageMessageType::Enum type,
             << ", message count: "
             << bmqu::PrintUtil::prettyNumber(
                    d_storageEventBuilder.messageCount())
-            << "." << BMQTSK_ALARMLOG_END return;  // RETURN
+            << "." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Flush if the builder is 'full'.
@@ -5180,7 +5186,8 @@ int FileStore::validateWritingRecord(const bmqt::MessageGUID& guid,
             << partitionDesc()
             << "Not the primary. Not writing & replicating record with guid "
             << guid << " and queueKey [" << queueKey << "]"
-            << BMQTSK_ALARMLOG_END return rc_NOT_PRIMARY;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc_NOT_PRIMARY;  // RETURN
     }
 
     return rc_SUCCESS;
@@ -5620,7 +5627,8 @@ int FileStore::writeMessageRecord(mqbi::StorageMessageAttributes* attributes,
             << partitionDesc()
             << "Not the primary. Not writing & replicating message with guid "
             << guid << " and queueKey [" << queueKey << "]"
-            << BMQTSK_ALARMLOG_END return rc_NOT_PRIMARY;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc_NOT_PRIMARY;  // RETURN
     }
 
     int optionsSize = 0;
@@ -5825,7 +5833,8 @@ int FileStore::writeQueueCreationRecord(DataStoreRecordHandle*  handle,
             << partitionDesc()
             << "Not the primary. Not writing & replicating QueueUriRecord for "
             << "uri: " << queueUri << " and queueKey [" << queueKey << "]"
-            << BMQTSK_ALARMLOG_END return rc_NOT_PRIMARY;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc_NOT_PRIMARY;  // RETURN
     }
 
     int          queueUriPadding     = 0;
@@ -6370,7 +6379,8 @@ void FileStore::processStorageEvent(const bsl::shared_ptr<bdlbb::Blob>& blob,
                 << source->nodeDescription() << " with"
                 << " different PartitionId: [" << pid << "] vs ["
                 << header.partitionId() << "]" << ". Ignoring storage event."
-                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END;
+            continue;  // CONTINUE
         }
 
         bmqu::BlobPosition                        recordPosition;
@@ -6403,7 +6413,8 @@ void FileStore::processStorageEvent(const bsl::shared_ptr<bdlbb::Blob>& blob,
                 << printPSN(d_writeHeadLeaseId, writeHeadSeqNum())
                 << " Record's journal offset (in words): "
                 << header.journalOffsetWords() << ". Ignoring entire event."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         if (d_writeHeadLeaseId == recHeader->primaryLeaseId()) {
@@ -6418,8 +6429,9 @@ void FileStore::processStorageEvent(const bsl::shared_ptr<bdlbb::Blob>& blob,
                                 recHeader->sequenceNumber())
                     << " Record's journal offset (in words): "
                     << header.journalOffsetWords() << ". Aborting broker."
-                    << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
-                           mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC);
+                    << BMQTSK_ALARMLOG_END;
+                mqbu::ExitUtil::terminate(
+                    mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC);
                 // EXIT
             }
         }
@@ -6481,7 +6493,7 @@ void FileStore::processStorageEvent(const bsl::shared_ptr<bdlbb::Blob>& blob,
                         << "the primary's active-status advisory was "
                         << "processed. New PSN: "
                         << printPSN(d_writeHeadLeaseId, writeHeadSeqNum())
-                        << "." << BMQTSK_ALARMLOG_END
+                        << "." << BMQTSK_ALARMLOG_END;
                 }
             }
         }
@@ -6494,8 +6506,8 @@ void FileStore::processStorageEvent(const bsl::shared_ptr<bdlbb::Blob>& blob,
                             recHeader->sequenceNumber())
                 << "), journal offset words: " << header.journalOffsetWords()
                 << ", rc: " << rc << ". Aborting broker."
-                << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
-                       mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC);
+                << BMQTSK_ALARMLOG_END;
+            mqbu::ExitUtil::terminate(mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC);
             // EXIT
         }
     } while (1 == iter.next());
@@ -6548,8 +6560,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                 << partitionDesc() << "Received an unexpected storage message "
                 << "type: " << header.messageType()
                 << " at journal offset (in words): "
-                << header.journalOffsetWords()
-                << BMQTSK_ALARMLOG_END return rc_INVALID_MSG_TYPE;  // RETURN
+                << header.journalOffsetWords() << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_MSG_TYPE;  // RETURN
         }
 
         bmqu::BlobPosition recordPosition;
@@ -6560,7 +6572,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                 << "Failed to load record position for storage msg "
                 << header.messageType() << ", with journal offset (in words): "
                 << header.journalOffsetWords() << ", rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc_INVALID_PAYLOAD_OFFSET;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_PAYLOAD_OFFSET;  // RETURN
         }
 
         bmqu::BlobObjectProxy<mqbs::RecordHeader> recHeader(blob.get(),
@@ -6572,8 +6585,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                 << partitionDesc()
                 << "Failed to read RecordHeader for storage msg "
                 << header.messageType() << ", with journal offset (in words): "
-                << header.journalOffsetWords()
-                << BMQTSK_ALARMLOG_END return rc_INVALID_PAYLOAD_OFFSET;  // RETURN
+                << header.journalOffsetWords() << BMQTSK_ALARMLOG_END;
+            return rc_INVALID_PAYLOAD_OFFSET;  // RETURN
         }
 
         if (!hasValidLeaseIdSeqNum) {
@@ -6596,7 +6609,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                     << printPSN(d_writeHeadLeaseId, writeHeadSeqNum())
                     << ", with journal offset (words): "
                     << header.journalOffsetWords() << "."
-                    << BMQTSK_ALARMLOG_END return rc_INVALID_PRIMARY_LEASE_ID;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return rc_INVALID_PRIMARY_LEASE_ID;  // RETURN
             }
             else if (d_writeHeadLeaseId < recHeader->primaryLeaseId()) {
                 // LeaseId was bumped up.
@@ -6632,7 +6646,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                                     recHeader->sequenceNumber())
                         << ". Journal offset (words): "
                         << header.journalOffsetWords() << "."
-                        << BMQTSK_ALARMLOG_END return rc_INVALID_SEQ_NUM;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return rc_INVALID_SEQ_NUM;  // RETURN
                 }
 
                 incrementWriteHeadSeqNum();
@@ -6667,9 +6682,8 @@ int FileStore::processRecoveryEvent(const bsl::shared_ptr<bdlbb::Blob>& blob)
                             recHeader->sequenceNumber())
                 << ", with journal "
                 << "offset (words): " << header.journalOffsetWords()
-                << ", rc: " << rc
-                << BMQTSK_ALARMLOG_END return 10 * rc +
-                       rc_WRITE_FAILURE;  // RETURN
+                << ", rc: " << rc << BMQTSK_ALARMLOG_END;
+            return 10 * rc + rc_WRITE_FAILURE;  // RETURN
         }
     }
 
@@ -6869,7 +6883,8 @@ void FileStore::setActivePrimary(mqbnet::ClusterNode* primaryNode,
             << "Invalid primary leaseId specified: " << primaryLeaseId
             << ", current self leaseId: " << d_writeHeadLeaseId
             << ". Specified primaryNode: " << primaryNode->nodeDescription()
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Idempotent
@@ -6939,7 +6954,8 @@ void FileStore::setActivePrimary(mqbnet::ClusterNode* primaryNode,
         BMQTSK_ALARMLOG_ALARM("REPLICATION")
             << partitionDesc()
             << "New primary failed to issue sync point , rc: " << rc
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 }
 

@@ -352,13 +352,16 @@ Test::haveUndeliveredCb(bsls::TimeInterval*       alarmTime_p,
     return oldestMsgIt;
 }
 
-void Test::loggingCb(BSLA_MAYBE_UNUSED const bsl::string& id,
-                     BSLA_MAYBE_UNUSED const
-                         bslma::ManagedPtr<mqbi::StorageIterator>& oldestMsgIt)
-    const {BALL_LOG_SET_CATEGORY("MQBBLP.QUEUECONSUMPTIONMONITORTEST")
+void Test::loggingCb(
+    BSLA_MAYBE_UNUSED const bsl::string& id,
+    BSLA_MAYBE_UNUSED const bslma::ManagedPtr<mqbi::StorageIterator>&
+                            oldestMsgIt) const
+{
+    BALL_LOG_SET_CATEGORY("MQBBLP.QUEUECONSUMPTIONMONITORTEST")
 
-               BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK")
-           << "Test Alarm" << BMQTSK_ALARMLOG_END}
+    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK")
+        << "Test Alarm" << BMQTSK_ALARMLOG_END;
+}
 
 // ============================================================================
 //                                    TESTS

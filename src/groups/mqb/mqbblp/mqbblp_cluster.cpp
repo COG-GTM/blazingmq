@@ -780,10 +780,8 @@ void Cluster::onPutEvent(const mqbevt::PutEvent& event)
         out << description() << ": received an invalid PUT event from node "
             << source->nodeDescription() << "\n";
         putIt.dumpBlob(out);
-        BMQTSK_ALARMLOG_ALARM("CLUSTER")
-            << out.str()
-            << BMQTSK_ALARMLOG_END BSLS_ASSERT_SAFE(false &&
-                                                    "Invalid putMessage");
+        BMQTSK_ALARMLOG_ALARM("CLUSTER") << out.str() << BMQTSK_ALARMLOG_END;
+        BSLS_ASSERT_SAFE(false && "Invalid putMessage");
         return;  // RETURN
     }
 
@@ -1052,8 +1050,8 @@ void Cluster::onConfirmEvent(const mqbevt::ConfirmEvent& event)
         out << description() << ": received invalid CONFIRM event from node "
             << source->nodeDescription() << "\n";
         confIt.dumpBlob(out);
-        BMQTSK_ALARMLOG_ALARM("CLUSTER")
-            << out.str() << BMQTSK_ALARMLOG_END return;  // RETURN
+        BMQTSK_ALARMLOG_ALARM("CLUSTER") << out.str() << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
     bmqp_ctrlmsg::NodeStatus::Value status =
         d_clusterData.membership().selfNodeStatus();
@@ -1153,8 +1151,8 @@ void Cluster::onRejectEvent(const mqbevt::RejectEvent& event)
         out << description() << ": received invalid REJECT event from node "
             << source->nodeDescription() << "\n";
         rejectIt.dumpBlob(out);
-        BMQTSK_ALARMLOG_ALARM("CLUSTER")
-            << out.str() << BMQTSK_ALARMLOG_END return;  // RETURN
+        BMQTSK_ALARMLOG_ALARM("CLUSTER") << out.str() << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
     bmqp_ctrlmsg::NodeStatus::Value status =
         d_clusterData.membership().selfNodeStatus();
@@ -1718,14 +1716,12 @@ void Cluster::onRecoveryStatusDispatched(
                     << ") than the one notified by leader ("
                     << d_state.partition(pid).primaryLeaseId()
                     << "). Stopping the node as this node seems  to have more "
-                    << "advanced view of the storage."
-                    << BMQTSK_ALARMLOG_END
+                    << "advanced view of the storage." << BMQTSK_ALARMLOG_END;
 
-                       bmqex::SystemExecutor()
-                           .post(bdlf::BindUtil::bind(
-                               &Cluster::terminate,
-                               this,
-                               mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC));
+                bmqex::SystemExecutor().post(bdlf::BindUtil::bind(
+                    &Cluster::terminate,
+                    this,
+                    mqbu::ExitCode::e_STORAGE_OUT_OF_SYNC));
                 return;  // RETURN
             }
             // else: all good.
@@ -2482,7 +2478,7 @@ void Cluster::processControlMessage(
     case MsgChoice::SELECTION_ID_DISCONNECT_RESPONSE: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << description() << ": unexpected clusterMessage:" << message
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     case MsgChoice::SELECTION_ID_ADMIN_COMMAND: {
         // Assume this is a rerouted command, so just execute it on the
@@ -2507,9 +2503,9 @@ void Cluster::processControlMessage(
     default: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << description() << ": unexpected clusterMessage:" << message
-            << BMQTSK_ALARMLOG_END BSLS_ASSERT_SAFE(
-                   message.choice().selectionId() !=
-                   MsgChoice::SELECTION_ID_UNDEFINED);
+            << BMQTSK_ALARMLOG_END;
+        BSLS_ASSERT_SAFE(message.choice().selectionId() !=
+                         MsgChoice::SELECTION_ID_UNDEFINED);
         // We should never receive an 'UNDEFINED' message, but while
         // introducing new features, we may receive unknown messages.
     } break;  // BREAK
@@ -2690,7 +2686,7 @@ void Cluster::processClusterControlMessage(
     default: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << description() << ": unexpected clusterMessage:" << message
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     }
 }
@@ -2747,7 +2743,8 @@ void Cluster::processEvent(const bmqp::Event&   event,
             BMQTSK_ALARMLOG_ALARM("CLUSTER")
                 << description() << ": received a 'CONTROL' event from node "
                 << source->nodeDescription() << " in local cluster setup."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         bdlma::LocalSequentialAllocator<2048> localAllocator(d_allocator_p);
@@ -2760,7 +2757,8 @@ void Cluster::processEvent(const bmqp::Event&   event,
                 << " node " << source->nodeDescription() << ", rc: " << rc
                 << "\n"
                 << bmqu::BlobStartHexDumper(event.blob())
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         BALL_LOG_TRACE << description()
@@ -2820,7 +2818,8 @@ void Cluster::processEvent(const bmqp::Event&   event,
                 << description()
                 << ": received a 'CLUSTER_STATE' event from node "
                 << source->nodeDescription() << " in local cluster setup."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         sendToDispatcher<mqbevt::ClusterStateEvent>(event, source);
@@ -2859,8 +2858,8 @@ void Cluster::processEvent(const bmqp::Event&   event,
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << description() << ": Received bmqp event of type '"
             << event.type() << "' which is currently not handled."
-            << BMQTSK_ALARMLOG_END BSLS_ASSERT_SAFE(
-                   event.type() != bmqp::EventType::e_UNDEFINED);
+            << BMQTSK_ALARMLOG_END;
+        BSLS_ASSERT_SAFE(event.type() != bmqp::EventType::e_UNDEFINED);
         // We should never receive an 'UNDEFINED' event, but while
         // introducing new features, we may receive unknown event types.
     } break;  // BREAK
@@ -2991,7 +2990,7 @@ void Cluster::onNodeHighWatermark(mqbnet::ClusterNode* node)
 
     BMQTSK_ALARMLOG_ALARM("CLUSTER")
         << description() << ": Channel HighWatermark hit for node "
-        << node->nodeDescription() << BMQTSK_ALARMLOG_END
+        << node->nodeDescription() << BMQTSK_ALARMLOG_END;
 }
 
 void Cluster::onNodeLowWatermark(BSLA_MAYBE_UNUSED mqbnet::ClusterNode* node)
@@ -3094,7 +3093,7 @@ void Cluster::onFailoverThreshold()
        << " pending reopen-queue requests.\n";
     // Log only a summary in the alarm
     printClusterStateSummary(os, 0, 4);
-    BMQTSK_ALARMLOG_PANIC("CLUSTER") << os.str() << BMQTSK_ALARMLOG_END
+    BMQTSK_ALARMLOG_PANIC("CLUSTER") << os.str() << BMQTSK_ALARMLOG_END;
 }
 
 void Cluster::onProcessedAdminCommand(

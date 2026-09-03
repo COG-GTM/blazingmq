@@ -1355,7 +1355,7 @@ void ClusterProxy::onFailoverThreshold()
        << " pending reopen-queue requests.\n";
     // Log only a summary in the alarm
     printClusterStateSummary(os, 0, 4);
-    BMQTSK_ALARMLOG_PANIC("CLUSTERPROXY") << os.str() << BMQTSK_ALARMLOG_END
+    BMQTSK_ALARMLOG_PANIC("CLUSTERPROXY") << os.str() << BMQTSK_ALARMLOG_END;
 }
 
 // MANIPULATORS

@@ -184,7 +184,8 @@ void applyQueueUpdate(mqbc::ClusterState* clusterState,
                     << clusterData.identity().description()
                     << ": Received QueueUpdateAdvisory for a domain and queue "
                     << "that were not found: " << queueUpdate << "]"
-                    << BMQTSK_ALARMLOG_END return;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return;  // RETURN
             }
 
             ClusterState::UriToQueueInfoMapCIter cit =
@@ -196,7 +197,8 @@ void applyQueueUpdate(mqbc::ClusterState* clusterState,
                     << clusterData.identity().description()
                     << ": Received QueueUpdateAdvisory for a queue that was "
                     << "not found: " << queueUpdate << "]"
-                    << BMQTSK_ALARMLOG_END return;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return;  // RETURN
             }
 
             if (cit->second->partitionId() != partitionId) {
@@ -206,7 +208,8 @@ void applyQueueUpdate(mqbc::ClusterState* clusterState,
                     << uri << "] with a mismatched partitionId "
                     << "[expected: " << cit->second->partitionId()
                     << ", received: " << partitionId << "]: " << queueUpdate
-                    << BMQTSK_ALARMLOG_END return;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return;  // RETURN
             }
 
             if (cit->second->key() != queueKey) {
@@ -216,7 +219,8 @@ void applyQueueUpdate(mqbc::ClusterState* clusterState,
                     << uri << "] with a mismatched queueKey "
                     << "[expected: " << cit->second->key()
                     << ", received: " << queueKey << "]: " << queueUpdate
-                    << BMQTSK_ALARMLOG_END return;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return;  // RETURN
             }
         }
         else {
@@ -283,10 +287,9 @@ void getNextPrimarys(NumNewPartitionsMap* numNewPartitions,
             << ": Unknown cluster masterAssignmentAlgorithm '"
             << assignmentAlgo
             << "', defaulting to 'leaderIsMasterAll' algorithm."
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   mqbnet::ClusterNode* selfNode =
-            clusterData.membership().selfNode();
+        mqbnet::ClusterNode* selfNode = clusterData.membership().selfNode();
         numNewPartitions->insert(bsl::make_pair(
             clusterData.membership().getClusterNodeSession(selfNode),
             numPartitionsToAssign));
@@ -957,7 +960,7 @@ bool ClusterUtil::assignQueue(ClusterState*         clusterState,
             BMQTSK_ALARMLOG_PANIC("DOMAIN_QUEUE_LIMIT_FULL")
                 << "domain 'bmq://" << domainName
                 << "' has reached the maximum number of queues (limit: "
-                << maxQueues << ")." << BMQTSK_ALARMLOG_END
+                << maxQueues << ")." << BMQTSK_ALARMLOG_END;
         }
 
         static void
@@ -968,7 +971,7 @@ bool ClusterUtil::assignQueue(ClusterState*         clusterState,
                 << (k_MAX_QUEUES_HIGH_WATERMARK * 100)
                 << "% watermark limit for the number of queues (current: "
                 << queues << ", limit: " << maxQueues << ")."
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
         }
     };
 
@@ -1152,11 +1155,9 @@ void ClusterUtil::registerQueueInfo(ClusterState*        clusterState,
                     << stateAppInfos
                     << "].  PartitionId/QueueKey/AppInfos in storage ["
                     << partitionId << "], [" << queueKey << "], ["
-                    << storageAppInfos << "]."
-                    << BMQTSK_ALARMLOG_END
+                    << storageAppInfos << "]." << BMQTSK_ALARMLOG_END;
 
-                    if (!cluster->isFSMWorkflow())
-                {
+                if (!cluster->isFSMWorkflow()) {
                     // TODO (FSM); remove this code after switching to FSM
 
                     // Cache and wait for primary to unregister the queue from
@@ -1665,7 +1666,7 @@ void ClusterUtil::apply(mqbc::ClusterState*                 clusterState,
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << clusterData.identity().description()
             << ": Unexpected clusterMessage: " << clusterMessage
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     }
 }
@@ -1951,7 +1952,7 @@ void ClusterUtil::validateClusterStateLedger(mqbi::Cluster*            cluster,
             << clusterData.identity().description()
             << ": Cluster state ledger's contents are"
             << " different from the cluster state: " << errorDescription.str()
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
     }
 }
 
@@ -2049,7 +2050,7 @@ int ClusterUtil::load(ClusterState*               state,
             BMQTSK_ALARMLOG_ALARM("CLUSTER")
                 << clusterData.identity().description()
                 << ": Unexpected clusterMessage: " << clusterMessage
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
         } break;  // BREAK
         }
     } while ((rc = latestIter->next()) == 0);

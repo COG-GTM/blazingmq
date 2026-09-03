@@ -898,12 +898,11 @@ mqbi::QueueHandle* RootQueueEngine::getHandle(
                 << d_queueState_p->uri()
                 << "' - please update the domain configuration to include "
                    "the appId to enable consumption."
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
 
-                       iter = makeSubStream(
-                appId,
-                mqbu::StorageKey::k_NULL_KEY,
-                bmqp::QueueId::k_UNASSIGNED_SUBQUEUE_ID);
+            iter = makeSubStream(appId,
+                                 mqbu::StorageKey::k_NULL_KEY,
+                                 bmqp::QueueId::k_UNASSIGNED_SUBQUEUE_ID);
         }
         BSLS_ASSERT_SAFE(iter != d_apps.end());
         BSLS_ASSERT_SAFE(iter->first == subStreamInfo.appId());
@@ -1523,7 +1522,7 @@ void RootQueueEngine::afterNewMessage()
                 << "Local queue: " << d_queueState_p->uri() << " dropping "
                 << numMessages
                 << " bcast messages because of subscription overhead."
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
         }
 
         // Clear storage status
@@ -2072,7 +2071,7 @@ void RootQueueEngine::logAlarmCb(
     mqbcmd::HumanPrinter::print(out, result);
     out << "\n";
 
-    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK") << out.str() << BMQTSK_ALARMLOG_END
+    BMQTSK_ALARMLOG_ALARM("QUEUE_STUCK") << out.str() << BMQTSK_ALARMLOG_END;
 }
 
 void RootQueueEngine::updateFlowControl(bsls::Types::Int64 nowMs)

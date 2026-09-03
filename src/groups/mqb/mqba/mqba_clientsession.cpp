@@ -1924,7 +1924,7 @@ void ClientSession::onPushEvent(const mqbevt::PushEvent& event)
                 << ", compressionAlgorithmType: "
                 << event.compressionAlgorithmType()
                 << "] Message was dumped in file at location [" << filepath
-                << "] on this machine." << BMQTSK_ALARMLOG_END
+                << "] on this machine." << BMQTSK_ALARMLOG_END;
         }
         else {
             BMQTSK_ALARMLOG_ALARM("CLIENT_INVALID_PUSH")
@@ -1934,7 +1934,7 @@ void ClientSession::onPushEvent(const mqbevt::PushEvent& event)
                 << ", compressionAlgorithmType: "
                 << event.compressionAlgorithmType()
                 << "] Attempt to dump message in a file failed with error "
-                << dumpRc << BMQTSK_ALARMLOG_END
+                << dumpRc << BMQTSK_ALARMLOG_END;
         }
     }
 }
