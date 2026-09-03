@@ -55,7 +55,6 @@ if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?Clang" )
     # The below warnings are disabled, but should be revisited and properly
     # addressed
     add_compile_options(
-            "$<$<PLATFORM_ID:Darwin>:-Wno-deprecated-declarations>"
             "-Wno-atomic-implicit-seq-cst"
             "-Wno-c++98-compat-pedantic"
             "-Wno-deprecated-copy"
