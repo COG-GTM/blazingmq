@@ -73,7 +73,7 @@ apt-get install -qy --no-install-recommends \
     bison \
     libfl-dev \
     pkg-config \
-    python3.12-venv \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 # Install prerequisites for LLVM: latest cmake version, Ubuntu apt repository contains stale version
@@ -161,7 +161,7 @@ GOOGLE_BENCHMARK_TAG="v1.9.1"
 checkoutGitRepo "$(github_url google/benchmark)" "${GOOGLE_BENCHMARK_TAG}" "google-benchmark"
 
 # Download googletest sources
-GOOGLETEST_TAG="v1.15.2"
+GOOGLETEST_TAG="v1.18.0"
 checkoutGitRepo "$(github_url google/googletest)" "${GOOGLETEST_TAG}" "googletest"
 
 # Download zlib
@@ -239,11 +239,6 @@ rm -rf "${DIR_BUILD_EXT}/bde"
 print_disk_usage "BDE"
 
 pushd "${DIR_SRCS_EXT}/ntf-core"
-# TODO The deprecated flag "-fcoroutines-ts" has been removed in clang
-# 17.0.1, but NTF is still using it.  We manually change this flag until
-# the fix in issue 175307231 is resolved.
-sed -i 's/fcoroutines-ts/fcoroutines/g' 'repository.cmake'
-
 ./configure --keep \
             --prefix /opt/bb             \
             --output "${DIR_BUILD_EXT}/ntf" \
