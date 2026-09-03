@@ -21,8 +21,8 @@ payload in various scenarios as listed below:
     - zlib and zstd messages share a queue and are both delivered.
 """
 
-import blazingmq.dev.it.testconstants as tc
 import pytest
+import blazingmq.dev.it.testconstants as tc
 from blazingmq.dev.it.fixtures import (
     Cluster,
     order,
