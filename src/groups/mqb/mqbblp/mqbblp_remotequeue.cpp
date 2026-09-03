@@ -224,11 +224,9 @@ int RemoteQueue::configureAsClusterMember(bool isReconfigure)
                 << "]: failed to retrieve storage for remote queue ["
                 << d_state_p->uri() << "], queueKey [" << d_state_p->key()
                 << "], rc: " << rc << ", reason [" << errorDesc.str() << "]."
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
 
-                           return 10 *
-                           rc +
-                       rc_QUEUE_CONFIGURE_FAILURE;  // RETURN
+            return 10 * rc + rc_QUEUE_CONFIGURE_FAILURE;  // RETURN
         }
 
         if (d_state_p->isAtMostOnce()) {
@@ -241,9 +239,8 @@ int RemoteQueue::configureAsClusterMember(bool isReconfigure)
                 << d_state_p->partitionId()
                 << "]: incompatible storage type for remote queue ["
                 << d_state_p->uri() << "], queueKey [" << d_state_p->key()
-                << "]"
-                << BMQTSK_ALARMLOG_END return 10 * rc +
-                       rc_QUEUE_CONFIGURE_FAILURE;  // RETURN
+                << "]" << BMQTSK_ALARMLOG_END;
+            return 10 * rc + rc_QUEUE_CONFIGURE_FAILURE;  // RETURN
         }
 
         d_state_p->setStorage(storageSp);
@@ -272,8 +269,8 @@ int RemoteQueue::configureAsClusterMember(bool isReconfigure)
             << "]: failed to configure queue engine for remote queue ["
             << d_state_p->uri() << "], queueKey [" << d_state_p->key()
             << "], rc: " << rc << ", reason [" << errorDesc.str() << "]."
-            << BMQTSK_ALARMLOG_END return 10 * rc +
-                   rc_ENGINE_CONFIGURE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return 10 * rc + rc_ENGINE_CONFIGURE_FAILURE;  // RETURN
     }
 
     // Inform the storage about the queue in the appropriate thread.  This must

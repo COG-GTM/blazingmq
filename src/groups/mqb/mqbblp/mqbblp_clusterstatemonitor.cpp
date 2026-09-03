@@ -221,7 +221,7 @@ void ClusterStateMonitor::notifyObserversIfNeeded()
         BMQTSK_ALARMLOG_PANIC("CLUSTER_STATE_MONITOR")
             << "'" << d_clusterData_p->identity().name() << "'"
             << " is still in a bad state.\n"
-            << alarmOs.str() << BMQTSK_ALARMLOG_END
+            << alarmOs.str() << BMQTSK_ALARMLOG_END;
     }
 }
 
@@ -425,7 +425,7 @@ void ClusterStateMonitor::onMonitorStateChangeToAlarming(
     mqbcmd::HumanPrinter::print(os, result, 0, 4);
 
     BMQTSK_ALARMLOG_PANIC("CLUSTER_STATE_MONITOR")
-        << os.str() << BMQTSK_ALARMLOG_END
+        << os.str() << BMQTSK_ALARMLOG_END;
 }
 
 void ClusterStateMonitor::onMonitorStateChangeToValid()

@@ -323,8 +323,8 @@ int ClusterStateLedgerUtil::validateLog(mqbsi::Log::Offset* offset,
                 << ", leaderAdvisoryWords: "
                 << recHeader->leaderAdvisoryWords()
                 << ", timestamp: " << recHeader->timestamp() << "]"
-                << BMQTSK_ALARMLOG_END return ClusterStateLedgerUtilRc::
-                       e_INVALID_CHECKSUM;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return ClusterStateLedgerUtilRc::e_INVALID_CHECKSUM;  // RETURN
         }
 
         currOffset += recordSize;

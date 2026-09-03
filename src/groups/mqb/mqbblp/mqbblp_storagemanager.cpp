@@ -131,7 +131,8 @@ void processPrimaryStatusAdvisoryDispatched(
                 << ", from perceived primary: " << source->nodeDescription()
                 << ", but with different leaseId. LeaseId "
                 << "perceived by self: " << pinfo->primaryLeaseId()
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         if (!isFSMWorkflow &&
@@ -150,8 +151,8 @@ void processPrimaryStatusAdvisoryDispatched(
                 << ", from: " << source->nodeDescription()
                 << ", but self perceives: "
                 << pinfo->primary()->nodeDescription()
-                << " as current primary."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << " as current primary." << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         // 'pinfo->primary()' is null.  This means we haven't heard from the
@@ -306,7 +307,7 @@ void StorageManager::onPartitionRecovery(
             << (recoveryPeer ? recoveryPeer->nodeDescription() : "**NA**")
             << " with status: " << status
             << ". This node will not be started now (even if other partitions "
-            << "recover successfully)." << BMQTSK_ALARMLOG_END
+            << "recover successfully)." << BMQTSK_ALARMLOG_END;
     }
     else {
         // Recovery was successful & there is no need to schedule another one.
@@ -324,7 +325,7 @@ void StorageManager::onPartitionRecovery(
                 << d_clusterData_p->identity().description()
                 << ": Failed to open Partition [" << partitionId
                 << "] after recovery was finished, rc: " << rc
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
         }
         else {
             // Apply 'recoveryEvents' to the file store.
@@ -343,7 +344,8 @@ void StorageManager::onPartitionRecovery(
                         << ": Partition [" << partitionId
                         << "] failed to apply buffered storage event, rc: "
                         << rc << ". Closing the partition."
-                        << BMQTSK_ALARMLOG_END fs->close();
+                        << BMQTSK_ALARMLOG_END;
+                    fs->close();
                     break;  // BREAK
                 }
             }
@@ -617,7 +619,8 @@ void StorageManager::setPrimaryForPartitionDispatched(
             << primaryNode->nodeDescription() << ", current primary node: "
             << (pinfo.primary() ? pinfo.primary()->nodeDescription()
                                 : "** NULL **")
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     if (pinfo.primaryLeaseId() == primaryLeaseId) {
@@ -657,8 +660,8 @@ void StorageManager::setPrimaryForPartitionDispatched(
                 << "] with a different primary node. Current primary: "
                 << pinfo.primary()->nodeDescription()
                 << ", specified primary: " << primaryNode->nodeDescription()
-                << ". Ignoring this request."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << ". Ignoring this request." << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
 
         // 'pinfo.primary()' is null.  This could occur if this node was
@@ -807,7 +810,8 @@ void StorageManager::processPartitionSyncEvent(
             << ": Received partition-sync event from node "
             << source->nodeDescription() << " with invalid"
             << " partitionId: " << pid << ". Ignoring entire event."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     PartitionInfo                    pinfo;
@@ -1629,7 +1633,8 @@ void StorageManager::processStorageEvent(const mqbevt::StorageEvent& event)
             << d_cluster_p->description() << ": Received storage event "
             << "from node " << source->nodeDescription() << " with "
             << "invalid Partition [" << pid << "]. Ignoring entire "
-            << "storage event." << BMQTSK_ALARMLOG_END return;  // RETURN
+            << "storage event." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Certain alarms are disabled if this node is starting, or if it
@@ -1872,8 +1877,8 @@ void StorageManager::processRecoveryEvent(const mqbevt::RecoveryEvent& event)
             << ": Received recovery event from node "
             << source->nodeDescription()
             << " with invalid partitionId: " << pid
-            << ". Ignoring entire recovery event."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << ". Ignoring entire recovery event." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     while (iter.next() == 1) {
@@ -1892,7 +1897,8 @@ void StorageManager::processRecoveryEvent(const mqbevt::RecoveryEvent& event)
                 << source->nodeDescription()
                 << " with different partitionIds: " << pid << " vs "
                 << header.partitionId() << ". Ignoring entire recovery event."
-                << BMQTSK_ALARMLOG_END return;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return;  // RETURN
         }
     }
 

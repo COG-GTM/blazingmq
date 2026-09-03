@@ -303,11 +303,9 @@ void StorageManager::onWatchdogDispatched(int partitionId, int generation)
         << "sequence was not completed in the configured time of "
         << d_watchdogTimeoutInterval.totalSeconds() << " seconds. "
         << "Retries remaining: " << retriesRemaining << " of "
-        << d_watchdogNumRetries
-        << BMQTSK_ALARMLOG_END
+        << d_watchdogNumRetries << BMQTSK_ALARMLOG_END;
 
-        if (retriesRemaining > 0)
-    {
+    if (retriesRemaining > 0) {
         PartitionFSMEventData eventData(
             d_clusterData_p->membership().selfNode(),
             -1,  // placeholder requestId
@@ -323,11 +321,9 @@ void StorageManager::onWatchdogDispatched(int partitionId, int generation)
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Watchdog retries exhausted after " << d_watchdogNumRetries
-            << " attempts. Terminating broker."
-            << BMQTSK_ALARMLOG_END
+            << " attempts. Terminating broker." << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::shutdown(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        mqbu::ExitUtil::shutdown(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 }
 
@@ -929,10 +925,9 @@ void StorageManager::primaryRemoveStorageImpl(int partitionId)
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Error while deprecating file set, rc: " << rc
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::terminate(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 
     bmqu::MemOutStream errorDesc;
@@ -944,11 +939,9 @@ void StorageManager::primaryRemoveStorageImpl(int partitionId)
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Error while creating recovery file set, rc: " << rc
-            << ", error: " << errorDesc.str()
-            << BMQTSK_ALARMLOG_END
+            << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::terminate(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 
     NodePSNContext& selfNodeContext =
@@ -1921,11 +1914,10 @@ void StorageManager::do_openRecoveryFileSet(
                 << d_clusterData_p->identity().description() << " Partition ["
                 << partitionId << "]: "
                 << "Error while creating recovery file set, rc: " << rc
-                << ", error: " << errorDesc.str()
-                << BMQTSK_ALARMLOG_END
+                << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
 
-                       mqbu::ExitUtil::terminate(
-                           mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+            mqbu::ExitUtil::terminate(
+                mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
         }
     }
 
@@ -1934,9 +1926,8 @@ void StorageManager::do_openRecoveryFileSet(
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Error while recovering file set from storage, rc: " << rc
-            << ", error: " << errorDesc.str()
-            << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
-                   mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+            << ", error: " << errorDesc.str() << BMQTSK_ALARMLOG_END;
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 }
 
@@ -1967,10 +1958,9 @@ void StorageManager::do_closeRecoveryFileSet(
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Failure while closing recovery file set, rc: " << rc
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::terminate(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 }
 
@@ -2004,10 +1994,10 @@ void StorageManager::do_storeSelfSeq(
                 << d_clusterData_p->identity().description() << " Partition ["
                 << partitionId << "]: "
                 << "Error while recovering PSN, rc: " << rc
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
 
-                       mqbu::ExitUtil::terminate(
-                           mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+            mqbu::ExitUtil::terminate(
+                mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
         }
     }
 
@@ -2844,11 +2834,11 @@ void StorageManager::do_sendDataToPrimary(
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: " << "Self has no stored PSN while healing "
             << "as a replica.  Please review Partition FSM logic."
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   enqueuePartitionFSMEvent(
-                       PartitionFSM::Event::e_ERROR_SENDING_DATA_CHUNKS,
-                       sendPartitionFSMEventData);
+        enqueuePartitionFSMEvent(
+            PartitionFSM::Event::e_ERROR_SENDING_DATA_CHUNKS,
+            sendPartitionFSMEventData);
         return;  // RETURN
     }
 
@@ -3049,9 +3039,8 @@ void StorageManager::do_processBufferedLiveData(
                 << d_clusterData_p->identity().description() << " Partition ["
                 << partitionId << "]: "
                 << "Failed to apply buffered storage event, rc: " << rc
-                << ". Closing the partition."
-                << BMQTSK_ALARMLOG_END fs->close(
-                       d_clusterConfig.partitionConfig().flushAtShutdown());
+                << ". Closing the partition." << BMQTSK_ALARMLOG_END;
+            fs->close(d_clusterConfig.partitionConfig().flushAtShutdown());
 
             PartitionFSMEventData eventDataLocal(primary,
                                                  -1,  // placeholder requestId
@@ -3355,11 +3344,9 @@ void StorageManager::do_attemptOpenStorage(
             << d_clusterData_p->identity().description() << " Partition ["
             << partitionId << "]: "
             << "Failed to open FileStore after recovery was finished, "
-            << "rc: " << rc
-            << BMQTSK_ALARMLOG_END
+            << "rc: " << rc << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::terminate(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
+        mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
 }
 
@@ -3912,9 +3899,8 @@ void StorageManager::do_unsupportedPrimaryDowngrade(
         << d_clusterData_p->identity().description() << " Partition ["
         << partitionId << "]: "
         << "Downgrade from primary to replica is **UNSUPPORTED**. Terminating "
-        << "broker."
-        << BMQTSK_ALARMLOG_END mqbu::ExitUtil::terminate(
-               mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);  // EXIT
+        << "broker." << BMQTSK_ALARMLOG_END;
+    mqbu::ExitUtil::terminate(mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);  // EXIT
 }
 
 // PRIVATE ACCESSORS
@@ -4750,7 +4736,8 @@ void StorageManager::processReplicaDataRequest(
     default: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << d_clusterData_p->identity().description()
-            << ": unexpected clusterMessage:" << message << BMQTSK_ALARMLOG_END
+            << ": unexpected clusterMessage:" << message
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     }
 }
@@ -4823,8 +4810,8 @@ void StorageManager::processStorageEvent(const mqbevt::StorageEvent& event)
             << (rawEvent.isStorageEvent() ? "storage " : "partition-sync ")
             << "event from node " << source->nodeDescription() << " with "
             << "invalid Partition Id [" << pid << "]. Ignoring "
-            << "entire storage event."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << "entire storage event." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
     BSLS_ASSERT_SAFE(d_fileStores.size() > pid);
 

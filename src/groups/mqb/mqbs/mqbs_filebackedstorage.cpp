@@ -525,7 +525,7 @@ FileBackedStorage::releaseRef(const bmqt::MessageGUID& guid, bool asPrimary)
                     << "DELETION record for GUID: " << guid << ", for queue '"
                     << d_queueUri << "', queueKey '" << d_queueKey
                     << "' while attempting to purge the message, rc: " << rc
-                    << BMQTSK_ALARMLOG_END
+                    << BMQTSK_ALARMLOG_END;
             }
 
             // If a queue is associated, inform it about the message being
@@ -840,10 +840,9 @@ int FileBackedStorage::gcExpiredMessages(const bdlt::Datetime& currentTimeUtc,
                 << "GUID: " << cit->first << ", for queue '" << d_queueUri
                 << "', queueKey '" << d_queueKey << "' while attempting to GC "
                 << "the message due to TTL/ACK expiration, rc: " << rc
-                << BMQTSK_ALARMLOG_END
-                // Do NOT remove the expired record without replicating
-                // Deletion.
-                return numMsgsDeleted;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            // Do NOT remove the expired record without replicating Deletion.
+            return numMsgsDeleted;  // RETURN
         }
 
         // If a queue is associated, inform it about the message being deleted,
@@ -991,7 +990,7 @@ void FileBackedStorage::processMessageRecord(
             << " received MESSAGE record for GUID '" << guid << "' for queue '"
             << queueUri() << "', queueKey '" << queueKey()
             << "' for which an entry already exists. Ignoring this message."
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
     }
 }
 
@@ -1022,7 +1021,8 @@ void FileBackedStorage::processConfirmRecord(
             << " received CONFIRM record for GUID '" << guid << "' for queue '"
             << queueUri() << "', queueKey '" << queueKey()
             << "' for which no entry exists. Ignoring this message."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     if (0 == it->second->d_refCount) {
@@ -1032,7 +1032,8 @@ void FileBackedStorage::processConfirmRecord(
             << "' received CONFIRM record for GUID '" << guid
             << "' for queue '" << queueUri() << "', queueKey '" << queueKey()
             << "' for which refCount is already zero. Ignoring this message."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     RecordHandlesArray& handles = it->second->d_array;
@@ -1068,7 +1069,8 @@ void FileBackedStorage::processDeletionRecord(const bmqt::MessageGUID& guid)
             << " received DELETION record for GUID '" << guid
             << "' for queue '" << queueUri() << "', queueKey '" << queueKey()
             << "' for which no entry exists. Ignoring this message."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Delete all handles from underlying data store.  Update stats.  Note that

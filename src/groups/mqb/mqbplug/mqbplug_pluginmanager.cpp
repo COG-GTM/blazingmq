@@ -317,7 +317,8 @@ int PluginManager::start(const mqbcfg::Plugins& pluginsConfig,
     if (requiredPlugins.empty()) {
         BMQTSK_ALARMLOG_ALARM("PLUGIN_MISSING")
             << "No plugin is enabled at all. Please double check if this is "
-            << "intended." << BMQTSK_ALARMLOG_END return rc_SUCCESS;  // RETURN
+            << "intended." << BMQTSK_ALARMLOG_END;
+        return rc_SUCCESS;  // RETURN
     }
 
     // For each directory provided via broker configuration, attempt to load
@@ -397,7 +398,7 @@ int PluginManager::start(const mqbcfg::Plugins& pluginsConfig,
             // error but we can still start the broker.
 
             BMQTSK_ALARMLOG_ALARM("PLUGIN_MISSING")
-                << errorDesc.str() << BMQTSK_ALARMLOG_END
+                << errorDesc.str() << BMQTSK_ALARMLOG_END;
         }
     }
     return rc;

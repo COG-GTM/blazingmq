@@ -434,11 +434,11 @@ void ClusterOrchestrator::onPartitionPrimaryStatusDispatched(
             << partitionId
             << "]: primary node (self) failed to sync partition, rc: "
             << status << ", leaseId: " << primaryLeaseId << "."
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   d_stateManager_mp->setPrimaryStatus(
-                       partitionId,
-                       bmqp_ctrlmsg::PrimaryStatus::E_PASSIVE);
+        d_stateManager_mp->setPrimaryStatus(
+            partitionId,
+            bmqp_ctrlmsg::PrimaryStatus::E_PASSIVE);
 
         mqbu::ExitUtil::terminate(mqbu::ExitCode::e_RECOVERY_FAILURE);  // EXIT
     }
@@ -927,7 +927,8 @@ void ClusterOrchestrator::processClusterStateFSMMessage(
     default: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << d_clusterData_p->identity().description()
-            << ": unexpected clusterMessage:" << message << BMQTSK_ALARMLOG_END
+            << ": unexpected clusterMessage:" << message
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     }
 }
@@ -982,7 +983,8 @@ void ClusterOrchestrator::processPartitionMessage(
     default: {
         BMQTSK_ALARMLOG_ALARM("CLUSTER")
             << d_clusterData_p->identity().description()
-            << ": unexpected clusterMessage:" << message << BMQTSK_ALARMLOG_END
+            << ": unexpected clusterMessage:" << message
+            << BMQTSK_ALARMLOG_END;
     } break;  // BREAK
     }
 }
@@ -1294,7 +1296,8 @@ void ClusterOrchestrator::processElectorEvent(const bmqp::Event&   event,
             << d_clusterData_p->identity().description()
             << " received an elector event from node "
             << source->nodeDescription() << " in local cluster setup."
-            << BMQTSK_ALARMLOG_END return;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     // Enqueue elector events in the dispatcher thread as well.  Note that its

@@ -824,9 +824,8 @@ int FileStoreUtil::archiveFileSet(bsl::string_view dataFile,
     if (0 != rc) {
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << "Failed to archive data file [" << dataFile << "] to location ["
-            << archiveLocation << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc * 10 +
-                   rc_DATA_MOVE_FAILURE;  // RETURN
+            << archiveLocation << "], rc: " << rc << BMQTSK_ALARMLOG_END;
+        return rc * 10 + rc_DATA_MOVE_FAILURE;  // RETURN
     }
     BALL_LOG_INFO << "Archived data file [" << dataFile << "] to location ["
                   << archiveLocation << "]";
@@ -836,8 +835,8 @@ int FileStoreUtil::archiveFileSet(bsl::string_view dataFile,
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << "Failed to archive journal file [" << journalFile
             << "] to location [" << archiveLocation << "], rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc * 10 +
-                   rc_JOURNAL_MOVE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc * 10 + rc_JOURNAL_MOVE_FAILURE;  // RETURN
     }
     BALL_LOG_INFO << "Archived journal file [" << journalFile
                   << "] to location [" << archiveLocation << "]";
@@ -848,8 +847,8 @@ int FileStoreUtil::archiveFileSet(bsl::string_view dataFile,
             BMQTSK_ALARMLOG_ALARM("FILE_IO")
                 << "Failed to archive qlist file [" << qlistFile
                 << "] to location [" << archiveLocation << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END return rc * 10 +
-                       rc_QLIST_MOVE_FAILURE;  // RETURN
+                << BMQTSK_ALARMLOG_END;
+            return rc * 10 + rc_QLIST_MOVE_FAILURE;  // RETURN
         }
         BALL_LOG_INFO << "Archived qlist file [" << qlistFile
                       << "] to location [" << archiveLocation << "]";
@@ -924,7 +923,8 @@ void FileStoreUtil::deleteArchiveFiles(int                partitionId,
                 << cluster << ": Failed to remove [" << archivedFiles[i]
                 << "] file during archived storage cleanup for "
                 << "Partition [" << partitionId << "], rc: " << rc
-                << BMQTSK_ALARMLOG_END continue;  // CONTINUE
+                << BMQTSK_ALARMLOG_END;
+            continue;  // CONTINUE
         }
 
         BALL_LOG_INFO << cluster << ": Removed file [" << archivedFiles[i]
@@ -943,16 +943,16 @@ void FileStoreUtil::deleteArchiveFiles(
     if (!bdls::FilesystemUtil::exists(archiveLocation)) {
         BMQTSK_ALARMLOG_ALARM("MISSING_FILE_OR_DIRECTORY")
             << cluster << ": Archive storage location [" << archiveLocation
-            << "] no longer exists." << BMQTSK_ALARMLOG_END return;  // RETURN
+            << "] no longer exists." << BMQTSK_ALARMLOG_END;
+        return;  // RETURN
     }
 
     if (!bdls::FilesystemUtil::isDirectory(archiveLocation)) {
         BMQTSK_ALARMLOG_ALARM("MISSING_FILE_OR_DIRECTORY")
             << cluster << ": Archive storage location [" << archiveLocation
-            << "] is not a directory."
-            << BMQTSK_ALARMLOG_END
+            << "] is not a directory." << BMQTSK_ALARMLOG_END;
 
-            return;  // RETURN
+        return;  // RETURN
     }
 
     const unsigned int numPartitions = static_cast<unsigned int>(

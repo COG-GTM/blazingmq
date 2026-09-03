@@ -115,10 +115,9 @@ void ClusterStateManager::do_abort(const EventWithMetadata& event)
         << d_clusterData_p->identity().description()
         << ": Cluster FSM received unexpected event: " << event.first
         << " while in " << d_clusterFSM.state() << " state, aborting."
-        << BMQTSK_ALARMLOG_END
+        << BMQTSK_ALARMLOG_END;
 
-               mqbu::ExitUtil::terminate(
-                   mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);  // EXIT
+    mqbu::ExitUtil::terminate(mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);  // EXIT
 }
 
 void ClusterStateManager::do_startWatchdog(
@@ -1440,11 +1439,9 @@ void ClusterStateManager::onWatchdogDispatched(int generation)
         << "sequence was not completed in the configured time of "
         << d_watchdogTimeoutInterval.totalSeconds() << " seconds. "
         << "Retries remaining: " << retriesRemaining << " of "
-        << d_watchdogNumRetries
-        << BMQTSK_ALARMLOG_END
+        << d_watchdogNumRetries << BMQTSK_ALARMLOG_END;
 
-        if (retriesRemaining > 0)
-    {
+    if (retriesRemaining > 0) {
         applyFSMEvent(ClusterFSM::Event::e_WATCHDOG,
                       ClusterFSMEventMetadata());
     }
@@ -1452,11 +1449,9 @@ void ClusterStateManager::onWatchdogDispatched(int generation)
         BMQTSK_ALARMLOG_ALARM("RECOVERY")
             << d_clusterData_p->identity().description()
             << ": Watchdog retries exhausted after " << d_watchdogNumRetries
-            << " attempts. Terminating broker."
-            << BMQTSK_ALARMLOG_END
+            << " attempts. Terminating broker." << BMQTSK_ALARMLOG_END;
 
-                   mqbu::ExitUtil::shutdown(
-                       mqbu::ExitCode::e_RECOVERY_FAILURE);
+        mqbu::ExitUtil::shutdown(mqbu::ExitCode::e_RECOVERY_FAILURE);
     }
 }
 

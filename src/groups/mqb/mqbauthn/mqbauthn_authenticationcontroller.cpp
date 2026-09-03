@@ -268,7 +268,8 @@ int AuthenticationController::createConfiguredAuthenticators(
             BMQTSK_ALARMLOG_ALARM("#AUTHENTICATION")
                 << "Failed to start Authenticator '" << authenticator->name()
                 << "' [rc: " << status << ", error: '" << errorStream.str()
-                << "']" << BMQTSK_ALARMLOG_END errorStream.reset();
+                << "']" << BMQTSK_ALARMLOG_END;
+            errorStream.reset();
             return status * 10 + rc_START_AUTHENTICATOR;  // RETURN
         }
 
@@ -296,7 +297,8 @@ int AuthenticationController::createDefaultAnonAuthenticator()
         BMQTSK_ALARMLOG_ALARM("#AUTHENTICATION")
             << "Failed to start Authenticator '" << authenticator->name()
             << "' [rc: " << status << ", error: '" << errorStream.str() << "']"
-            << BMQTSK_ALARMLOG_END errorStream.reset();
+            << BMQTSK_ALARMLOG_END;
+        errorStream.reset();
         return status;  // RETURN
     }
 
@@ -376,8 +378,8 @@ int AuthenticationController::ensureDefaultAuthenticator(
         BMQTSK_ALARMLOG_ALARM("#AUTHENTICATION")
             << "Failed to start default anonymous authenticator '"
             << authenticator->name() << "' [rc: " << status << ", error: '"
-            << errorStream.str() << "']"
-            << BMQTSK_ALARMLOG_END return status;  // RETURN
+            << errorStream.str() << "']" << BMQTSK_ALARMLOG_END;
+        return status;  // RETURN
     }
 
     const bsl::string normMech = normalizeMechanism(authenticator->mechanism(),

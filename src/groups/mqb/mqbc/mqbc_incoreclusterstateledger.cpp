@@ -227,7 +227,8 @@ int IncoreClusterStateLedger::cleanupLog(const bsl::string& logPath)
         BMQTSK_ALARMLOG_ALARM("FILE_IO")
             << cluster << ": Failed to remove [" << logPath
             << "] file during CSL file cleanup, rc: " << rc
-            << BMQTSK_ALARMLOG_END return rc_REMOVE_FILE_FAILURE;  // RETURN
+            << BMQTSK_ALARMLOG_END;
+        return rc_REMOVE_FILE_FAILURE;  // RETURN
     }
 
     BALL_LOG_INFO << cluster << ": Removed file [" << logPath
@@ -1135,7 +1136,8 @@ int IncoreClusterStateLedger::applyImpl(const bdlbb::Blob&   event,
                     << ": Invalid Partition Id: " << info
                     << " specified in advisory: " << message << ". "
                     << "Ignoring this *ENTIRE* advisory message."
-                    << BMQTSK_ALARMLOG_END return rc_ADVISORY_INVALID;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return rc_ADVISORY_INVALID;  // RETURN
             }
 
             mqbnet::ClusterNode* proposedPrimaryNode =
@@ -1147,7 +1149,8 @@ int IncoreClusterStateLedger::applyImpl(const bdlbb::Blob&   event,
                     << ": Invalid primaryNodeId: " << info
                     << " specified in advisory: " << message << ". "
                     << " Ignoring this *ENTIRE* advisory."
-                    << BMQTSK_ALARMLOG_END return rc_ADVISORY_INVALID;  // RETURN
+                    << BMQTSK_ALARMLOG_END;
+                return rc_ADVISORY_INVALID;  // RETURN
             }
 
             const ClusterStatePartitionInfo& pi = d_clusterState_p->partition(
@@ -1174,10 +1177,10 @@ int IncoreClusterStateLedger::applyImpl(const bdlbb::Blob&   event,
                     << "partition/primary mapping: " << info << ". This "
                     << "downgrade from primary to replica is currently not "
                     << "supported, and self node will exit."
-                    << BMQTSK_ALARMLOG_END
+                    << BMQTSK_ALARMLOG_END;
 
-                           mqbu::ExitUtil::terminate(
-                               mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);
+                mqbu::ExitUtil::terminate(
+                    mqbu::ExitCode::e_UNSUPPORTED_SCENARIO);
                 // EXIT
             }
 
@@ -1215,7 +1218,8 @@ int IncoreClusterStateLedger::applyImpl(const bdlbb::Blob&   event,
                         << ", proposed primary node: "
                         << proposedPrimaryNode->nodeDescription()
                         << ". Ignoring this *ENTIRE* advisory."
-                        << BMQTSK_ALARMLOG_END return rc_ADVISORY_INVALID;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return rc_ADVISORY_INVALID;  // RETURN
                 }
             }
             else {
@@ -1228,7 +1232,8 @@ int IncoreClusterStateLedger::applyImpl(const bdlbb::Blob&   event,
                         << ": Stale primaryLeaseId specified in: " << info
                         << ", current primaryLeaseId: " << pi.primaryLeaseId()
                         << ". Ignoring this *ENTIRE* advisory."
-                        << BMQTSK_ALARMLOG_END return rc_ADVISORY_INVALID;  // RETURN
+                        << BMQTSK_ALARMLOG_END;
+                    return rc_ADVISORY_INVALID;  // RETURN
                 }
             }
         }

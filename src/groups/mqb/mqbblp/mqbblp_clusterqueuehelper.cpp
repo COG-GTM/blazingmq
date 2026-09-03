@@ -348,14 +348,14 @@ unsigned int ClusterQueueHelper::getNextQueueId()
         BMQTSK_ALARMLOG_ALARM("CLUSTER_STATE")
             << d_cluster_p->description()
             << " nextQueueId for cluster is at 50% capacity, please schedule a"
-            << " bounce of this broker." << BMQTSK_ALARMLOG_END
+            << " bounce of this broker." << BMQTSK_ALARMLOG_END;
     }
     else if (d_nextQueueId ==
              bsl::numeric_limits<unsigned int>::max() / 10 * 9) {
         BMQTSK_ALARMLOG_PANIC("CLUSTER_STATE")
             << d_cluster_p->description()
             << " nextQueueId for cluster is at 90% capacity, please urgently "
-            << "schedule a bounce of this broker." << BMQTSK_ALARMLOG_END
+            << "schedule a bounce of this broker." << BMQTSK_ALARMLOG_END;
     }
     else if (d_nextQueueId == 0 ||
              d_nextQueueId >= bmqp::QueueId::k_RESERVED_QUEUE_ID) {
@@ -399,7 +399,7 @@ ClusterQueueHelper::getNextSubQueueId(const OpenQueueContextSp& context)
             << d_cluster_p->description() << " nextSubQueueId for queue "
             << context->queueContext()->uri()
             << " in cluster is at 50% capacity, please schedule a bounce of"
-            << " this broker." << BMQTSK_ALARMLOG_END
+            << " this broker." << BMQTSK_ALARMLOG_END;
     }
     else if (queueInfo->d_nextSubQueueId ==
              bsl::numeric_limits<unsigned int>::max() / 10 * 9) {
@@ -407,7 +407,7 @@ ClusterQueueHelper::getNextSubQueueId(const OpenQueueContextSp& context)
             << d_cluster_p->description() << " nextSubQueueId for queue "
             << context->queueContext()->uri()
             << " in cluster is at 90% capacity, please urgently schedule a"
-            << " bounce of this broker." << BMQTSK_ALARMLOG_END
+            << " bounce of this broker." << BMQTSK_ALARMLOG_END;
     }
     else if (queueInfo->d_nextSubQueueId == 0 ||
              (queueInfo->d_nextSubQueueId >=
@@ -1697,11 +1697,10 @@ void ClusterQueueHelper::onReopenQueueResponse(
                 << d_cluster_p->description()
                 << ": error while reopening queue [" << req
                 << ", response: " << requestContext->response() << "]"
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
 
-            // Mark the queue's subStream as 'not opened', so that
-            // queue does not issue further reopen-queue request for
-            // it.
+            // Mark the queue's subStream as 'not opened', so that queue
+            // does not issue further reopen-queue request for it.
 
             BSLS_ASSERT_SAFE(sqit != qinfo.d_subQueueIds.end());
             BSLS_ASSERT_SAFE(sqit->appId() == appId);
@@ -5075,14 +5074,14 @@ void ClusterQueueHelper::processPeerOpenQueueRequest(
             << d_cluster_p->description()
             << ": Rejecting invalid openQueueRequest from '"
             << requester->description() << "': " << request
-            << BMQTSK_ALARMLOG_END
+            << BMQTSK_ALARMLOG_END;
 
-                   sendErrorResponse(
-                       requester->clusterNode(),
-                       request,
-                       bmqp_ctrlmsg::StatusCategory::E_INVALID_ARGUMENT,
-                       0,
-                       "At least one of [read|write|admin]Count must be > 0");
+        sendErrorResponse(
+            requester->clusterNode(),
+            request,
+            bmqp_ctrlmsg::StatusCategory::E_INVALID_ARGUMENT,
+            0,
+            "At least one of [read|write|admin]Count must be > 0");
 
         return;  // RETURN
     }
@@ -5978,9 +5977,9 @@ int ClusterQueueHelper::gcExpiredQueues(bool               immediate,
                 << d_cluster_p->description() << " Cannot gc "
                 << queuesToGc.size() << " expired queues "
                 << "since primary and leader nodes are different."
-                << BMQTSK_ALARMLOG_END
+                << BMQTSK_ALARMLOG_END;
 
-                       d_primaryNotLeaderAlarmRaised = true;
+            d_primaryNotLeaderAlarmRaised = true;
         }
 
         return rc_SELF_IS_NOT_LEADER;  // RETURN
