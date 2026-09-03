@@ -27,8 +27,7 @@
 
 #include <bsls_platform.h>
 
-// BMQ
-#include <bmqu_memoutstream.h>
+#include <bsl_sstream.h>
 
 // TEST DRIVER
 #include <bmqtst_testhelper.h>
@@ -61,9 +60,9 @@ struct TestType {
     : d_allocator_p(bslma::Default::allocator(basicAllocator))
     , d_value(basicAllocator)
     {
-        bmqu::MemOutStream os(basicAllocator);
+        bsl::ostringstream os(basicAllocator);
         os << value;
-        d_value.assign(os.str().data(), os.str().length());
+        d_value = os.str();
         ++s_numAliveInstances;
     }
 
