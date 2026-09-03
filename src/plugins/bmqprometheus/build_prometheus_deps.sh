@@ -26,8 +26,8 @@ fetch_deps() {
     curl -SL "https://github.com/curl/curl/releases/download/curl-8_4_0/curl-8.4.0.tar.gz" | tar -xzC srcs/
     mv "srcs/curl-8.4.0" "srcs/curl"
 
-    # Clone prometheus-cpp repo because it has git submodules
-    git clone https://github.com/jupp0r/prometheus-cpp.git srcs/prometheus-cpp
+    # Clone pinned prometheus-cpp v1.3.0 because it has git submodules
+    git clone --depth 1 --branch v1.3.0 https://github.com/jupp0r/prometheus-cpp.git srcs/prometheus-cpp
 }
 
 build_curl() {
