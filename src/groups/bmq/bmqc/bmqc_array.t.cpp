@@ -17,7 +17,6 @@
 
 // BDE
 #include <bsl_algorithm.h>
-#include <bsl_cstdio.h>
 #include <bsl_cstdlib.h>
 #include <bsl_string.h>
 #include <bsl_vector.h>
@@ -27,6 +26,9 @@
 #include <bslmf_isconst.h>
 
 #include <bsls_platform.h>
+
+// BMQ
+#include <bmqu_memoutstream.h>
 
 // TEST DRIVER
 #include <bmqtst_testhelper.h>
@@ -59,8 +61,9 @@ struct TestType {
     : d_allocator_p(bslma::Default::allocator(basicAllocator))
     , d_value(basicAllocator)
     {
-        d_value.resize(16);
-        bsl::sprintf(&d_value[0], "%d", value);
+        bmqu::MemOutStream os(basicAllocator);
+        os << value;
+        d_value.assign(os.str().data(), os.str().length());
         ++s_numAliveInstances;
     }
 
