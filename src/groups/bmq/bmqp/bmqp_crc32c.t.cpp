@@ -123,6 +123,9 @@ static int populateBufferLengthsSorted(bsl::vector<int>* bufferLengths)
 }
 
 #ifdef BMQTST_BENCHMARK_ENABLED
+// Google Benchmark >= 1.9 (Homebrew) exposes 'benchmark::Benchmark' and
+// deprecates the 'internal' spelling; the Ubuntu libbenchmark-dev package is
+// older and only provides 'benchmark::internal::Benchmark'.
 #if defined(__APPLE__)
 typedef benchmark::Benchmark BmqBenchmark;
 #else
