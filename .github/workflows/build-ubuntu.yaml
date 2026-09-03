@@ -110,7 +110,8 @@ jobs:
             bison \
             libfl-dev \
             libbenchmark-dev \
-            libz-dev
+            libz-dev \
+            libzstd-dev
 
       # Build BlazingMQ
       - name: Configure BlazingMQ

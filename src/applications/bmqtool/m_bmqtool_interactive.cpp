@@ -108,7 +108,7 @@ void Interactive::printHelp()
         << "(\"consumerPriority\": p)}])" << bsl::endl
         << "  close uri=\"\" (async=true)" << bsl::endl
         << "  post uri=\"\" payload=[\"\",\"\"] (async=true) "
-           "(compressionAlgorithmType=[NONE|ZLIB])"
+           "(compressionAlgorithmType=[NONE|ZLIB|ZSTD])"
         << bsl::endl
         << "    (messageProperties=[{\"name\": \"\", \"value\": \"\", "
            "\"type\": \"\"}])"

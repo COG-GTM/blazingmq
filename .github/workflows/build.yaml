@@ -308,7 +308,8 @@ jobs:
             google-benchmark \
             googletest \
             python@3.10 \
-            zlib
+            zlib \
+            zstd
 
       - name: Build BlazingMQ
         env:
@@ -350,6 +351,7 @@ jobs:
             libgmock-dev \
             libgtest-dev \
             libz-dev \
+            libzstd-dev \
             autoconf \
             libtool
       - name: Install cached non packaged dependencies
@@ -446,4 +448,3 @@ jobs:
 
       - name: Inspect Docker images
         run: docker image ls
-

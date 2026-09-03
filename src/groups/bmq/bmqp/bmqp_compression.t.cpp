@@ -47,6 +47,9 @@
 #include <bsl_memory.h>
 #include <bsl_vector.h>
 
+// ZSTD
+#include <zstd.h>
+
 // CONVENIENCE
 using namespace BloombergLP;
 using namespace bsl;
@@ -868,6 +871,559 @@ static void test4_decompressionSizeLimit()
     }
 }
 
+static void test5_zstdRoundTrip()
+// ------------------------------------------------------------------------
+// ZSTD ROUND TRIP
+//
+// Concerns:
+//   Verify Zstandard compression through both public compression overloads,
+//   including empty, multi-buffer, and append cases.
+//
+// Plan:
+//   - Compress representative strings and verify the Zstandard frame magic.
+//   - Decompress each frame and compare it with the input.
+//   - Exercise direct implementation calls and preserved output prefixes.
+//
+// Testing:
+//   bmqp::Compression Zstandard round trips
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ZSTD ROUND TRIP");
+    const char* const k_DATA[] = {"Hello World",
+                                  "HelloHello",
+                                  "abcdefghij",
+                                  "Hello Hello Hello Hello Hello",
+                                  "abcdefghijklmnopqrstuvwxyz",
+                                  "abcdefghijklmnopqrstuvwxyz1234567890",
+                                  ""};
+
+    for (size_t index = 0; index < sizeof(k_DATA) / sizeof(*k_DATA); ++index) {
+        const char* const  data   = k_DATA[index];
+        const int          length = static_cast<int>(bsl::strlen(data));
+        bmqu::MemOutStream error(bmqtst::TestHelperUtil::allocator());
+        bdlbb::PooledBlobBufferFactory bufferFactory(
+            1024,
+            bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob input(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob compressed(&bufferFactory,
+                               bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob compressedFromBlob(&bufferFactory,
+                                       bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob decompressed(&bufferFactory,
+                                 bmqtst::TestHelperUtil::allocator());
+        bdlbb::BlobUtil::append(&input, data, length);
+
+        int rc = bmqp::Compression::compress(
+            &compressed,
+            &bufferFactory,
+            bmqt::CompressionAlgorithmType::e_ZSTD,
+            data,
+            length,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        BMQTST_ASSERT_GE(compressed.length(), 4);
+        char magic[4];
+        bdlbb::BlobUtil::copy(magic, compressed, 0, 4);
+        BMQTST_ASSERT_EQ(bsl::memcmp(magic, "\x28\xb5\x2f\xfd", 4), 0);
+
+        rc = bmqp::Compression::compress(
+            &compressedFromBlob,
+            &bufferFactory,
+            bmqt::CompressionAlgorithmType::e_ZSTD,
+            input,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        BMQTST_ASSERT_EQ(compressed.length(), compressedFromBlob.length());
+
+        rc = bmqp::Compression::decompress(
+            &decompressed,
+            &bufferFactory,
+            bmqt::CompressionAlgorithmType::e_ZSTD,
+            compressed,
+            0,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressed, input), 0);
+    }
+
+    {
+        // Feed three separate buffers through one Zstandard stream.
+        bmqu::MemOutStream error(bmqtst::TestHelperUtil::allocator());
+        bdlbb::PooledBlobBufferFactory bufferFactory(
+            1024,
+            bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob input(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob compressed(&bufferFactory,
+                               bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob output(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+        bdlbb::BlobUtil::append(&input, "one", 3);
+        bdlbb::BlobUtil::append(&input, "two", 3);
+        bdlbb::BlobUtil::append(&input, "three", 5);
+
+        int rc = bmqp::Compression_Impl::compressZstd(
+            &compressed,
+            &bufferFactory,
+            input,
+            ZSTD_CLEVEL_DEFAULT,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        rc = bmqp::Compression_Impl::decompressZstd(
+            &output,
+            &bufferFactory,
+            compressed,
+            0,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        BMQTST_ASSERT_EQ(output.length(), 11);
+        char expected[] = "onetwothree";
+        char actual[11];
+        bdlbb::BlobUtil::copy(actual, output, 0, 11);
+        BMQTST_ASSERT_EQ(bsl::memcmp(actual, expected, 11), 0);
+    }
+
+    {
+        // An empty blob still produces and consumes a valid empty frame.
+        bmqu::MemOutStream error(bmqtst::TestHelperUtil::allocator());
+        bdlbb::PooledBlobBufferFactory bufferFactory(
+            1024,
+            bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob input(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob compressed(&bufferFactory,
+                               bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob output(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+        int         rc = bmqp::Compression_Impl::compressZstd(
+            &compressed,
+            &bufferFactory,
+            input,
+            ZSTD_CLEVEL_DEFAULT,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        rc = bmqp::Compression_Impl::decompressZstd(
+            &output,
+            &bufferFactory,
+            compressed,
+            0,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        BMQTST_ASSERT_EQ(output.length(), 0);
+    }
+
+    {
+        // Compression appends after data already present in the output blob.
+        bmqu::MemOutStream error(bmqtst::TestHelperUtil::allocator());
+        bdlbb::PooledBlobBufferFactory bufferFactory(
+            1024,
+            bmqtst::TestHelperUtil::allocator());
+        bdlbb::Blob output(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+        bdlbb::BlobUtil::append(&output, "prefix", 6);
+        int rc = bmqp::Compression::compress(
+            &output,
+            &bufferFactory,
+            bmqt::CompressionAlgorithmType::e_ZSTD,
+            "payload",
+            7,
+            &error,
+            bmqtst::TestHelperUtil::allocator());
+        BMQTST_ASSERT_EQ(rc, 0);
+        char prefix[6];
+        bdlbb::BlobUtil::copy(prefix, output, 0, 6);
+        BMQTST_ASSERT_EQ(bsl::memcmp(prefix, "prefix", 6), 0);
+    }
+}
+
+static void test6_zstdLargePayload()
+// ------------------------------------------------------------------------
+// ZSTD LARGE PAYLOAD
+//
+// Concerns:
+//   Verify compression ratio, round trips, and bounded decompression for
+//   highly compressible payloads.
+//
+// Plan:
+//   - Compress a repeated pattern and verify it shrinks and round-trips.
+//   - Repeat the decompression cap checks used by the zlib coverage.
+//
+// Testing:
+//   Zstandard compression and maxOutputSize enforcement
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ZSTD LARGE PAYLOAD");
+    bmqu::MemOutStream             error(bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory bufferFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob input(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob compressed(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+    const bsl::string pattern(5000, 'A', bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&input,
+                            pattern.data(),
+                            static_cast<int>(pattern.length()));
+    int rc = bmqp::Compression::compress(
+        &compressed,
+        &bufferFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        input,
+        &error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_LT(compressed.length(), input.length());
+    bdlbb::Blob decompressed(&bufferFactory,
+                             bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressed,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressed,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressed, input), 0);
+
+    const int   k_INPUT_SIZE = 8 * 1024 * 1024;
+    bsl::string zeros(k_INPUT_SIZE, '\0', bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob zerosBlob(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&zerosBlob, zeros.data(), k_INPUT_SIZE);
+    bdlbb::Blob zerosCompressed(&bufferFactory,
+                                bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::compress(&zerosCompressed,
+                                     &bufferFactory,
+                                     bmqt::CompressionAlgorithmType::e_ZSTD,
+                                     zerosBlob,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob full(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&full,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       zerosCompressed,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(full.length(), k_INPUT_SIZE);
+
+    bdlbb::Blob capped(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&capped,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       zerosCompressed,
+                                       1024 * 1024,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    BMQTST_ASSERT_LE(capped.length(), 1024 * 1024 + 1024);
+
+    bdlbb::Blob largeCap(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&largeCap,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       zerosCompressed,
+                                       64 * 1024 * 1024,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(largeCap.length(), k_INPUT_SIZE);
+}
+
+/// Assert that decompressing the specified input as Zstandard fails and
+/// records an error.
+static void
+assertZstdDecompressionFails(const bdlbb::Blob&              input,
+                             bdlbb::PooledBlobBufferFactory* bufferFactory,
+                             bmqu::MemOutStream*             error)
+{
+    bdlbb::Blob output(bufferFactory, bmqtst::TestHelperUtil::allocator());
+    error->reset();
+    const int rc = bmqp::Compression::decompress(
+        &output,
+        bufferFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        input,
+        0,
+        error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    BMQTST_ASSERT_GT(error->str().length(), static_cast<size_t>(0));
+}
+
+static void test7_zstdCorruptInput()
+// ------------------------------------------------------------------------
+// ZSTD CORRUPT INPUT
+//
+// Concerns:
+//   Arbitrary, damaged, truncated, and empty input must fail closed.
+//
+// Plan:
+//   - Reject random bytes, a damaged valid frame, a truncated frame, and no
+//     input while recording a useful error.
+//
+// Testing:
+//   Zstandard decompression error handling
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ZSTD CORRUPT INPUT");
+    bmqu::MemOutStream             error(bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory bufferFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob validInput(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob validFrame(&bufferFactory,
+                           bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&validInput, "payload", 7);
+    int rc = bmqp::Compression::compress(
+        &validFrame,
+        &bufferFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        validInput,
+        &error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob random(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&random, "\x01\x02\x03\x04\x05", 5);
+    assertZstdDecompressionFails(random, &bufferFactory, &error);
+
+    bsl::vector<char> corrupted(validFrame.length(),
+                                0,
+                                bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::copy(corrupted.data(),
+                          validFrame,
+                          0,
+                          validFrame.length());
+    if (corrupted.size() > 8) {
+        corrupted[6] ^= static_cast<char>(0x5a);
+        corrupted[7] ^= static_cast<char>(0xa5);
+        corrupted[8] ^= static_cast<char>(0x3c);
+    }
+    bdlbb::Blob corruptedBlob(&bufferFactory,
+                              bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&corruptedBlob,
+                            corrupted.data(),
+                            static_cast<int>(corrupted.size()));
+    assertZstdDecompressionFails(corruptedBlob, &bufferFactory, &error);
+
+    bdlbb::Blob truncated(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::copy(corrupted.data(),
+                          validFrame,
+                          0,
+                          validFrame.length());
+    bdlbb::BlobUtil::append(&truncated,
+                            corrupted.data(),
+                            static_cast<int>(corrupted.size() - 3));
+    assertZstdDecompressionFails(truncated, &bufferFactory, &error);
+
+    bdlbb::Blob empty(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    assertZstdDecompressionFails(empty, &bufferFactory, &error);
+}
+
+static void test8_algorithmMismatch()
+// ------------------------------------------------------------------------
+// ALGORITHM MISMATCH
+//
+// Concerns:
+//   Compression algorithms must not silently decode each other's frames or
+//   accept unsupported enum values.
+//
+// Plan:
+//   - Cross-decode zlib and zstd frames.
+//   - Exercise unknown and out-of-range algorithm values.
+//
+// Testing:
+//   Compression algorithm dispatch
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ALGORITHM MISMATCH");
+    bmqu::MemOutStream             error(bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory bufferFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob zstd(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob zlib(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob output(&bufferFactory, bmqtst::TestHelperUtil::allocator());
+    int         rc = bmqp::Compression::compress(
+        &zstd,
+        &bufferFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        "payload",
+        7,
+        &error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    rc = bmqp::Compression::compress(&zlib,
+                                     &bufferFactory,
+                                     bmqt::CompressionAlgorithmType::e_ZLIB,
+                                     "payload",
+                                     7,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    rc = bmqp::Compression::decompress(&output,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZLIB,
+                                       zstd,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    output.removeAll();
+    rc = bmqp::Compression::decompress(&output,
+                                       &bufferFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       zlib,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+
+    const bmqt::CompressionAlgorithmType::Enum unknown =
+        bmqt::CompressionAlgorithmType::e_UNKNOWN;
+    const bmqt::CompressionAlgorithmType::Enum invalid =
+        static_cast<bmqt::CompressionAlgorithmType::Enum>(3);
+    rc = bmqp::Compression::compress(&output,
+                                     &bufferFactory,
+                                     unknown,
+                                     "payload",
+                                     7,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    rc = bmqp::Compression::compress(&output,
+                                     &bufferFactory,
+                                     invalid,
+                                     "payload",
+                                     7,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    rc = bmqp::Compression::decompress(&output,
+                                       &bufferFactory,
+                                       unknown,
+                                       zstd,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+    rc = bmqp::Compression::decompress(&output,
+                                       &bufferFactory,
+                                       invalid,
+                                       zstd,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_NE(rc, 0);
+}
+
+static void test9_zstdSmallOutputBuffers()
+// ------------------------------------------------------------------------
+// ZSTD SMALL OUTPUT BUFFERS
+//
+// Concerns:
+//   - Zstandard decompression must drain data buffered after all input bytes
+//     have been consumed.
+//   - Compression and decompression must work with very small blob buffers.
+//
+// Plan:
+//   - Compress a repeated payload with a 1024-byte output buffer.
+//   - Decompress it with 16-byte and 1-byte output buffers.
+//   - Compress with a 16-byte output buffer and decompress with a 1024-byte
+//     output buffer.
+//
+// Testing:
+//   Zstandard streaming with constrained output buffers
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("ZSTD SMALL OUTPUT BUFFERS");
+    bmqu::MemOutStream             error(bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory inputFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory largeFactory(
+        1024,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory sixteenByteFactory(
+        16,
+        bmqtst::TestHelperUtil::allocator());
+    bdlbb::PooledBlobBufferFactory oneByteFactory(
+        1,
+        bmqtst::TestHelperUtil::allocator());
+    const bsl::string payload(5000, 'z', bmqtst::TestHelperUtil::allocator());
+    bdlbb::Blob input(&inputFactory, bmqtst::TestHelperUtil::allocator());
+    bdlbb::BlobUtil::append(&input,
+                            payload.data(),
+                            static_cast<int>(payload.size()));
+
+    bdlbb::Blob compressedLarge(&largeFactory,
+                                bmqtst::TestHelperUtil::allocator());
+    int         rc = bmqp::Compression::compress(
+        &compressedLarge,
+        &largeFactory,
+        bmqt::CompressionAlgorithmType::e_ZSTD,
+        input,
+        &error,
+        bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob decompressedSixteen(&sixteenByteFactory,
+                                    bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedSixteen,
+                                       &sixteenByteFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedLarge,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedSixteen, input), 0);
+
+    bdlbb::Blob decompressedOne(&oneByteFactory,
+                                bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedOne,
+                                       &oneByteFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedLarge,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedOne, input), 0);
+
+    bdlbb::Blob compressedSixteen(&sixteenByteFactory,
+                                  bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::compress(&compressedSixteen,
+                                     &sixteenByteFactory,
+                                     bmqt::CompressionAlgorithmType::e_ZSTD,
+                                     input,
+                                     &error,
+                                     bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+
+    bdlbb::Blob decompressedLarge(&largeFactory,
+                                  bmqtst::TestHelperUtil::allocator());
+    rc = bmqp::Compression::decompress(&decompressedLarge,
+                                       &largeFactory,
+                                       bmqt::CompressionAlgorithmType::e_ZSTD,
+                                       compressedSixteen,
+                                       0,
+                                       &error,
+                                       bmqtst::TestHelperUtil::allocator());
+    BMQTST_ASSERT_EQ(rc, 0);
+    BMQTST_ASSERT_EQ(bdlbb::BlobUtil::compare(decompressedLarge, input), 0);
+}
+
 // ============================================================================
 //                              PERFORMANCE TESTS
 // ----------------------------------------------------------------------------
@@ -1230,6 +1786,11 @@ int main(int argc, char* argv[])
     case 2: test2_compression_cluster_message(); break;
     case 3: test3_compression_decompression_none(); break;
     case 4: test4_decompressionSizeLimit(); break;
+    case 5: test5_zstdRoundTrip(); break;
+    case 6: test6_zstdLargePayload(); break;
+    case 7: test7_zstdCorruptInput(); break;
+    case 8: test8_algorithmMismatch(); break;
+    case 9: test9_zstdSmallOutputBuffers(); break;
     case -1:
         BMQTST_BENCHMARK_WITH_ARGS(
             testN1_performanceCompressionDecompressionDefault,

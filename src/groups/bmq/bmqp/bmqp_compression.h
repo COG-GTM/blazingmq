@@ -25,8 +25,7 @@
 //@DESCRIPTION: This component defines a utility struct, 'bmqp::Compression',
 // that provides functionality of 'compress', 'decompress' as per the specified
 // 'algorithm'. It additionally defines a struct 'Compression_Impl' that
-// provides implementation for compression and decompression for all supported
-// types of compression algorithms.
+// provides zlib and zstd compression and decompression implementations.
 //
 
 // BMQ
@@ -145,6 +144,27 @@ struct Compression_Impl {
     /// occur during this operation. Also, specify `allocator` which will be
     /// used to supply memory. Return 0 on success, and non-zero otherwise.
     static int decompressZlib(bdlbb::Blob*              output,
+                              bdlbb::BlobBufferFactory* factory,
+                              const bdlbb::Blob&        input,
+                              bsls::Types::Uint64       maxOutputSize,
+                              bsl::ostream*             errorStream,
+                              bslma::Allocator*         allocator);
+
+    /// Compress `input` with Zstandard at the specified `level` into
+    /// `output`, using `ZSTD_CLEVEL_DEFAULT` for the library default.
+    /// Return 0 on success and non-zero otherwise.  Any existing data in
+    /// `output` is preserved.
+    static int compressZstd(bdlbb::Blob*              output,
+                            bdlbb::BlobBufferFactory* factory,
+                            const bdlbb::Blob&        input,
+                            int                       level,
+                            bsl::ostream*             errorStream,
+                            bslma::Allocator*         allocator);
+
+    /// Decompress Zstandard `input` into `output`, failing closed once output
+    /// would exceed non-zero `maxOutputSize`.  Return 0 on success and
+    /// non-zero otherwise.  Any existing data in `output` is preserved.
+    static int decompressZstd(bdlbb::Blob*              output,
                               bdlbb::BlobBufferFactory* factory,
                               const bdlbb::Blob&        input,
                               bsls::Types::Uint64       maxOutputSize,

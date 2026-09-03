@@ -30,7 +30,7 @@
             "binaryDir": "$env{DIR_BUILD}/blazingmq",
             "environment": {
                 "PKG_CONFIG_PATH":
-                    "$env{DIR_INSTALL}/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/googletest/lib/pkgconfig"
+                    "$env{DIR_INSTALL}/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/zstd/lib/pkgconfig:/opt/homebrew/opt/googletest/lib/pkgconfig"
             },
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "$env{DIR_INSTALL}",
