@@ -1,0 +1,17 @@
+{
+  "baseline_sha": "dc11e788c02a312fd6c156c6690705297cfed4b9",
+  "metric": "bmqt::UriParser::parse threads=1",
+  "threshold": 1.5,
+  "runs": 5,
+  "recorded": "2026-10-06T00:14:40+00:00",
+  "results_ms": {
+    "bmqt::UriParser::parse threads=1": 41.2,
+    "bmqt::UriParser::parse threads=2": 60.6,
+    "bmqt::UriParser::parse threads=4": 51.4,
+    "bmqt::UriParser::parse threads=8": 68.4,
+    "bmqt::Uri::Uri threads=1": 57.3,
+    "bmqt::Uri::Uri threads=2": 55.1,
+    "bmqt::Uri::Uri threads=4": 51.2,
+    "bmqt::Uri::Uri threads=8": 68.9
+  }
+}
