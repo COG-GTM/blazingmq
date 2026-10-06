@@ -42,10 +42,11 @@ the result on screen and annotate it:
   and returns with the command's exit code (output is also appended to
   `/tmp/demo-show.log`). **The window stays open on the result** until the
   next `show.sh` call or `show.sh --close`.
-- After every `show.sh` step, while its result is on screen: call
-  `annotate_recording` (`type=setup`) with the finding in one line, e.g.
-  "First bad commit ce09e26d: parse 36 → 263 ms (7x)", then `sleep 8`. This
-  keeps the result frames in the edited video.
+- Annotate twice per step (`annotate_recording`, `type=setup`): once just
+  before `show.sh` with what you are about to do, and once after it returns,
+  while the result is on screen, with the finding in one line (e.g. "First
+  bad commit ce09e26d: parse 36 → 263 ms (7x)"), then `sleep 8`. The editor
+  keeps the frames around annotations.
 - Show at least these steps, in order:
   1. `Correlate: bisect`: `git bisect start/good/bad`, then `git bisect run`
      with a step script that runs `bench_alert.py --no-alert --threshold 3`
@@ -61,7 +62,10 @@ the result on screen and annotate it:
      `std::regex_match`, the regex `_Executor`), so the regex cost is
      readable on screen.
 - Then `show.sh --close`, `recording_stop` with title "BlazingMQ perf
-  triage" and a 2-sentence summary. Post the video in the alert thread
+  triage" and a 2-sentence summary. The edited video plays too fast to read
+  (about 8 s), so slow it down before posting:
+  `ffmpeg -y -i <edited.mp4> -filter:v "setpts=5*PTS" -an -r 24 -c:v libx264 -crf 23 -pix_fmt yuv420p /tmp/triage.mp4`
+  (post the original if ffmpeg is missing). Post `/tmp/triage.mp4` in the alert thread
   (`post_message` with `file_path`, text "Investigation recording: bisect →
   diff → perf profile"). If it is over 35 MB, post the session link instead.
   Attach the same video to the PR description in step 5.
