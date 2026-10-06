@@ -55,7 +55,8 @@ def run_benchmark(binary, runs):
                 samples.setdefault(key, []).append(
                     float(m.group(3)) * TO_MS[m.group(4)]
                 )
-        print(f"run {i + 1}/{runs} done", file=sys.stderr)
+        parse_ms = samples.get("bmqt::UriParser::parse threads=1", [None])[-1]
+        print(f"run {i + 1}/{runs} done: parse threads=1 {parse_ms} ms", file=sys.stderr, flush=True)
     if not samples:
         raise RuntimeError("no benchmark lines parsed; is libbenchmark installed?")
     return {k: round(statistics.median(v), 2) for k, v in samples.items()}
