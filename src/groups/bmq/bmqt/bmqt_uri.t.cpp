@@ -236,6 +236,20 @@ static void test1_breathingTest()
                              "bmq://ts.trades.myapp"
                              ".~lcl-fooBar/my.queue");
         }
+        {
+            const char k_URI[] = "bmq://ts.trades.myapp.~dev2/my_queue-1"
+                                 "?id=app.v2";
+            bmqt::Uri  obj(bmqtst::TestHelperUtil::allocator());
+            rc = bmqt::UriParser::parse(&obj, &error, k_URI);
+            BMQTST_ASSERT_EQ(rc, 0);
+            BMQTST_ASSERT_EQ(error, "");
+            BMQTST_ASSERT_EQ(obj.domain(), "ts.trades.myapp");
+            BMQTST_ASSERT_EQ(obj.tier(), "dev2");
+            BMQTST_ASSERT_EQ(obj.queue(), "my_queue-1");
+            BMQTST_ASSERT_EQ(obj.id(), "app.v2");
+            BMQTST_ASSERT_EQ(obj.canonical(),
+                             "bmq://ts.trades.myapp.~dev2/my_queue-1");
+        }
     }
 
     PV("Testing invalid URI parsing");
