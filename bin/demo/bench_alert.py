@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+# Copyright 2026 Bloomberg Finance L.P.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Run the bmqt::Uri benchmark, compare it to the committed baseline and post
 an on-call alert to Slack when parsing has regressed.
 
@@ -38,7 +53,7 @@ TO_MS = {"ns": 1e-6, "us": 1e-3, "ms": 1.0, "s": 1e3}
 
 def git(*args):
     return subprocess.run(
-        ["git", "-C", str(ROOT), *args], capture_output=True, text=True
+        ["git", "-C", str(ROOT), *args], capture_output=True, text=True, check=False
     ).stdout.strip()
 
 
@@ -55,7 +70,12 @@ def run_benchmark(binary, runs):
                 samples.setdefault(key, []).append(
                     float(m.group(3)) * TO_MS[m.group(4)]
                 )
-        print(f"run {i + 1}/{runs} done", file=sys.stderr)
+        parse_ms = samples.get("bmqt::UriParser::parse threads=1", [None])[-1]
+        print(
+            f"run {i + 1}/{runs} done: parse threads=1 {parse_ms} ms",
+            file=sys.stderr,
+            flush=True,
+        )
     if not samples:
         raise RuntimeError("no benchmark lines parsed; is libbenchmark installed?")
     return {k: round(statistics.median(v), 2) for k, v in samples.items()}
@@ -91,7 +111,7 @@ def post_slack(payload):
     return body["ts"]
 
 
-def build_payload(channel, metric, base, cur, ratio, results, baseline):
+def build_payload(channel, metric, *, base, cur, ratio, results, baseline):
     head = git("rev-parse", "--short=12", "HEAD")
     branch = git("rev-parse", "--abbrev-ref", "HEAD")
     good = baseline["baseline_sha"][:12]
@@ -101,7 +121,9 @@ def build_payload(channel, metric, base, cur, ratio, results, baseline):
         for k, v in sorted(results.items())
         if k in baseline["results_ms"]
     )
-    title = f":rotating_light: PERF REGRESSION bmqt::UriParser::parse — {ratio:.1f}x slower"
+    title = (
+        f":rotating_light: PERF REGRESSION bmqt::UriParser::parse — {ratio:.1f}x slower"
+    )
     when = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     fields = [
         ("Service", "BlazingMQ client/broker — `bmqt::Uri` parsing"),
@@ -117,10 +139,15 @@ def build_payload(channel, metric, base, cur, ratio, results, baseline):
         "channel": channel,
         "text": f"{title} | COG-GTM/blazingmq {branch} {good}..{head}",
         "blocks": [
-            {"type": "header", "text": {"type": "plain_text", "text": title[:150], "emoji": True}},
+            {
+                "type": "header",
+                "text": {"type": "plain_text", "text": title[:150], "emoji": True},
+            },
             {
                 "type": "section",
-                "fields": [{"type": "mrkdwn", "text": f"*{k}*\n{v}"} for k, v in fields],
+                "fields": [
+                    {"type": "mrkdwn", "text": f"*{k}*\n{v}"} for k, v in fields
+                ],
             },
             {"type": "section", "text": {"type": "mrkdwn", "text": f"```{rows}```"}},
             {
@@ -142,9 +169,15 @@ def main():
     ap.add_argument("--build-dir", default=str(ROOT / "build" / "blazingmq"))
     ap.add_argument("--runs", type=int, default=5)
     ap.add_argument("--threshold", type=float, default=None)
-    ap.add_argument("--dry-run", action="store_true", help="print the Slack payload, do not post")
+    ap.add_argument(
+        "--dry-run", action="store_true", help="print the Slack payload, do not post"
+    )
     ap.add_argument("--no-alert", action="store_true", help="only print results")
-    ap.add_argument("--write-baseline", action="store_true", help="record results as the new baseline")
+    ap.add_argument(
+        "--write-baseline",
+        action="store_true",
+        help="record results as the new baseline",
+    )
     args = ap.parse_args()
 
     binary = Path(args.build_dir) / "tests" / "bmqt_uri.t"
@@ -162,10 +195,12 @@ def main():
                     "metric": "bmqt::UriParser::parse threads=1",
                     "threshold": args.threshold or 1.5,
                     "runs": args.runs,
-                    "recorded": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    "recorded": datetime.now(timezone.utc).isoformat(
+                        timespec="seconds"
+                    ),
                     "results_ms": results,
                 },
-                indent=2,
+                indent=4,
             )
             + "\n"
         )
@@ -179,12 +214,20 @@ def main():
     base, cur = baseline["results_ms"][metric], results[metric]
     ratio = cur / base
     verdict = "REGRESSION" if ratio >= threshold else "OK"
-    print(f"{metric}: baseline {base:.1f} ms, current {cur:.1f} ms, {ratio:.2f}x -> {verdict}")
+    print(
+        f"{metric}: baseline {base:.1f} ms, current {cur:.1f} ms, {ratio:.2f}x -> {verdict}"
+    )
     if verdict == "OK" or args.no_alert:
         return 2 if verdict == "REGRESSION" else 0
 
     payload = build_payload(
-        os.environ.get("SLACK_ALERT_CHANNEL", "C0C6T4QNT2R"), metric, base, cur, ratio, results, baseline
+        os.environ.get("SLACK_ALERT_CHANNEL", "C0C6T4QNT2R"),
+        metric,
+        base=base,
+        cur=cur,
+        ratio=ratio,
+        results=results,
+        baseline=baseline,
     )
     if args.dry_run:
         print(json.dumps(payload, indent=2))

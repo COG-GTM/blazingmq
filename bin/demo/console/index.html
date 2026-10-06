@@ -1,0 +1,99 @@
+<!doctype html><html><head><meta charset="utf-8"><title>BlazingMQ Perf Gate</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#0b1020;--panel:#131a2e;--line:#2a3558;--txt:#e7ecf7;--mut:#93a0bf;--acc:#4f8cff;--red:#ff5a5f;--grn:#32d296;--amb:#ffb547}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 -apple-system,Segoe UI,Inter,Helvetica,Arial,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--line)}
+h1{font-size:22px;margin:0}.sub{color:var(--mut);font-size:13px}
+code{font-family:SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:#0e1427;border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+main{display:grid;grid-template-columns:1.05fr 1fr;gap:20px;padding:24px 32px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+.btns{display:flex;gap:10px;align-items:center}
+button{font:inherit;border:0;border-radius:10px;padding:12px 22px;font-weight:700;cursor:pointer}
+#run{background:var(--red);color:#fff;font-size:16px;box-shadow:0 0 0 0 rgba(255,90,95,.6)}
+#run:hover{filter:brightness(1.1)}#dry{background:#1d2850;color:var(--txt)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.runs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0}
+.slot{border:1px dashed var(--line);border-radius:10px;padding:10px;text-align:center;min-height:62px}
+.slot b{display:block;font-size:18px}.slot span{color:var(--mut);font-size:11px}
+.slot.on{border-style:solid;border-color:var(--acc)}.slot.spin{border-color:var(--amb);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+.chart{margin-top:6px}.row{display:grid;grid-template-columns:90px 1fr 120px;align-items:center;gap:10px;margin:9px 0;font-size:13px}
+.track{position:relative;height:18px;background:#0e1427;border-radius:5px;overflow:visible}
+.fill{height:100%;border-radius:5px;transition:width .8s}
+.verdict{margin-top:16px;padding:14px 16px;border-radius:12px;font-weight:700;display:none}
+.verdict.bad{display:block;background:#3a1619;color:var(--red);border:1px solid #6b2328}
+.verdict.ok{display:block;background:#12352a;color:var(--grn);border:1px solid #1f5c46}
+.verdict small{display:block;font-weight:400;color:var(--txt);opacity:.85;margin-top:4px}
+.loop{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.step{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--mut)}
+.step.done{border-color:var(--grn);color:var(--grn)}.step.human{border-color:var(--amb)}.step.human.done{color:var(--amb)}
+.thread{display:flex;flex-direction:column;gap:10px;max-height:62vh;overflow:auto}
+.msg{background:#1a1d21;border:1px solid #33373d;border-radius:10px;padding:10px 12px;font-size:13.5px;white-space:pre-wrap;word-wrap:break-word}
+.msg .who{font-weight:800;font-size:12.5px;margin-bottom:3px}.msg .who small{color:#8b8f94;font-weight:400;margin-left:6px}
+.msg.human{border-color:var(--amb)}.msg a{color:#1d9bd1}
+.empty{color:var(--mut);font-size:13px}
+details{margin-top:14px}summary{color:var(--mut);cursor:pointer;font-size:12px}
+pre{background:#0e1427;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:11.5px;max-height:220px;overflow:auto;white-space:pre-wrap}
+footer{padding:0 32px 24px;color:var(--mut);font-size:12px}
+</style></head><body>
+<header><div><h1>🚦 BlazingMQ Perf Gate</h1>
+<div class="sub">COG-GTM/blazingmq · <span id="branch">…</span> · metric <code id="metric">…</code></div></div>
+<div class="sub">Alerts to <b>#blazingmq-sre-alerts</b> → Devin Automation</div></header>
+<main>
+<section class="card">
+ <div class="tag">1 · Run the gate</div>
+ <div class="btns"><button id="run">▶ Run perf gate</button><button id="dry">Dry run (no Slack)</button>
+ <span id="status" class="sub"></span></div>
+ <div class="runs" id="runs"></div>
+ <div class="tag">2 · Median vs baseline</div>
+ <div class="chart">
+  <div class="row"><span>baseline</span><div class="track"><div class="fill" id="fb" style="background:var(--grn)"></div></div><span id="vb"></span></div>
+  <div class="row"><span>threshold</span><div class="track"><div class="fill" id="ft" style="background:var(--amb)"></div></div><span id="vt"></span></div>
+  <div class="row"><span>current</span><div class="track"><div class="fill" id="fc" style="background:var(--red);width:0"></div></div><span id="vc">–</span></div>
+ </div>
+ <div class="verdict" id="verdict"></div>
+ <details><summary>raw output</summary><pre id="log"></pre></details>
+</section>
+<section class="card">
+ <div class="tag">3 · Devin in the alert thread</div>
+ <div class="loop" id="loop"></div>
+ <div class="thread" id="thread"><div class="empty">Waiting for an alert. Press <b>Run perf gate</b>.</div></div>
+</section>
+</main>
+<footer>Simulated regression on the COG-GTM demo fork (modelled on upstream PR #1011). Upstream BlazingMQ is unaffected. The benchmark is the repo's own <code>bmqt_uri.t</code>: 100k <code>UriParser::parse</code> calls, 5 runs, median.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const STEPS=[["Detect",/\*(ack|detect)/i],["Correlate",/\*correlat|first bad commit/i],["RCA",/\*(RCA|investigat|root cause)/i],["Recommend",/\*recommend/i],["SRE approval",null,1],["Remediate",/\/pull\/\d+/i],["Verify",/\*verif|\bverified\b/i],["Devin Review",/\*devin review|devin review (done|complete|posted|finished)/i]];
+let cfg={},alertTs=null,maxMs=400,polling=null;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function mrkdwn(t){let s=esc(t.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&amp;/g,'&'));
+ s=s.replace(/&lt;(https?:[^|&]+)\|([^&]+?)&gt;/g,'<a href="$1" target="_blank">$2</a>').replace(/&lt;(https?:[^&]+?)&gt;/g,'<a href="$1" target="_blank">$1</a>');
+ s=s.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*([^*\n]+)\*/g,'<b>$1</b>');return s}
+function bar(id,v){$(id).style.width=Math.min(100,v/maxMs*100)+'%'}
+function renderLoop(msgs){const devin=msgs.filter(m=>m.bot).map(m=>m.text).join('\n');const human=msgs.some(m=>!m.bot&&/approv|lgtm|ship it/i.test(m.text));
+ $('loop').innerHTML=STEPS.map(([n,re,h])=>`<span class="step ${h?'human':''} ${(h?human:re.test(devin))?'done':''}">${h?'✋ ':''}${n}</span>`).join('')}
+async function init(){cfg=await (await fetch('/api/config')).json();$('metric').textContent=cfg.metric;
+ $('vb').textContent=cfg.baseline.toFixed(1)+' ms';$('vt').textContent=(cfg.baseline*cfg.threshold).toFixed(1)+' ms ('+cfg.threshold+'x)';
+ bar('fb',cfg.baseline);bar('ft',cfg.baseline*cfg.threshold);renderLoop([]);renderRuns({runs:[],status:'idle'});
+ const st=await (await fetch('/api/status')).json();if(st.status&&st.status!=='idle')apply(st);if(st.status==='running')poll()}
+function renderRuns(st){const n=st.total_runs||5;let h='';for(let i=0;i<n;i++){const v=st.runs[i];const spin=st.status==='running'&&i===st.runs.length;
+ h+=`<div class="slot ${v!=null?'on':''} ${spin?'spin':''}"><b>${v!=null?v.toFixed(0):'·'}</b><span>run ${i+1}${v!=null?' · ms':''}</span></div>`}$('runs').innerHTML=h}
+function apply(st){$('branch').textContent=st.branch?`${st.branch} @ ${st.head}`:'…';renderRuns(st);$('log').textContent=(st.log||[]).join('\n');
+ const busy=st.status==='running';$('run').disabled=$('dry').disabled=busy;
+ $('status').textContent=busy?'benchmarking…':st.status==='error'?'error, see raw output':st.status==='done'?'done':'';
+ if(st.runs.length){const s=[...st.runs].sort((a,b)=>a-b);const med=st.current??s[Math.floor(s.length/2)];maxMs=Math.max(400,med*1.1,cfg.baseline*cfg.threshold*1.2);
+  bar('fb',cfg.baseline);bar('ft',cfg.baseline*cfg.threshold);bar('fc',med);$('vc').textContent=med.toFixed(1)+' ms ('+(med/cfg.baseline).toFixed(1)+'x)'}
+ const v=$('verdict');if(st.verdict==='REGRESSION'){v.className='verdict bad';v.innerHTML=`🚨 REGRESSION: ${st.ratio.toFixed(1)}x slower than baseline (threshold ${cfg.threshold}x)<small>${st.alert_ts?'Alert posted to #blazingmq-sre-alerts. The Devin Automation is starting a session on it.':st.mode==='dry'?'Dry run: alert payload printed, nothing posted.':''}</small>`}
+ else if(st.verdict==='OK'){v.className='verdict ok';v.innerHTML=`✅ PASS: ${st.ratio.toFixed(2)}x baseline, under the ${cfg.threshold}x threshold<small>No alert sent.</small>`}else v.className='verdict';
+ if(st.alert_ts&&st.alert_ts!==alertTs){alertTs=st.alert_ts;$('thread').innerHTML='<div class="empty">Alert posted. Waiting for Devin to pick it up…</div>';pollThread()}}
+async function poll(){clearTimeout(polling);const st=await (await fetch('/api/status')).json();apply(st);if(st.status==='running')polling=setTimeout(poll,1000)}
+async function pollThread(){if(!alertTs)return;try{const d=await (await fetch('/api/thread?ts='+alertTs)).json();
+ if(d.messages&&d.messages.length){$('thread').innerHTML=d.messages.map(m=>`<div class="msg ${m.bot?'':'human'}"><div class="who">${esc(m.who)}<small>${new Date(m.ts*1000).toLocaleTimeString()}</small></div>${mrkdwn(m.text)}</div>`).join('');renderLoop(d.messages)}}catch(e){}
+ setTimeout(pollThread,4000)}
+async function start(mode){await fetch('/api/run?mode='+mode,{method:'POST'});$('verdict').className='verdict';$('fc').style.width=0;$('vc').textContent='–';setTimeout(poll,300)}
+$('run').onclick=()=>start('live');$('dry').onclick=()=>start('dry');
+const q=new URLSearchParams(location.search).get('ts');if(q){alertTs=q;pollThread()}
+init();
+</script></body></html>
