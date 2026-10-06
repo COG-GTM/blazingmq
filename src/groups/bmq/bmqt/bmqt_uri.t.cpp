@@ -31,6 +31,9 @@
 #include <bslmt_barrier.h>
 #include <bslmt_latch.h>
 #include <bslmt_threadgroup.h>
+#include <bsls_assert.h>
+#include <bsls_timeutil.h>
+#include <bsls_types.h>
 
 // TEST DRIVER
 #include <bmqtst_testhelper.h>
@@ -752,6 +755,140 @@ static void testN1_benchmark(benchmark::State& state)
 
 #endif  // BMQTST_BENCHMARK_ENABLED
 
+static void test7_authorityGrammar()
+// ------------------------------------------------------------------------
+// AUTHORITY GRAMMAR
+//
+// Concerns:
+//   1. The hand-written tokenizer alone enforces the authority grammar
+//      '<domain>[.~<tier>]', where domain is '[-a-zA-Z0-9_.]+' and tier is
+//      '[-a-zA-Z0-9]+'.
+//   2. URIs with characters outside that grammar are rejected with an
+//      error code (no assertion or abort), and valid authorities are
+//      reported unchanged.
+//
+// Plan:
+//   1. Parse a table of valid and invalid authorities and verify the
+//      return code, 'authority()', 'domain()' and 'tier()'.
+//
+// Testing:
+//   bmqt::UriParser::parse
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("AUTHORITY GRAMMAR");
+
+    const int k_OK = bmqt::UriParser::UriParseResult::e_SUCCESS;
+    const int k_UNSUPPORTED =
+        bmqt::UriParser::UriParseResult::e_UNSUPPORTED_CHAR;
+
+    struct Test {
+        int         d_line;
+        const char* d_input;
+        int         d_rc;
+        const char* d_authority;
+        const char* d_domain;
+        const char* d_tier;
+    } k_DATA[] = {
+        // valid
+        {L_, "bmq://a/q", k_OK, "a", "a", ""},
+        {L_, "bmq://my-dom_1.x/q", k_OK, "my-dom_1.x", "my-dom_1.x", ""},
+        {L_, "bmq://.a._-./q", k_OK, ".a._-.", ".a._-.", ""},
+        {L_, "bmq://a.~b/q", k_OK, "a.~b", "a", "b"},
+        {L_,
+         "bmq://my.dom.~lcl-Dev2/q",
+         k_OK,
+         "my.dom.~lcl-Dev2",
+         "my.dom",
+         "lcl-Dev2"},
+        // invalid domain
+        {L_, "bmq://a~b/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a b/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a:1234/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a@b/q", k_UNSUPPORTED, "", "", ""},
+        // invalid tier
+        {L_, "bmq://a.~b.c/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a.~b~c/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a.~b_c/q", k_UNSUPPORTED, "", "", ""},
+        {L_, "bmq://a.~.~b/q", k_UNSUPPORTED, "", "", ""},
+    };
+
+    const size_t k_NUM_DATA = sizeof(k_DATA) / sizeof(*k_DATA);
+
+    for (size_t idx = 0; idx < k_NUM_DATA; ++idx) {
+        const Test& test = k_DATA[idx];
+
+        bmqt::Uri   obj(bmqtst::TestHelperUtil::allocator());
+        bsl::string error(bmqtst::TestHelperUtil::allocator());
+
+        const int rc = bmqt::UriParser::parse(&obj, &error, test.d_input);
+        BMQTST_ASSERT_EQ_D(test.d_line, rc, test.d_rc);
+        BMQTST_ASSERT_EQ_D(test.d_line, obj.isValid(), rc == k_OK);
+        BMQTST_ASSERT_EQ_D(test.d_line, error.empty(), rc == k_OK);
+        if (rc == k_OK) {
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.authority(), test.d_authority);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.domain(), test.d_domain);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.tier(), test.d_tier);
+        }
+    }
+}
+
+static void test8_parsePerformance()
+// ------------------------------------------------------------------------
+// PARSE PERFORMANCE (COARSE)
+//
+// Concerns:
+//   1. 'bmqt::UriParser::parse' stays a cheap, allocation-light scan.
+//      Expensive per-call work (e.g. 'bsl::regex' matching) in the parse
+//      path was measured at ~2.9us per parse vs ~0.35us without it.
+//
+// Plan:
+//   1. In non-sanitized builds, time 3 batches of 100k parses
+//      of a typical URI and require the best batch to average under a
+//      generous 1.5us per parse.  The precise numbers are tracked by the
+//      benchmark in case -1 and 'bin/demo/bench_alert.py'.
+//
+// Testing:
+//   bmqt::UriParser::parse performance
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("PARSE PERFORMANCE (COARSE)");
+
+    if (bmqtst::TestHelperUtil::k_ASAN || bmqtst::TestHelperUtil::k_MSAN ||
+        bmqtst::TestHelperUtil::k_TSAN || bmqtst::TestHelperUtil::k_UBSAN) {
+        PV("Skipping: sanitizer build");
+        return;  // RETURN
+    }
+
+    const size_t      k_NUM_BATCHES      = 3;
+    const size_t      k_NUM_ITERATIONS   = 100000;
+    const double      k_MAX_NS_PER_PARSE = 1500.0;
+    const bsl::string k_SAMPLE_URI(
+        "bmq://my.sample.domain.~dev/my-queue-name?id=consumer123",
+        bmqtst::TestHelperUtil::allocator());
+
+    bmqt::Uri   uri(bmqtst::TestHelperUtil::allocator());
+    bsl::string error(bmqtst::TestHelperUtil::allocator());
+
+    double bestNsPerParse = 0;
+    for (size_t batch = 0; batch < k_NUM_BATCHES; ++batch) {
+        const bsls::Types::Int64 start = bsls::TimeUtil::getTimer();
+        for (size_t i = 0; i < k_NUM_ITERATIONS; ++i) {
+            const int rc = bmqt::UriParser::parse(&uri, &error, k_SAMPLE_URI);
+            BSLS_ASSERT_OPT(rc == 0);
+            (void)rc;
+        }
+        const double nsPerParse = static_cast<double>(
+                                      bsls::TimeUtil::getTimer() - start) /
+                                  static_cast<double>(k_NUM_ITERATIONS);
+        PV("batch " << batch << ": " << nsPerParse << " ns/parse");
+        if (batch == 0 || nsPerParse < bestNsPerParse) {
+            bestNsPerParse = nsPerParse;
+        }
+    }
+
+    BMQTST_ASSERT_LT(bestNsPerParse, k_MAX_NS_PER_PARSE);
+}
+
 // ============================================================================
 //                                 MAIN PROGRAM
 // ----------------------------------------------------------------------------
@@ -762,6 +899,8 @@ int main(int argc, char* argv[])
 
     switch (_testCase) {
     case 0:
+    case 8: test8_parsePerformance(); break;
+    case 7: test7_authorityGrammar(); break;
     case 6: test6_testLongUri(); break;
     case 5: test5_hashAppend(); break;
     case 4: test4_testPrint(); break;
