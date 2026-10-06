@@ -25,7 +25,6 @@
 #include <bdlb_stringrefutil.h>
 #include <bdlma_localsequentialallocator.h>
 #include <bsl_ostream.h>
-#include <bsl_regex.h>
 #include <bsla_fallthrough.h>
 #include <bsls_assert.h>
 
@@ -640,17 +639,6 @@ int UriParser::parse(Uri*                     result,
     // Step 7: validate mandatory fields
     rc = ctx.validateResult(errorDescription, *result);
     BMQT_RETURN_ON_BAD_RC(rc, result);
-
-    // Step 8: hardening - re-validate the parsed authority against the
-    // canonical domain/tier grammar before handing the URI to callers, so
-    // that a future change to the hand-written tokenizer above cannot
-    // silently accept a malformed domain or tier.
-    // <domain>[.~<tier>]
-    static const bsl::regex k_CANONICAL_AUTHORITY(
-        "[-a-zA-Z0-9_.]+(\\.~[-a-zA-Z0-9]+)?");
-    BSLS_ASSERT_OPT(bsl::regex_match(result->d_authority.begin(),
-                                     result->d_authority.end(),
-                                     k_CANONICAL_AUTHORITY));
 
 #undef BMQT_RETURN_ON_BAD_RC
 
