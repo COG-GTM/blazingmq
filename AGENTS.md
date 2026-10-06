@@ -32,27 +32,39 @@ SRE loop below. Post a short update in the alert's Slack thread at every step.
 Keep each update to 3–6 lines, with numbers and SHAs.
 
 **Film the investigation.** The room watches a video of the triage, so make
-the investigation visible on the desktop and record it:
-- Right after the acknowledgement, call `recording_start` (fps 10).
+the investigation visible on the desktop and record it. The recording tool
+auto-edits out idle time and keeps the footage around annotations, so put
+the result on screen and annotate it:
+- Start `recording_start` (fps 10) only once the build is done and you are
+  about to bisect, so the video doesn't open on a blank screen.
 - Run every investigation command through `bin/demo/show.sh "<step title>"
   "<command>"`. It opens a large terminal on the desktop, runs the command,
-  waits, and exits with the command's exit code (output is also appended to
-  `/tmp/demo-show.log`). At minimum, show:
-  1. `Correlate: bisect`: the full `git bisect start/good/bad` and
-     `git bisect run ...` (no `--quiet`; let the per-step benchmark lines
-     print), then `git bisect log`.
+  and returns with the command's exit code (output is also appended to
+  `/tmp/demo-show.log`). **The window stays open on the result** until the
+  next `show.sh` call or `show.sh --close`.
+- After every `show.sh` step, while its result is on screen: call
+  `annotate_recording` (`type=setup`) with the finding in one line, e.g.
+  "First bad commit ce09e26d: parse 36 → 263 ms (7x)", then `sleep 8`. This
+  keeps the result frames in the edited video.
+- Show at least these steps, in order:
+  1. `Correlate: bisect`: `git bisect start/good/bad`, then `git bisect run`
+     with a step script that runs `bench_alert.py --no-alert --threshold 3`
+     (exit 2 = bad). The planted regression is 6–9x and single runs have
+     about ±15% noise, so the 1.5x alert line is too tight for bisecting.
+     Don't pass `--quiet`; let each step's benchmark line print. Finish
+     with `git bisect log`.
   2. `Investigate: offending diff`:
-     `git show --color=always <bad-sha> -- src/groups/bmq/bmqt/bmqt_uri.cpp`.
-  3. `Investigate: profile`: `perf record -g` on `bmqt_uri.t -1`, then
-     `perf report --stdio --no-children --percent-limit 3 | head -60`, so the
-     `std::regex` frames are on screen.
-- Before each step, call `annotate_recording` (`type=setup`) with a one-line
-  description, e.g. "Bisecting dc11e788..HEAD with the URI benchmark".
-- After the RCA is posted, call `recording_stop` with title "BlazingMQ perf
+     `git --no-pager show --color=always <bad-sha> -- src/groups/bmq/bmqt/bmqt_uri.cpp`.
+  3. `Investigate: profile`: `bin/demo/show.sh "Investigate: profile"
+     bin/demo/profile.sh`. It runs `sudo perf record -g` on `bmqt_uri.t -1`
+     and prints a one-screen "% of cycles" table (`UriParser::parse`,
+     `std::regex_match`, the regex `_Executor`), so the regex cost is
+     readable on screen.
+- Then `show.sh --close`, `recording_stop` with title "BlazingMQ perf
   triage" and a 2-sentence summary. Post the video in the alert thread
   (`post_message` with `file_path`, text "Investigation recording: bisect →
-  diff → perf profile"). If the file is over 35 MB, post the session link
-  instead. Attach the same video to the PR description in step 5.
+  diff → perf profile"). If it is over 35 MB, post the session link instead.
+  Attach the same video to the PR description in step 5.
 - Recording is best effort: if it fails, say so in one line and carry on.
   Never let it delay the approval stop.
 
