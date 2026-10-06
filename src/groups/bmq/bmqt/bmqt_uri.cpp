@@ -120,6 +120,7 @@ struct UriParsingContext {
         //       ^        ^
         //       start    (start + (*length))
         // Allowed characters: [-a-zA-Z0-9\\._]
+        // A ".~" sequence terminates the domain and starts the tier.
         for (size_t pos = start; pos < d_uri.length(); ++pos) {
             if (isalnum_fast(d_uri[pos])) {
                 continue;
