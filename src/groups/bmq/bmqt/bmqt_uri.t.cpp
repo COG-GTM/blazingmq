@@ -31,6 +31,8 @@
 #include <bslmt_barrier.h>
 #include <bslmt_latch.h>
 #include <bslmt_threadgroup.h>
+#include <bsls_timeutil.h>
+#include <bsls_types.h>
 
 // TEST DRIVER
 #include <bmqtst_testhelper.h>
@@ -638,6 +640,156 @@ static void test6_testLongUri()
     BMQTST_ASSERT_EQ(obj.isValid(), false);
 }
 
+static void test7_authorityGrammar()
+// ------------------------------------------------------------------------
+// AUTHORITY GRAMMAR
+//
+// Concerns:
+//   1. 'UriParser::parse' accepts exactly the '<domain>[.~<tier>]'
+//      authority grammar (domain: [-a-zA-Z0-9_.], tier: [-a-zA-Z0-9]) and
+//      rejects anything else with the matching error code, without relying
+//      on a secondary validation pass.
+//   2. Parsing a valid URI stays cheap: no per-parse heavyweight
+//      validation (e.g. 'std::regex') is reintroduced.
+//
+// Plan:
+//   1. Parse a table of valid and invalid authorities and check the
+//      return code and the parsed domain, tier and authority.
+//   2. Time a batch of parses of a valid URI (best of several rounds) and
+//      check a generous per-parse budget.  Skipped under sanitizers.
+//
+// Testing:
+//   UriParser::parse
+// ------------------------------------------------------------------------
+{
+    bmqtst::TestHelper::printTestName("AUTHORITY GRAMMAR");
+
+    bsl::string error(bmqtst::TestHelperUtil::allocator());
+
+    PV("Testing valid authorities");
+    {
+        struct Test {
+            int         d_line;
+            const char* d_input;
+            const char* d_domain;
+            const char* d_tier;
+            const char* d_authority;
+        } k_DATA[] = {
+            {L_, "bmq://a/q", "a", "", "a"},
+            {L_, "bmq://Az-09_x.y/q", "Az-09_x.y", "", "Az-09_x.y"},
+            {L_,
+             "bmq://my-domain.~dv-1/q",
+             "my-domain",
+             "dv-1",
+             "my-domain.~dv-1"},
+            {L_,
+             "bmq://ts.trades.myapp.~DEV2/q?id=foo",
+             "ts.trades.myapp",
+             "DEV2",
+             "ts.trades.myapp.~DEV2"},
+        };
+
+        const size_t k_NUM_DATA = sizeof(k_DATA) / sizeof(*k_DATA);
+
+        for (size_t idx = 0; idx < k_NUM_DATA; ++idx) {
+            const Test& test = k_DATA[idx];
+
+            bmqt::Uri obj(bmqtst::TestHelperUtil::allocator());
+            const int rc = bmqt::UriParser::parse(&obj, &error, test.d_input);
+            BMQTST_ASSERT_EQ_D(test.d_line, rc, 0);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.isValid(), true);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.domain(), test.d_domain);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.tier(), test.d_tier);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.authority(), test.d_authority);
+        }
+    }
+
+    PV("Testing invalid authorities");
+    {
+        struct Test {
+            int         d_line;
+            const char* d_input;
+            int         d_rc;
+        } k_DATA[] = {
+            {L_,
+             "bmq://ts.trades myapp/q",
+             bmqt::UriParser::UriParseResult::e_UNSUPPORTED_CHAR},
+            {L_,
+             "bmq://ts:trades/q",
+             bmqt::UriParser::UriParseResult::e_UNSUPPORTED_CHAR},
+            {L_,
+             "bmq://ts.trades.~dev_2/q",
+             bmqt::UriParser::UriParseResult::e_UNSUPPORTED_CHAR},
+            {L_,
+             "bmq://ts.trades.~dev.2/q",
+             bmqt::UriParser::UriParseResult::e_UNSUPPORTED_CHAR},
+            {L_,
+             "bmq://.~dev/q",
+             bmqt::UriParser::UriParseResult::e_MISSING_DOMAIN},
+            {L_,
+             "bmq://ts.trades.~/q",
+             bmqt::UriParser::UriParseResult::e_EMPTY_TIER},
+        };
+
+        const size_t k_NUM_DATA = sizeof(k_DATA) / sizeof(*k_DATA);
+
+        for (size_t idx = 0; idx < k_NUM_DATA; ++idx) {
+            const Test& test = k_DATA[idx];
+
+            bmqt::Uri obj(bmqtst::TestHelperUtil::allocator());
+            const int rc = bmqt::UriParser::parse(&obj, &error, test.d_input);
+            BMQTST_ASSERT_EQ_D(test.d_line, rc, test.d_rc);
+            BMQTST_ASSERT_EQ_D(test.d_line, obj.isValid(), false);
+        }
+    }
+
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer) || __has_feature(memory_sanitizer) ||    \
+    __has_feature(thread_sanitizer)
+#define BMQT_URI_T_SKIP_PERF_CHECK
+#endif
+#endif
+#if defined(__SANITIZE_ADDRESS__) || defined(__SANITIZE_THREAD__)
+#define BMQT_URI_T_SKIP_PERF_CHECK
+#endif
+
+#ifndef BMQT_URI_T_SKIP_PERF_CHECK
+    PV("Coarse parse performance check");
+    {
+        // A healthy parse of this URI takes well under 1us even in a debug
+        // build; the per-parse 'std::regex' check from 'ce09e26d' took it
+        // to ~2.6us.  Take the best of several rounds to absorb scheduler
+        // noise.
+        const int                k_NUM_ROUNDS     = 5;
+        const int                k_NUM_ITERATIONS = 20000;
+        const bsls::Types::Int64 k_BUDGET_NS      = 2000;
+        const bsl::string        k_SAMPLE_URI(
+            "bmq://my.sample.domain.~dev/my-queue-name?id=consumer123",
+            bmqtst::TestHelperUtil::allocator());
+
+        bmqt::Uri          obj(bmqtst::TestHelperUtil::allocator());
+        bsls::Types::Int64 bestNs = 0;
+
+        for (int round = 0; round < k_NUM_ROUNDS; ++round) {
+            const bsls::Types::Int64 begin = bsls::TimeUtil::getTimer();
+            for (int i = 0; i < k_NUM_ITERATIONS; ++i) {
+                bmqt::UriParser::parse(&obj, &error, k_SAMPLE_URI);
+            }
+            const bsls::Types::Int64 elapsed = bsls::TimeUtil::getTimer() -
+                                               begin;
+            if (round == 0 || elapsed < bestNs) {
+                bestNs = elapsed;
+            }
+        }
+
+        const bsls::Types::Int64 perParseNs = bestNs / k_NUM_ITERATIONS;
+        PV("Best per-parse time: " << perParseNs << " ns");
+        BMQTST_ASSERT_LT(perParseNs, k_BUDGET_NS);
+    }
+#endif
+#undef BMQT_URI_T_SKIP_PERF_CHECK
+}
+
 #ifdef BMQTST_BENCHMARK_ENABLED
 
 struct UriParserBenchmark {
@@ -762,6 +914,7 @@ int main(int argc, char* argv[])
 
     switch (_testCase) {
     case 0:
+    case 7: test7_authorityGrammar(); break;
     case 6: test6_testLongUri(); break;
     case 5: test5_hashAppend(); break;
     case 4: test4_testPrint(); break;
