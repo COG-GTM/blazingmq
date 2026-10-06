@@ -85,7 +85,8 @@ BlazingMQ and see them in action.
 [bin/build-ubuntu.sh](bin/build-ubuntu.sh) and
 [bin/build-darwin.sh](bin/build-darwin.sh) build BlazingMQ and its dependencies,
 respectively, on Ubuntu 22.04.2 LTS and Darwin 22.6.0. They can serve as a basis
-to build BlazingMQ on other systems.  
+to build BlazingMQ on other systems. Note that the build requires CMake 3.24
+or newer.  
   
 To build BlazingMQ with plugins, pass '--plugins' argument with desired plugin names to the build script, e.g.
 ```bash
