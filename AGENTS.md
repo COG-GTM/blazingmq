@@ -31,6 +31,31 @@ When you are started from a `PERF REGRESSION` alert in #blazingmq-sre-alerts, wo
 SRE loop below. Post a short update in the alert's Slack thread at every step.
 Keep each update to 3–6 lines, with numbers and SHAs.
 
+**Film the investigation.** The room watches a video of the triage, so make
+the investigation visible on the desktop and record it:
+- Right after the acknowledgement, call `recording_start` (fps 10).
+- Run every investigation command through `bin/demo/show.sh "<step title>"
+  "<command>"`. It opens a large terminal on the desktop, runs the command,
+  waits, and exits with the command's exit code (output is also appended to
+  `/tmp/demo-show.log`). At minimum, show:
+  1. `Correlate: bisect`: the full `git bisect start/good/bad` and
+     `git bisect run ...` (no `--quiet`; let the per-step benchmark lines
+     print), then `git bisect log`.
+  2. `Investigate: offending diff`:
+     `git show --color=always <bad-sha> -- src/groups/bmq/bmqt/bmqt_uri.cpp`.
+  3. `Investigate: profile`: `perf record -g` on `bmqt_uri.t -1`, then
+     `perf report --stdio --no-children --percent-limit 3 | head -60`, so the
+     `std::regex` frames are on screen.
+- Before each step, call `annotate_recording` (`type=setup`) with a one-line
+  description, e.g. "Bisecting dc11e788..HEAD with the URI benchmark".
+- After the RCA is posted, call `recording_stop` with title "BlazingMQ perf
+  triage" and a 2-sentence summary. Post the video in the alert thread
+  (`post_message` with `file_path`, text "Investigation recording: bisect →
+  diff → perf profile"). If the file is over 35 MB, post the session link
+  instead. Attach the same video to the PR description in step 5.
+- Recording is best effort: if it fails, say so in one line and carry on.
+  Never let it delay the approval stop.
+
 1. **Detect / acknowledge.** Reply in the thread. Say you are investigating,
    restate the metric, the baseline vs. current numbers, and the commit range
    from the alert.
