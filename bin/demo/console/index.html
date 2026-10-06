@@ -65,7 +65,7 @@ footer{padding:0 32px 24px;color:var(--mut);font-size:12px}
 <footer>Simulated regression on the COG-GTM demo fork (modelled on upstream PR #1011). Upstream BlazingMQ is unaffected. The benchmark is the repo's own <code>bmqt_uri.t</code>: 100k <code>UriParser::parse</code> calls, 5 runs, median.</footer>
 <script>
 const $=id=>document.getElementById(id);
-const STEPS=[["Detect",/\*(ack|detect)/i],["Correlate",/\*correlat|first bad commit/i],["RCA",/\*(RCA|investigat|root cause)/i],["Recommend",/\*recommend/i],["SRE approval",null,1],["Remediate",/\/pull\/\d+/i],["Verify",/\*verif/i],["Devin Review",/\*devin review|devin review (done|complete|posted|finished)/i]];
+const STEPS=[["Detect",/\*(ack|detect)/i],["Correlate",/\*correlat|first bad commit/i],["RCA",/\*(RCA|investigat|root cause)/i],["Recommend",/\*recommend/i],["SRE approval",null,1],["Remediate",/\/pull\/\d+/i],["Verify",/\*verif|\bverified\b/i],["Devin Review",/\*devin review|devin review (done|complete|posted|finished)/i]];
 let cfg={},alertTs=null,maxMs=400,polling=null;
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function mrkdwn(t){let s=esc(t.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&amp;/g,'&'));
