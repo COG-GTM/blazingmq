@@ -1,0 +1,45 @@
+digraph BlazingMQ {
+    graph [bgcolor="white", pad=0.24, nodesep=0.40, ranksep=0.56, newrank=true,
+           labelloc=t, fontname="DejaVu Sans Bold", fontsize=24,
+           fontcolor="#132C46", dpi=150, label="BlazingMQ | One persistent queue"];
+    node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=15,
+          fontcolor="#132C46", color="#7694B0", fillcolor="#EEF5FC", margin="0.20,0.14"];
+    edge [fontname="DejaVu Sans", fontsize=12, fontcolor="#293F55",
+          color="#4B6883", penwidth=1.35, arrowsize=0.7];
+
+    app [label="Producer and consumer applications\nSDK • bmqa / bmqp", fillcolor="#E2EEFA"];
+    ingress [label="Optional proxy broker\nSelects an upstream member"];
+
+    subgraph cluster_primary {
+        label="MEMBER • PRIMARY FOR THIS PARTITION"; labelloc=b;
+        fontname="DejaVu Sans Bold"; fontsize=13; fontcolor="#174B43";
+        style="rounded,filled"; color="#89BDB1"; fillcolor="#F1FAF7"; margin=16;
+
+        session [label="Transport and session\nTransportManager / ClientSession",
+                 color="#77AA9D", fillcolor="white"];
+        queue [label="Queue routing\nLocalQueue / RootQueueEngine", color="#77AA9D", fillcolor="white"];
+        primary [label="FileStore\nPartition data and journal", color="#77AA9D", fillcolor="#DDF2EB"];
+
+        session -> queue [label="dispatcher", dir=both];
+        queue -> primary [label="store / confirm"];
+    }
+
+    metadata [label="Cluster metadata\nLeader coordinates assignments\nOptional ledger replicates advisories",
+              color="#B69D61", fillcolor="#FFF6E0", fontsize=13];
+    subgraph cluster_replica {
+        label="OTHER CLUSTER MEMBERS";
+        fontname="DejaVu Sans Bold"; fontsize=13; fontcolor="#244F77";
+        style="rounded,filled"; color="#9AB8D2"; fillcolor="#F3F8FD"; margin=16;
+
+        replica [label="Replica FileStore\nApplies partition records", fillcolor="white"];
+    }
+
+    app -> session [label="direct connection", dir=both];
+    app -> ingress [dir=both];
+    ingress -> session [label="relay", dir=both];
+    metadata -> queue [label="assignments", style=dashed, color="#92723F"];
+    primary -> replica [label="replicate"];
+    { rank=same; ingress; session; }
+    { rank=same; metadata; queue; }
+    { rank=same; primary; replica; }
+}

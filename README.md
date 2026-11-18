@@ -43,8 +43,8 @@ libraries are available in C++, Java, and Python.
 BlazingMQ is an actively developed project and has been battle-tested in
 production at Bloomberg for 8+ years.
 
-This repository the contains BlazingMQ message broker, the BlazingMQ C++ client
-library, and a BlazingMQ command line tool. The BlazingMQ
+This repository contains the BlazingMQ message broker, the C++ client library,
+and command-line tools. The BlazingMQ
 [Java client library](https://github.com/bloomberg/blazingmq-sdk-java) and
 [Python client library](https://github.com/bloomberg/blazingmq-sdk-python) are
 maintained in separate repositories.
@@ -53,6 +53,7 @@ maintained in separate repositories.
 ## Menu
 
 - [Documentation](#documentation)
+- [Repository layout](#repository-layout)
 - [Quick Start](#quick-start)
 - [Building](#building)
 - [Installation](#installation)
@@ -66,6 +67,19 @@ maintained in separate repositories.
 
 Comprehensive documentation about BlazingMQ can be found
 [here](https://bloomberg.github.io/blazingmq).
+
+For a source-level tour of the broker, see the [architecture guide and diagram](docs/architecture.md).
+
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| [`src/applications`](src/applications) | Broker (`bmqbrkr`), client CLI (`bmqtool`), and storage inspection CLI (`bmqstoragetool`) |
+| [`src/groups/bmq`](src/groups/bmq) | C++ SDK, wire protocol, and shared libraries |
+| [`src/groups/mqb`](src/groups/mqb) | Broker sessions, cluster coordination, queue routing, and storage |
+| [`src/plugins`](src/plugins) | Optional broker plugins, including Prometheus metrics |
+| [`src/python`](src/python), [`src/integration-tests`](src/integration-tests) | Python tooling and broker integration tests |
+| [`bin`](bin), [`etc/presets`](etc/presets), [`docker`](docker) | Build scripts, CMake presets, and container examples |
 
 
 ## Quick Start
@@ -82,31 +96,42 @@ BlazingMQ and see them in action.
 
 ## Building
 
-[bin/build-ubuntu.sh](bin/build-ubuntu.sh) and
-[bin/build-darwin.sh](bin/build-darwin.sh) build BlazingMQ and its dependencies,
-respectively, on Ubuntu 22.04.2 LTS and Darwin 22.6.0. They can serve as a basis
-to build BlazingMQ on other systems.  
-  
-To build BlazingMQ with plugins, pass '--plugins' argument with desired plugin names to the build script, e.g.
-```bash
-bin/build-ubuntu.sh --plugins plugin-1-name,plugin-2-name
-```
+Run the build scripts from the repository root with CMake 3.25 or newer
+(required by the checked-in preset format) on `PATH`. On Ubuntu 22.04, this
+means using a newer CMake than the default `apt` version.
+
+- **Ubuntu x86-64:** Install the system packages listed in
+  [`bin/build-ubuntu.sh`](bin/build-ubuntu.sh) and use a compiler that supports
+  C++23. Run `bin/build-ubuntu.sh`, or `bin/build-ubuntu.sh --plugins prometheus`
+  to include the optional Prometheus plugin.
+- **macOS (Apple Silicon):** With Clang and Homebrew available, run
+  [`bin/build-darwin.sh`](bin/build-darwin.sh). Add `--install-deps` to install
+  its Homebrew prerequisites first. The Ubuntu `--plugins` option does not
+  apply to this script.
+
+Both scripts fetch and build BDE and NTF. With the default build directory, the
+broker and CLI binaries are under `build/blazingmq/src/applications/`. For a
+local broker with sample configuration, run
+`build/blazingmq/src/applications/bmqbrkr/run`. See the
+[integration test guide](src/integration-tests/README.md) to run broker tests.
 
 ### With vcpkg
 
-There is also support for building BlazingMQ with [vpckg](https://vcpkg.io/en/).
+There are also presets for [vcpkg](https://vcpkg.io/en/).
 
-Before attempting to build, you will have to acquire `flex`, `bison`, and `bde-tools` for your system, as vcpkg cannot fetch them. Both `flex` and `bison` can likely be installed through your system's package manager. Clone [`bde-tools`](https://github.com/bloomberg/bde-tools.git), we'll assume `blazingmq/thirdparty/bde-tools` for this guide.
+Install `flex` and `bison` for your system and clone
+[`bde-tools`](https://github.com/bloomberg/bde-tools.git) separately.
 
-Once the prerequisite tools are installed, you should be able to build BlazingMQ with the following:
+For example, on Linux x86-64:
 
 ```sh
 export VCPKG_ROOT=/path/to/vcpkg
-cmake --preset [preset-name] -DCMAKE_PREFIX_PATH=/path/to/thirdparty/bde-tools
+cmake --preset linux-x64-vcpkg -DCMAKE_PREFIX_PATH=/path/to/bde-tools
 cmake --build cmake.bld
 ```
 
-For a list of presets, please look at the `*-vcpkg` configurations in [`CMakePresets.json`](./CMakePresets.json).
+The Linux and macOS `*-vcpkg` presets are defined in
+[`etc/presets/vcpkg.json`](etc/presets/vcpkg.json).
 
 
 ## Installation
