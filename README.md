@@ -70,6 +70,29 @@ Comprehensive documentation about BlazingMQ can be found
 
 ## Quick Start
 
+The fastest way to try BlazingMQ is the single-node Docker setup in this
+repository. You need Docker with the Compose v2 plugin (`docker compose`); the
+first image build compiles BlazingMQ and its dependencies and takes several
+minutes. From the root of the repository:
+
+```sh
+docker compose -f docker/single-node/docker-compose.yaml up --build -d
+docker compose -f docker/single-node/docker-compose.yaml run --rm bmqtool
+# inside the bmqtool container:
+bmqtool -b tcp://bmqbrkr:30114
+```
+
+Use `docker compose ... run --rm bmqtool` to get an interactive shell; `--rm`
+removes the container when you exit the shell. The `bmqtool`
+service only starts a shell and exits straight away, so
+`docker compose ... up bmqtool` does not leave you at a prompt. At the
+`bmqtool` prompt, type `start`, then `open`, `post`, `list` and `confirm` as
+shown in the article below. Exit the `bmqtool` shell, then stop everything with
+`docker compose -f docker/single-node/docker-compose.yaml down`. Without `--rm`,
+the `run` container stays behind and `down` cannot remove the network; remove
+it with `docker compose -f docker/single-node/docker-compose.yaml down --remove-orphans`
+or `docker rm`.
+
 [This](https://bloomberg.github.io/blazingmq/docs/getting_started/blazingmq_in_action/)
 article guides readers to build, install, and experiment with BlazingMQ locally
 in a Docker container.
@@ -85,7 +108,33 @@ BlazingMQ and see them in action.
 [bin/build-ubuntu.sh](bin/build-ubuntu.sh) and
 [bin/build-darwin.sh](bin/build-darwin.sh) build BlazingMQ and its dependencies,
 respectively, on Ubuntu 22.04.2 LTS and Darwin 22.6.0. They can serve as a basis
-to build BlazingMQ on other systems.  
+to build BlazingMQ on other systems. Run them from the root of the repository.
+
+On Ubuntu, install the prerequisites first. `bin/build-ubuntu.sh` prints the
+`apt` package list when it starts, but that list leaves out two things:
+
+- `python3`, which the BDE build tools need (without it the build stops with
+  `No appropriate python interpreter found.`).
+- CMake 3.25 or newer. BDE needs at least 3.24 and the CMake presets in this
+  repository need 3.25, but Ubuntu 22.04 ships CMake 3.22. One way to get a
+  newer CMake is from pip, for example `pip install --user 'cmake==3.31.*'`.
+  pip puts the `cmake` command in `~/.local/bin`, which must come before
+  `/usr/bin` on your `PATH` so the build does not pick up the apt CMake. Check
+  with `cmake --version` before you build.
+
+```bash
+sudo apt update && sudo apt -y install ca-certificates
+sudo apt install -y --no-install-recommends autoconf automake build-essential gdb cmake ninja-build pkg-config bison libfl-dev libbenchmark-dev libgmock-dev libgtest-dev libtool libz-dev libssl-dev git python3 python3-pip
+pip install --user 'cmake==3.31.*'
+export PATH="$HOME/.local/bin:$PATH"
+hash -r
+cmake --version   # must print 3.25 or newer
+bin/build-ubuntu.sh
+```
+
+The script clones BDE, NTF and the BDE tools into `thirdparty/`, builds them,
+and builds BlazingMQ into `build/blazingmq`. When it finishes it prints the
+paths of the broker (`bmqbrkr.tsk`) and the command line tool (`bmqtool.tsk`).
   
 To build BlazingMQ with plugins, pass '--plugins' argument with desired plugin names to the build script, e.g.
 ```bash
@@ -94,7 +143,7 @@ bin/build-ubuntu.sh --plugins plugin-1-name,plugin-2-name
 
 ### With vcpkg
 
-There is also support for building BlazingMQ with [vpckg](https://vcpkg.io/en/).
+There is also support for building BlazingMQ with [vcpkg](https://vcpkg.io/en/).
 
 Before attempting to build, you will have to acquire `flex`, `bison`, and `bde-tools` for your system, as vcpkg cannot fetch them. Both `flex` and `bison` can likely be installed through your system's package manager. Clone [`bde-tools`](https://github.com/bloomberg/bde-tools.git), we'll assume `blazingmq/thirdparty/bde-tools` for this guide.
 
