@@ -77,17 +77,21 @@ minutes. From the root of the repository:
 
 ```sh
 docker compose -f docker/single-node/docker-compose.yaml up --build -d
-docker compose -f docker/single-node/docker-compose.yaml run bmqtool
+docker compose -f docker/single-node/docker-compose.yaml run --rm bmqtool
 # inside the bmqtool container:
 bmqtool -b tcp://bmqbrkr:30114
 ```
 
-Use `docker compose ... run bmqtool` to get an interactive shell. The `bmqtool`
+Use `docker compose ... run --rm bmqtool` to get an interactive shell; `--rm`
+removes the container when you exit the shell. The `bmqtool`
 service only starts a shell and exits straight away, so
 `docker compose ... up bmqtool` does not leave you at a prompt. At the
 `bmqtool` prompt, type `start`, then `open`, `post`, `list` and `confirm` as
-shown in the article below. Stop everything with
-`docker compose -f docker/single-node/docker-compose.yaml down`.
+shown in the article below. Exit the `bmqtool` shell, then stop everything with
+`docker compose -f docker/single-node/docker-compose.yaml down`. Without `--rm`,
+the `run` container stays behind and `down` cannot remove the network; remove
+it with `docker compose -f docker/single-node/docker-compose.yaml down --remove-orphans`
+or `docker rm`.
 
 [This](https://bloomberg.github.io/blazingmq/docs/getting_started/blazingmq_in_action/)
 article guides readers to build, install, and experiment with BlazingMQ locally
@@ -113,13 +117,18 @@ On Ubuntu, install the prerequisites first. `bin/build-ubuntu.sh` prints the
   `No appropriate python interpreter found.`).
 - CMake 3.25 or newer. BDE needs at least 3.24 and the CMake presets in this
   repository need 3.25, but Ubuntu 22.04 ships CMake 3.22. One way to get a
-  newer CMake is from pip, for example `pip install 'cmake==3.31.*'`; make sure
-  it comes first on your `PATH`.
+  newer CMake is from pip, for example `pip install --user 'cmake==3.31.*'`.
+  pip puts the `cmake` command in `~/.local/bin`, which must come before
+  `/usr/bin` on your `PATH` so the build does not pick up the apt CMake. Check
+  with `cmake --version` before you build.
 
 ```bash
 sudo apt update && sudo apt -y install ca-certificates
 sudo apt install -y --no-install-recommends autoconf automake build-essential gdb cmake ninja-build pkg-config bison libfl-dev libbenchmark-dev libgmock-dev libgtest-dev libtool libz-dev libssl-dev git python3 python3-pip
-pip install 'cmake==3.31.*'
+pip install --user 'cmake==3.31.*'
+export PATH="$HOME/.local/bin:$PATH"
+hash -r
+cmake --version   # must print 3.25 or newer
 bin/build-ubuntu.sh
 ```
 
